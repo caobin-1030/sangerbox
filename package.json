@@ -28,7 +28,7 @@
     "file-saver": "^2.0.2",
     "hls.js": "^0.13.2",
     "html2canvas": "^1.0.0-rc.5",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jspdf": "^1.5.3",
     "pako": "^1.0.10",
     "popper.js": "^1.16.0",
