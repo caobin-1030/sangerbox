@@ -1,0 +1,4774 @@
+<template>
+  <div>
+    <Header></Header>
+    <div @click="search2();searcher()" id="sea" v-show="false" class="Search"><span>搜索</span></div>
+    <div v-if="mess" class="mess"><img src="../../public/img/msg.png" alt=""><span>正在导出</span></div>
+    <div class="SearchBackground" @click="downAnalysis()">
+      <div class="SearchBody1" @click.stop="settingEvent()">
+        <div class="search2">
+          <div class="searchBox1">
+            <div>
+              <el-dropdown trigger="click">
+                <span class="el-dropdown-link">
+                  <span>{{choice}}</span>
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item id="lit" @click.native="literature1()">{{literature}}</el-dropdown-item>
+                  <el-dropdown-item @click.native="periodical1()">{{periodical}}</el-dropdown-item>
+                  <el-dropdown-item @click.native="fund1()">{{fund}}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+            <div class="searchInput">
+              <el-autocomplete
+                class="inline-input" @input="searchContent==''?'':Fund();search3()" @keyup.13.native="searcher()"
+                v-model="searchContent"
+                :fetch-suggestions="querySearch"
+                placeholder="在此输入您搜索的内容"
+                :trigger-on-focus="false"
+                @select="handleSelect;searcher()"
+              ></el-autocomplete>
+              <span style="margin-right:10px" class="tougao" @click="high()">>>高级搜索</span>
+            </div>
+            <div @click="search3();searcher()" class="Search"><span>搜索</span></div>
+          </div>
+        </div>
+        <div class="SearchBody">
+          <span>寻找文献</span>
+          <ul>
+            <li><span @click="searchtp53()">TP53</span></li>
+            <li><span @click="searchmyc()">MYC</span></li>
+            <li><span @click="searchegfr()">egfr</span></li>
+            <li><span @click="searchkras()">kras</span></li>
+          </ul>
+          <div class="SearchBox">
+            <div>
+              <el-dropdown trigger="click">
+                <span class="el-dropdown-link">
+                  {{choice}}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item class="lit" @click.native="literature1()">{{literature}}</el-dropdown-item>
+                  <el-dropdown-item @click.native="periodical1()">{{periodical}}</el-dropdown-item>
+                  <el-dropdown-item @click.native="fund1()">{{fund}}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+            <div class="searchInput">
+              <el-autocomplete
+                class="inline-input" @input="searchContent==''?'':Fund();search3()" @keyup.13.native="searcher()"
+                v-model="searchContent"
+                :fetch-suggestions="querySearch"
+                placeholder="在此输入您搜索的内容"
+                :trigger-on-focus="false"
+                @select="handleSelect;searcher()"
+              ></el-autocomplete>
+              <span style="margin-right:10px" class="tougao" @click="high()">>>高级搜索</span>
+            </div>
+            <div @click="search3();searcher()" class="Search"><span>搜索</span></div>
+          </div>
+          <p class="sousuo"><span>搜索结果：<span>{{result}}</span><span>搜索时间：</span><span>{{timer}}</span></span><span class="tougao" @click="toContribute()">>>智能选刊</span></p>
+          <div id="senior" class="senior" v-if="senior1">
+            <div class="theads">
+              <p>高级搜索</p>
+              <img @click="quiet()" src="../../public/img/x.png" alt="">
+            </div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>关联符</td>
+                  <td>检索字段</td>
+                  <td>检索词</td>
+                </tr>
+                <tr>
+                  <td>
+                  </td>
+                  <td>
+                    <el-select  v-model="model1" placeholder="请选择">
+                      <el-option
+                        v-for="item in field2"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-input v-if="model1!='subjectThree' && model1!='subjectTwo' && model1!='subjectOne'"
+                      placeholder="请输入内容"
+                      v-model="int1"
+                      clearable>
+                    </el-input>
+                    <el-select v-else-if="model1=='subjectOne'" filterable v-model="int1" placeholder="请选择">
+                      <el-option
+                        v-for="item in yijixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model1=='subjectTwo'" filterable v-model="int1" placeholder="请选择">
+                      <el-option
+                        v-for="item in erjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model1=='subjectThree'" filterable v-model="int1" placeholder="请选择">
+                      <el-option
+                        v-for="item in sanjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <el-select v-model="relation2" placeholder="请选择" style="width:75px" size='small'>
+                      <el-option
+                        v-for="item in relation"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-select v-model="model2" placeholder="请选择">
+                      <el-option
+                        v-for="item in field2"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-input v-if="model2!='subjectThree' && model2!='subjectTwo' && model2!='subjectOne'"
+                      placeholder="请输入内容"
+                      v-model="int2"
+                      clearable>
+                    </el-input>
+                    <el-select v-else-if="model2=='subjectOne'" filterable v-model="int2" placeholder="请选择">
+                      <el-option
+                        v-for="item in yijixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model2=='subjectTwo'" filterable v-model="int2" placeholder="请选择">
+                      <el-option
+                        v-for="item in erjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model2=='subjectThree'" filterable v-model="int2" placeholder="请选择">
+                      <el-option
+                        v-for="item in sanjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <el-select v-model="relation3" placeholder="请选择" style="width:75px" size='small'>
+                      <el-option
+                        v-for="item in relation"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-select v-model="model3" placeholder="请选择">
+                      <el-option
+                        v-for="item in field2"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-input v-if="model3!='subjectThree' && model3!='subjectTwo' && model3!='subjectOne'"
+                      placeholder="请输入内容"
+                      v-model="int3"
+                      clearable>
+                    </el-input>
+                    <el-select v-else-if="model3='subjectOne'" filterable v-model="int3" placeholder="请选择">
+                      <el-option
+                        v-for="item in yijixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model3=='subjectTwo'" filterable v-model="int3" placeholder="请选择">
+                      <el-option
+                        v-for="item in erjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model3=='subjectThree'" filterable v-model="int3" placeholder="请选择">
+                      <el-option
+                        v-for="item in sanjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <el-select v-model="relation4" placeholder="请选择" style="width:75px" size='small'>
+                      <el-option
+                        v-for="item in relation"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-select v-model="model4" placeholder="请选择">
+                      <el-option
+                        v-for="item in field2"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                  <td>
+                    <el-input v-if="model4!='subjectThree' && model4!='subjectTwo' && model4!='subjectOne'"
+                      placeholder="请输入内容"
+                      v-model="int4"
+                      clearable>
+                    </el-input>
+                    <el-select v-else-if="model4=='subjectOne'" filterable v-model="int4" placeholder="请选择">
+                      <el-option
+                        v-for="item in yijixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model4=='subjectTwo'" filterable v-model="int4" placeholder="请选择">
+                      <el-option
+                        v-for="item in erjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                    <el-select v-else-if="model4=='subjectThree'" filterable v-model="int4" placeholder="请选择">
+                      <el-option
+                        v-for="item in sanjixueke"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <el-button @click="reset()" type="info" size="small" round>重置</el-button>
+                    <el-button @click="Search()" type="primary" size="small" round>检索</el-button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="SearchHeadBg">
+      </div>
+      <div class="SearchContent">
+        <div class="SearchHead">
+          <div class="SearchContent1 row">
+            <div class="SearchHeadOne col-md-2 col-sm-3 col-xs-3">
+              <div>
+                <img src="../../public/img/search.png">
+                <span>快速搜索</span>
+              </div>
+              <div><img @click="clear()" src="../../public/img/brush.png" title="清空"></div>
+            </div>
+            <div class="SearchHeadTwo col-md-7 col-sm-6 col-xs-7">
+              <ul>
+                <li :class="{'asc':isAsc1,'desc':isDesc1}" @click="approvedYear();search3();searcher();inf()">
+                  批准年份
+                  <span>
+                    <img v-if="show1" src="../../public/img/shang.png">
+                    <img v-if="active1" src="../../public/img/shangActive.png">
+                  </span>
+                  <span>
+                    <img v-if="show6" src="../../public/img/xia.png">
+                    <img v-if="active6" src="../../public/img/xiaActive.png">
+                  </span>
+                </li>
+                <li :class="{'asc':isAsc2,'desc':isDesc2}" @click="projectAmount();search3();searcher();inf()">
+                  项目金额
+                  <span>
+                    <img v-if="show2" src="../../public/img/shang.png">
+                    <img v-if="active2" src="../../public/img/shangActive.png">
+                  </span>
+                  <span>
+                    <img v-if="show3" src="../../public/img/xia.png">
+                    <img v-if="active3" src="../../public/img/xiaActive.png">
+                  </span>
+                </li>
+                <li :class="{'asc':isAsc3,'desc':isDesc3}" @click="relevant();search3();searcher();inf()">
+                  相关度
+                  <span>
+                    <img v-if="show4" src="../../public/img/shang.png">
+                    <img v-if="active4" src="../../public/img/shangActive.png">
+                  </span>
+                  <span>
+                    <img v-if="show5" src="../../public/img/xia.png">
+                    <img v-if="active5" src="../../public/img/xiaActive.png">
+                  </span>
+                </li>
+                
+              </ul>
+            </div>
+            <div class="SearchHeadThree col-md-3 col-sm-2">
+              <ul>
+                <li><img src="../../public/img/analysis.png" v-if="analy" id="ana" @click.stop="analysis()" alt="分析" title="分析"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="SearchBody1 row"  @click.stop="settingEvent()">
+          <div class="SearchBodyOne col-sm-2" v-if="show">
+            <ul>
+              <li>
+                <p><img src="../../public/img/xuebu.png"><span>学部分类:</span></p>
+                <el-checkbox-group v-model="checkList4" @change="checkListSix();search3();searcher()">
+                  <el-checkbox label="数理科学部">数理</el-checkbox>
+                  <el-checkbox label="化学科学部">化学</el-checkbox>
+                  <el-checkbox label="生命科学部">生命</el-checkbox>
+                  <div class="InputP" v-show="inpp">
+                    <el-checkbox label="地球科学部">地球</el-checkbox>
+                    <el-checkbox label="工程与材料科学部">工程与材料</el-checkbox>
+                    <el-checkbox label="信息科学部">信息</el-checkbox>
+                    <el-checkbox label="管理科学部">管理</el-checkbox>
+                    <el-checkbox label="医学科学部">医学</el-checkbox>
+                    <el-checkbox label="其他学部">其他</el-checkbox>
+                  </div>
+                  <span><img @click="influencefactorDown" v-show="inpp1" src="../../public/img/xia1.png" alt=""></span>
+                  <span><img @click="influencefactorDown" v-show="!inpp1" src="../../public/img/shang1.png" alt=""></span>
+                </el-checkbox-group>
+              </li>
+              <li>
+                <p><img src="../../public/img/xiangmujine.png"><span>项目金额:</span></p>
+                  <el-checkbox-group v-model="checkList5" @change="checkListSeven();search3();searcher()">
+                  <el-checkbox label="10-20">10-20万</el-checkbox>
+                  <el-checkbox label="20-50">20-50万</el-checkbox>
+                  <el-checkbox label="50-100">50-100万</el-checkbox>
+                  <div class="InputP" v-show="inpp2">
+                    <input type="number" v-model="inp3">
+                    <div></div>
+                    <input type="number" v-model="inp4">
+                    <el-button type="primary" size="mini" round @click="xiangMoney();search3();searcher()">搜索</el-button>
+                  </div>
+                  <span><img @click="xiangDown" v-show="inpp3" src="../../public/img/xia1.png" alt=""></span>
+                  <span><img @click="xiangDown" v-show="!inpp3" src="../../public/img/shang1.png" alt=""></span>
+                </el-checkbox-group>
+              </li>
+              <li>
+                <p><img src="../../public/img/pizhun.png"><span>批准时间:</span></p>
+                  <el-checkbox-group v-model="checkList6" class="shijian" @change="checkListEight();search3();searcher()">
+                    <el-checkbox label="2016-2017"></el-checkbox>
+                    <el-checkbox label="2017-2018"></el-checkbox> 
+                    <el-checkbox label="2019-2020"></el-checkbox>
+                    <div class="InputP" v-show="inpp4">
+                      <input type="number" v-model="inp5">
+                      <div></div>
+                      <input type="number" v-model="inp6">
+                      <el-button type="primary" size="mini" round @click="yearTimeOne();search3();searcher()">搜索</el-button>
+                    </div>
+                    <span><img @click="sanDown" v-show="inpp5" src="../../public/img/xia1.png" alt=""></span>
+                    <span><img @click="sanDown" v-show="!inpp5" src="../../public/img/shang1.png" alt=""></span>
+                  </el-checkbox-group>
+              </li>
+              <li>
+                <p><img src="../../public/img/xiangmuleixing.png"><span>项目类型:</span></p>
+                  <el-checkbox-group v-model="checkList7" @change="checkListNine();search3();searcher()">
+                    <el-checkbox label="面上项目"></el-checkbox>
+                    <el-checkbox label="重点项目"></el-checkbox>
+                    <el-checkbox label="重大项目"></el-checkbox>
+                    <div class="InputP" v-show="inpp6">
+                      <el-checkbox label="重大研究计划"></el-checkbox>
+                      <el-checkbox label="中国杰出青年科学基金"></el-checkbox>
+                      <el-checkbox label="创新研究群体科学基金"></el-checkbox>
+                      <el-checkbox label="国家（地区）合作与交流项目"></el-checkbox>
+                      <el-checkbox label="专项基金项目"></el-checkbox>
+                      <el-checkbox label="联合基金项目"></el-checkbox>
+                      <el-checkbox label="海外或港、澳青年学者合作研究基金"></el-checkbox>
+                      <el-checkbox label="青年科学基金项目"></el-checkbox>
+                      <el-checkbox label="地区科学基金项目"></el-checkbox>
+                      <el-checkbox label="海外及港澳学者合作研究基金"></el-checkbox>
+                      <el-checkbox label="国家基础科学人才培养基金"></el-checkbox>
+                      <el-checkbox label="国家重大科研仪器研制项目"></el-checkbox>
+                      <el-checkbox label="应急管理项目"></el-checkbox>
+                      <el-checkbox label="优秀青年基金项目"></el-checkbox>
+                      <el-checkbox label="研究成果专著出版基金"></el-checkbox>
+                      <el-checkbox label="重点实验室研究项目基金"></el-checkbox>
+                      <el-checkbox label="数学天元基金"></el-checkbox>
+                      <el-checkbox label="委托任务"></el-checkbox>
+                    </div>
+                    <span><img @click="xiangmuDown" v-show="inpp7" src="../../public/img/xia1.png" alt=""></span>
+                    <span><img @click="xiangmuDown" v-show="!inpp7" src="../../public/img/shang1.png" alt=""></span>
+                  </el-checkbox-group>
+              </li>
+            </ul>
+          </div>
+          <div class="SearchBodyTwo col-sm-10" v-if="show" v-loading="loading"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="f5f5f5">
+            <ul v-if="JSON.stringify(Fu)!='{}'">
+              <li v-for="(item,i) in data6" :key="i">
+                <p class="title3"><span v-html="item.title" @click="toFund(item.approvalNumber)">{{item.title}}</span></p>
+                <div class="Periodical2"> 
+                  <div class="Periodical2Left">
+                    <p>学科分类：一级：<span @click="subjectOne1(item.subjectOneType);search3();searcher()" class="sta" v-if="item.subjectOneType!=null">{{item.subjectOneType}}</span><span v-else>N/A</span> 二级：<span @click="subjectTwo1(item.subjectTwoType);search2();searcher()" class="sta" v-if="item.subjectTwoType!=null">{{item.subjectTwoType}}</span><span v-if="item.subjectTwoType==null">N/A</span> 三级：<span @click="subjectThree1(item.subjectThreeType);search3();searcher()" class="sta" v-if="item.subjectThreeType!=null">{{item.subjectThreeType}}</span><span v-if="item.subjectThreeType==null">N/A</span></p>
+                    <!-- <p>学科代码：一级：<span v-if="item.subjectOneCode!=null">{{item.subjectOneCode}}</span><span v-else>N/A</span> 二级：<span v-if="item.subjectTwoCode!=null">{{item.subjectTwoCode}}</span><span v-if="item.subjectTwoCode==null">N/A</span> 三级：<span v-if="item.subjectThreeCode!=null">{{item.subjectThreeCode}}</span><span v-if="item.subjectThreeCode==null">N/A</span></p> -->
+                    <div class="issn">
+                      <div>
+                        <p>负责人</p>
+                        <p @click="student(item.studentsName);search3();searcher()" class="sta" v-if="item.studentsName!=null">{{item.studentsName}}</p>
+                        <p v-else>N/A</p>
+                      </div>
+                      <div>
+                        <p>单位</p>
+                        <p @click="unit1(item.unit);search3();searcher()" class="sta" v-if="item.unit!=null">{{item.unit}}</p>
+                        <p v-else>N/A</p>
+                      </div>
+                      <div>
+                        <p>金额 （万）</p>
+                        <p @click="money1(item.money);search3();searcher()" class="sta" v-if="item.money!=null">{{item.money}}</p>
+                        <p v-else>N/A</p>
+                      </div>
+                      <div>
+                        <p>项目编号</p>
+                        <p @click="toFund(item.approvalNumber)" class="sta" v-if="item.approvalNumber!=null">{{item.approvalNumber}}</p>
+                        <p v-else>N/A</p>
+                      </div>
+                      <div>
+                        <p>项目类型</p>
+                        <p @click="type11(item.type);search3();searcher()" class="sta" v-if="item.type!=null">{{item.type}}</p>
+                        <p v-else>N/A</p>
+                      </div>
+                      <div>
+                        <p>批准年份</p>
+                        <p @click="Year1(item.approvalYear);search3();searcher()" class="sta" v-if="item.approvalYear!=null">{{item.approvalYear}}</p>
+                        <p v-else>N/A</p>
+                      </div>
+                    </div>
+                    <div>
+                      <div :class="item.info==null?'hengxian':'hengxian1'"></div>
+                      <p>执行时间：<span v-if="item.info!=null && (item.info.researchTimeScope).length>22">{{(item.info.researchTimeScope).slice(0,10)}}到{{(item.info.researchTimeScope).slice(22,32)}}</span><span v-if="item.info!=null && (item.info.researchTimeScope).length<22">{{item.info.researchTimeScope}}</span><span v-if="item.info==null">N/A</span></p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div v-else>
+              <div style="width:100%;text-align: center">
+                <img style="margin-top:200px;height:150px" src="../../public/img/none.png" alt="">
+              </div>
+            </div>
+            <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            layout="prev, pager, next,jumper" 
+            :total="this.result"
+            v-if="el_show">
+            </el-pagination>
+          </div>
+          <div class="SearchBodyThree col-sm-2" v-if="show">
+            <div>
+              <el-button style="background:#3366cc;color:#fff;border:1px solid #3366cc;margin-bottom:10px" v-if="analy" id="ana" @click.stop="analysis()" plain>搜索结果分析</el-button>
+            </div>
+            <!-- <div>
+              <p>新手上路</p>
+              <div></div>
+              <p @click="to884">1、怎样快速查文献</p>
+              <p @click="to885">2、怎样收藏文献</p>
+              <p @click="to886">3、怎么进行文献分析</p>
+              <p @click="to887">4、怎么筛选目标杂志</p>
+            </div>
+            <div>
+              <p>数据统计</p>
+              <div></div>
+              <p @click="to888">1、怎样对搜索结果进行统计</p>
+              <p @click="to889">2、怎样进行投稿选刊</p>
+            </div> -->
+            <div>
+              <p>最新动态</p>
+              <div></div>
+              <p v-for="(item,i) of data7" :key="i"><span  @click="toShengxinren(item.id)">{{item.title}}</span></p>
+            </div>
+            <div v-if="his.length>0">
+              <p>历史记录</p>
+              <div></div>
+              <p @click="his1(item)" v-for="(item,i) of data13" :key="i">{{item}}</p>
+            </div>
+          </div><div class="SearchBodyFore"  v-loading="loading1"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          element-loading-background="f5f5f5" id="view" ref="canvas" v-if="!show">
+            <div class="ForeContent">
+              <div>
+                <img src="../../public/img/forebg.png" alt="">
+                <ul>
+                  <li><img src="../../public/img/logo7.png" alt=""></li>
+                  <li>
+                    <p>大数据分析图表</p>
+                    <p>Sangerbox Big Data Analysis Chart</p>
+                  </li>
+                  <li><p>{{systemDate}}<span  @click="savecanvas()" style="cursor: pointer;">导出</span></p></li>
+                </ul>
+              </div>
+              <div class="sevenContent">
+                <div class="shuContent">
+                  <div class="xuebu">
+                    <p>所属学部</p>
+                    <div>
+                      <div class="xue1">
+                        <div id="xue" :style="{width: '350px', height: '300px'}"></div>
+                      </div>
+                      <div>
+                        <div v-for="(item,i) of data8" :key="i" class="xue2"><div class="yuan1" :style="{border:item.borcolor}"></div><p>{{item.name}} {{(item.moneySum.moneySum).toFixed(2)}}</p></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hengContent">
+                  <div class="xiangmu">
+                    <p>项目类型</p>
+                    <div>
+                      <div class="xiang1">
+                        <div id="xiang" :style="{width: '350px', height: '300px'}"></div>
+                      </div>
+                      <div>
+                        <div v-for="(item,i) of data9" :key="i" class="xiang2"><div class="yuan1" :style="{border:item.borcolor}"></div><p>{{item.name}} {{(item.moneySum.moneySum).toFixed(2)}}</p></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="eghitContent">
+                <div class="shucontent">
+                  <div class="fuze" style="height:433px">
+                    <p>负责人</p>
+                    <div class="fuze1">
+                      <div class="fu2">
+                        <p style="color:#AFB6D4;margin-top:7px;">排名</p>
+                        <p><img src="../../public/img/bang1.png" alt=""></p>
+                        <p><img src="../../public/img/bang2.png" alt=""></p>
+                        <p><img src="../../public/img/bang3.png" alt=""></p>
+                        <p>NO.4</p>
+                        <p>NO.5</p>
+                        <p>NO.6</p>
+                        <p>NO.7</p>
+                        <p>NO.8</p>
+                        <p>NO.9</p>
+                        <p>NO.10</p>
+                      </div>
+                      <table class="fu1">
+                        <tbody>
+                          <tr>
+                            <td>姓名</td>
+                            <td>数目</td>
+                            <td>金额（万）</td>
+                          </tr>
+                          <tr @click="Fuze(item.name)" style="cursor: pointer;" v-for="(item,i) of data10" :key="i">
+                            <td>{{item.name}}</td>
+                            <td>{{item.count}}</td>
+                            <td>{{item.moneySum.moneySum}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    
+                    </div>
+                    
+                  </div>
+                  <div class="biaoti1" style="height:390px">
+                    <p>标题统计</p>
+                    <div>
+                      <div id="biaoti" :style="{width: '280px', height: '340px'}"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hengcontent">
+                  <div class="yijixue" style="height:271px">
+                    <p>一级学科</p>
+                    <div class="yiji">
+                      <div id="yiji1" :style="{width: '830px', height: '280px'}"></div>
+                    </div>
+                  </div>
+                  <div class="erjixue" style="height:271px">
+                    <p>二级学科</p>
+                    <div class="erji">
+                      <div id="erji1" :style="{width: '830px', height: '280px'}"></div>
+                    </div>
+                  </div>
+                  <div class="sanjixue" style="height:271px">
+                    <p>三级学科</p>
+                    <div class="sanji">
+                      <div id="sanji1" :style="{width: '830px', height: '280px'}"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="nineContent">
+                <div class="danwei">
+                  <p>单位统计</p>
+                  <div class="danwei1">
+                    <div id="danwei1" :style="{width: '550px', height: '240px'}"></div>
+                  </div>
+                  <div>
+                    <div class="xiangmujin">
+                      <p>项目金额</p>
+                      <p>万元</p>
+                    </div>
+                    <div class="xiangmujine" v-for="(item,i) of data11" :key="i">
+                      <p>{{item.name}}</p>
+                      <p>{{(item.moneySum.moneySum).toFixed(2)}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="nianfen">
+                  <p>年份统计</p>
+                  <div class="nianfen1">
+                    <div id="nianfen1" :style="{width: '550px', height: '240px'}"></div>
+                  </div>
+                  <div>
+                    <div class="dangnianjin">
+                      <p>项目金额</p>
+                      <p>万元</p>
+                    </div>
+                    <div class="dangnianjine" v-for="(item,i) of data12" :key="i">
+                      <p>{{item.name}}</p>
+                      <p>{{(item.moneySum.moneySum).toFixed(2)}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <Footer/>
+  </div>
+</template>
+<script>
+import Header from '../components/Header'
+import Footer from '../components/Footer'
+import html2canvas from 'html2canvas';
+import FileSaver from 'file-saver';
+export default {
+  metaInfo() {
+    return {title: this.searchContent == undefined ? '基金搜索' : this.searchContent + '-基金搜索'} // set a title
+  },
+  data() {
+    return {
+      isactive:false,mess:false,
+      dataset : [ 30 , 10 , 43 , 55  ],
+      show:true,Entrance:true,e:0,w:0,r:0,t:0,y:0,g:0,j:0,f:0,d:0,i:0,o:0,p:0,u:0,h:0,a:0,q:0,z:0,v:0,n:0,
+      inpp:false,inpp1:true,inpp2:false,inpp3:true,inpp4:false,inpp5:true,inpp6:false,inpp7:true,
+      inp1:"",inp2:"",inp3:"",inp4:'',inp5:"",inp6:'',inp7:"",inp8:'',
+      type3:true,analy:true,
+      result:0,zh:false,
+      timer:0,loading:false,foreConte:true,loading1:false,
+      checkList1: [],checkList2: [],checkList3: [],checkList4: [],checkList5: [],checkList6: [],checkList7:[],
+      input1:"",input2:"",input3:"",input4:"",
+      isAsc1:false,isDesc1:false,isAsc2:false,isDesc2:false,isAsc3:false,isDesc3:false,
+      show1:true,active1:false,show2:true,active2:false,show3:true,active3:false,show4:true,active4:false,show5:true,active5:false,show6:true,active6:false,
+      searchContent:'',
+      choice:'文 献',
+      literature:'文 献',
+      periodical:'期 刊',
+      fund:'基 金',ifsAggs:[],
+      search:'',abbb:[],
+      searchPubmedArticle:{},searchPubmedJournal:{},
+      a1:{},a2:{},currentPage:1,
+      chk1:'',chk2:'',chk3:'',chk4:'',chk5:"",chk6:'',chk7:'',chk8:"",chk9:'',chk10:'',chk11:"",
+      el_show:true,
+      aa:'',ab:'',type1:false,
+      yijixueke:[
+        {value:"H16 肿瘤学",label:"H16 肿瘤学"}, {value:"A01 数学",label:"A01 数学"}, {value:"E08 建筑环境与结构工程",label:"E08 建筑环境与结构工程"}, {value:"F01 电子学与信息系统",label:"F01 电子学与信息系统"}, {value:"E05 机械工程",label:"E05 机械工程"}, {value:"D07 环境地球科学",label:"D07 环境地球科学"}, {value:"F02 计算机科学",label:"F02 计算机科学"}, {value:"A04 物理学Ⅰ",label:"A04 物理学Ⅰ"}, {value:"A05 物理学Ⅱ",label:"A05 物理学Ⅱ"}, {value:"A02 力学",label:"A02 力学"}, {value:"D01 地理学",label:"D01 地理学"}, {value:"B01 合成化学",label:"B01 合成化学"}, {value:"E02 无机非金属材料",label:"E02 无机非金属材料"}, {value:"F03 自动化",label:"F03 自动化"}, {value:"B08 化学工程与工业化学",label:"B08 化学工程与工业化学"}, {value:"H09 神经系统和精神疾病",label:"H09 神经系统和精神疾病"}, {value:"E04 冶金与矿业",label:"E04 冶金与矿业"}, {value:"E01 金属材料",label:"E01 金属材料"}, {value:"E09 水利科学与海洋工程",label:"E09 水利科学与海洋工程"}, {value:"G01 管理科学与工程",label:"G01 管理科学与工程"}, {value:"F05 光学和光电子学",label:"F05 光学和光电子学"}, {value:"D02 地质学",label:"D02 地质学"}, {value:"H02 循环系统",label:"H02 循环系统"}, {value:"H27 中医学",label:"H27 中医学"}, {value:"E06 工程热物理与能源利用",label:"E06 工程热物理与能源利用"}, {value:"C13 作物学",label:"C13 作物学"}, {value:"E03 有机高分子材料",label:"E03 有机高分子材料"}, {value:"G02 工商管理",label:"G02 工商管理"}, {value:"C02 植物学",label:"C02 植物学"}, {value:"D06 海洋科学",label:"D06 海洋科学"}, {value:"H28 中药学",label:"H28 中药学"}, {value:"C03 生态学",label:"C03 生态学"}, {value:"B03 化学理论与机制",label:"B03 化学理论与机制"}, {value:"B06 环境化学",label:"B06 环境化学"}, {value:"E07 电气科学与工程",label:"E07 电气科学与工程"}, {value:"H18 影像医学与生物医学工程",label:"H18 影像医学与生物医学工程"}, {value:"B04 化学测量学",label:"B04 化学测量学"}, {value:"C01 微生物学",label:"C01 微生物学"}, {value:"C20 食品科学",label:"C20 食品科学"}, {value:"C16 林学",label:"C16 林学"}, {value:"D04 地球物理学和空间物理学",label:"D04 地球物理学和空间物理学"}, {value:"H26 预防医学",label:"H26 预防医学"}, {value:"G03 经济科学",label:"G03 经济科学"}, {value:"F04 半导体科学与信息器件",label:"F04 半导体科学与信息器件"}, {value:"D05 大气科学",label:"D05 大气科学"}, {value:"G04 宏观管理与政策",label:"G04 宏观管理与政策"}, {value:"B05 材料化学与能源化学",label:"B05 材料化学与能源化学"}, {value:"C15 园艺学与植物营养学",label:"C15 园艺学与植物营养学"}, {value:"C05 生物物理、生物化学与分子生物学",label:"C05 生物物理、生物化学与分子生物学"}, {value:"B02 催化与表界面化学",label:"B02 催化与表界面化学"}, {value:"F06 人工智能",label:"F06 人工智能"}, {value:"C14 植物保护学",label:"C14 植物保护学"}, {value:"C06 遗传学与生物信息学",label:"C06 遗传学与生物信息学"}, {value:"A03 天文学",label:"A03 天文学"}, {value:"C17 畜牧学与草地科学",label:"C17 畜牧学与草地科学"}, {value:"H30 药物学",label:"H30 药物学"}, {value:"C18 兽医学",label:"C18 兽医学"}, {value:"H31 药理学",label:"H31 药理学"}, {value:"B07 化学生物学",label:"B07 化学生物学"}, {value:"C04 动物学",label:"C04 动物学"}, {value:"H10 医学免疫学",label:"H10 医学免疫学"}, {value:"H19 医学病原生物与感染",label:"H19 医学病原生物与感染"}, {value:"H04 生殖系统/围生医学/新生儿",label:"H04 生殖系统/围生医学/新生儿"}, {value:"H03 消化系统",label:"H03 消化系统"}, {value:"H29 中西医结合",label:"H29 中西医结合"}, {value:"H07 内分泌系统/代谢和营养支持",label:"H07 内分泌系统/代谢和营养支持"}, {value:"C07 细胞生物学",label:"C07 细胞生物学"}, {value:"H06 运动系统",label:"H06 运动系统"}, {value:"H08 血液系统",label:"H08 血液系统"}, {value:"H14 口腔颅颌面科学",label:"H14 口腔颅颌面科学"}, {value:"H05 泌尿系统",label:"H05 泌尿系统"}, {value:"H01 呼吸系统",label:"H01 呼吸系统"}, {value:"C10 生物力学与组织工程学",label:"C10 生物力学与组织工程学"}, {value:"H12 眼科学",label:"H12 眼科学"}, {value:"H15 急重症医学/创伤/烧伤/整形",label:"H15 急重症医学/创伤/烧伤/整形"}, {value:"C09 神经科学",label:"C09 神经科学"}, {value:"D03 地球化学",label:"D03 地球化学"}, {value:"C08 免疫学",label:"C08 免疫学"}, {value:"C11 生理学与整合生物学",label:"C11 生理学与整合生物学"}, {value:"C12 发育生物学与生殖生物学",label:"C12 发育生物学与生殖生物学"}, {value:"C21 心理学",label:"C21 心理学"}, {value:"H11 皮肤及其附属器",label:"H11 皮肤及其附属器"}, {value:"H13 耳鼻咽喉头颈科学",label:"H13 耳鼻咽喉头颈科学"}, {value:"H20 检验医学",label:"H20 检验医学"}, {value:"A06",label:"A06"}, {value:"H25 老年医学",label:"H25 老年医学"}, {value:"H17 康复医学",label:"H17 康复医学"}, {value:"A08",label:"A08"}, {value:"H24 地方病学/职业病学",label:"H24 地方病学/职业病学"}, {value:"H22 放射医学",label:"H22 放射医学"}, {value:"H23 法医学",label:"H23 法医学"}, {value:"C19 水产学",label:"C19 水产学"}, {value:"H21 特种医学",label:"H21 特种医学"}, {value:"A04",label:"A04"}, {value:"F07 交叉学科中的信息科学",label:"F07 交叉学科中的信息科学"}, {value:"A09",label:"A09"}, {value:"L00",label:"L00"}
+      ],
+      erjixueke:[
+        {value:"A0402 凝聚态物性Ⅱ",label:"A0402 凝聚态物性Ⅱ"}, {value:"F0205 计算机应用技术",label:"F0205 计算机应用技术"}, {value:"A0203 固体力学",label:"A0203 固体力学"}, {value:"E0805 结构工程",label:"E0805 结构工程"}, {value:"A0404 光学",label:"A0404 光学"}, {value:"D0701 土壤学",label:"D0701 土壤学"}, {value:"C1304 作物种质资源与遗传育种学",label:"C1304 作物种质资源与遗传育种学"}, {value:"H1617 消化系统肿瘤",label:"H1617 消化系统肿瘤"}, {value:"E0804 环境工程",label:"E0804 环境工程"}, {value:"F0301 控制理论与方法",label:"F0301 控制理论与方法"}, {value:"B0103 有机合成",label:"B0103 有机合成"}, {value:"D0101 自然地理学",label:"D0101 自然地理学"}, {value:"C1701 畜牧学",label:"C1701 畜牧学"}, {value:"A0204 流体力学",label:"A0204 流体力学"}, {value:"A0117 计算数学与科学工程计算",label:"A0117 计算数学与科学工程计算"}, {value:"F0207 计算机网络",label:"F0207 计算机网络"}, {value:"D0107 地理信息系统",label:"D0107 地理信息系统"}, {value:"D0102 人文地理学",label:"D0102 人文地理学"}, {value:"E0309 有机高分子功能材料",label:"E0309 有机高分子功能材料"}, {value:"F0104 通信网络",label:"F0104 通信网络"}, {value:"B0201 催化化学",label:"B0201 催化化学"}, {value:"B0105 配位合成化学",label:"B0105 配位合成化学"}, {value:"E0503 机械动力学",label:"E0503 机械动力学"}, {value:"C0204 植物生理学",label:"C0204 植物生理学"}, {value:"H2902 中西医结合临床基础",label:"H2902 中西医结合临床基础"}, {value:"E0508 零件成形制造",label:"E0508 零件成形制造"}, {value:"F0603 机器感知与模式识别",label:"F0603 机器感知与模式识别"}, {value:"A0504 核技术及其应用",label:"A0504 核技术及其应用"}, {value:"F0202 计算机软件",label:"F0202 计算机软件"}, {value:"A0108 偏微分方程",label:"A0108 偏微分方程"}, {value:"A0202 动力学与控制",label:"A0202 动力学与控制"}, {value:"A0506 等离子体物理",label:"A0506 等离子体物理"}, {value:"B0601 环境污染化学",label:"B0601 环境污染化学"}, {value:"H2708 中医内科",label:"H2708 中医内科"}, {value:"A05 物理学Ⅱ",label:"A05 物理学Ⅱ"}, {value:"H1606 肿瘤复发与转移",label:"H1606 肿瘤复发与转移"}, {value:"F0206 信息安全",label:"F0206 信息安全"}, {value:"A0501 基础物理学",label:"A0501 基础物理学"}, {value:"A0505 粒子物理与核物理实验方法与技术",label:"A0505 粒子物理与核物理实验方法与技术"}, {value:"E0509 零件加工制造",label:"E0509 零件加工制造"}, {value:"E0105 金属功能材料",label:"E0105 金属功能材料"}, {value:"D0704 工程地质学",label:"D0704 工程地质学"}, {value:"E0807 交通土建工程",label:"E0807 交通土建工程"}, {value:"F0102 信息系统",label:"F0102 信息系统"}, {value:"B0602 污染控制与化学修复",label:"B0602 污染控制与化学修复"}, {value:"E0604 燃烧学",label:"E0604 燃烧学"}, {value:"A0403 原子和分子物理",label:"A0403 原子和分子物理"}, {value:"C0502 生物化学",label:"C0502 生物化学"}, {value:"E0808 防灾工程",label:"E0808 防灾工程"}, {value:"B0810 能源化工",label:"B0810 能源化工"}, {value:"E0207 无机非金属类光电信息与功能材料",label:"E0207 无机非金属类光电信息与功能材料"}, {value:"H0203 心肌细胞/血管细胞损伤、修复、重构和再生",label:"H0203 心肌细胞/血管细胞损伤、修复、重构和再生"}, {value:"C1401 植物病理学",label:"C1401 植物病理学"}, {value:"B0404 化学与生物传感",label:"B0404 化学与生物传感"}, {value:"B0502 有机高分子功能材料化学",label:"B0502 有机高分子功能材料化学"}, {value:"A0107 常微分方程与动力系统",label:"A0107 常微分方程与动力系统"}, {value:"D0106 遥感机理与方法",label:"D0106 遥感机理与方法"}, {value:"H1602 肿瘤发生",label:"H1602 肿瘤发生"}, {value:"E0910 海洋工程",label:"E0910 海洋工程"}, {value:"C1201 发育生物学",label:"C1201 发育生物学"}, {value:"B0102 无机合成",label:"B0102 无机合成"}, {value:"E0506 机械设计学",label:"E0506 机械设计学"}, {value:"A0503 核物理",label:"A0503 核物理"}, {value:"B0301 理论与计算化学",label:"B0301 理论与计算化学"}, {value:"A0401 凝聚态物性Ⅰ:结构、力学和热学性质",label:"A0401 凝聚态物性Ⅰ:结构、力学和热学性质"}, {value:"E0704 电力系统",label:"E0704 电力系统"}, {value:"C1805 兽医传染病学",label:"C1805 兽医传染病学"}, {value:"A0502 粒子物理学和场论",label:"A0502 粒子物理学和场论"}, {value:"H0906 脑血管结构、功能异常及相关疾病",label:"H0906 脑血管结构、功能异常及相关疾病"}, {value:"D0709 环境地球化学",label:"D0709 环境地球化学"}, {value:"F0502 光子与光电子器件",label:"F0502 光子与光电子器件"}, {value:"D0609 生物海洋学与海洋生物资源",label:"D0609 生物海洋学与海洋生物资源"}, {value:"A0102 代数学",label:"A0102 代数学"}, {value:"E0505 机械摩擦学与表面技术",label:"E0505 机械摩擦学与表面技术"}, {value:"B0807 生物化工与轻化工",label:"B0807 生物化工与轻化工"}, {value:"A0114 应用数学方法",label:"A0114 应用数学方法"}, {value:"C1501 果树学",label:"C1501 果树学"}, {value:"H1904 病毒、病毒感染与宿主免疫",label:"H1904 病毒、病毒感染与宿主免疫"}, {value:"D0713 污染物行为过程及其环境效应",label:"D0713 污染物行为过程及其环境效应"}, {value:"C0501 生物大分子结构与功能",label:"C0501 生物大分子结构与功能"}, {value:"F0103 通信理论与系统",label:"F0103 通信理论与系统"}, {value:"A0111 数理统计",label:"A0111 数理统计"}, {value:"C0206 植物资源学",label:"C0206 植物资源学"}, {value:"B0702 生物分子的化学生物学",label:"B0702 生物分子的化学生物学"}, {value:"B0803 反应工程",label:"B0803 反应工程"}, {value:"A0105 函数论",label:"A0105 函数论"}, {value:"C0606 基因表达调控与表观遗传学",label:"C0606 基因表达调控与表观遗传学"}, {value:"A0116 组合数学",label:"A0116 组合数学"}, {value:"E0603 传热传质学",label:"E0603 传热传质学"}, {value:"A0405 声学",label:"A0405 声学"}, {value:"A0106 泛函分析",label:"A0106 泛函分析"}, {value:"C0102 微生物生理与生物化学",label:"C0102 微生物生理与生物化学"}, {value:"H2718 中医针灸",label:"H2718 中医针灸"}, {value:"A0112 运筹学",label:"A0112 运筹学"}, {value:"G0308 农林经济管理",label:"G0308 农林经济管理"}, {value:"H1622 乳腺肿瘤",label:"H1622 乳腺肿瘤"}, {value:"E0806 岩土与基础工程",label:"E0806 岩土与基础工程"}, {value:"F0302 控制系统",label:"F0302 控制系统"}, {value:"F0403 半导体光电子器件与集成",label:"F0403 半导体光电子器件与集成"}, {value:"C1502 蔬菜学与瓜果学",label:"C1502 蔬菜学与瓜果学"}, {value:"C0402 动物系统及分类学",label:"C0402 动物系统及分类学"}, {value:"B0603 环境毒理与健康",label:"B0603 环境毒理与健康"}, {value:"B0705 药物化学生物学",label:"B0705 药物化学生物学"}, {value:"E0206 碳素材料与超硬材料",label:"E0206 碳素材料与超硬材料"}, {value:"H1621 女性生殖系统肿瘤",label:"H1621 女性生殖系统肿瘤"}, {value:"F0304 系统工程理论与技术",label:"F0304 系统工程理论与技术"}, {value:"H2803 中药药效物质",label:"H2803 中药药效物质"}, {value:"F0106 空天通信",label:"F0106 空天通信"}, {value:"E0204 功能陶瓷",label:"E0204 功能陶瓷"}, {value:"F0201 计算机科学的基础理论",label:"F0201 计算机科学的基础理论"}, {value:"C1303 作物栽培与耕作学",label:"C1303 作物栽培与耕作学"}, {value:"E0510 制造系统与自动化",label:"E0510 制造系统与自动化"}, {value:"B0501 无机与纳米材料化学",label:"B0501 无机与纳米材料化学"}, {value:"E0410 安全科学与工程",label:"E0410 安全科学与工程"}, {value:"F0203 计算机体系结构",label:"F0203 计算机体系结构"}, {value:"H0812 白血病",label:"H0812 白血病"}, {value:"H1609 肿瘤化学药物治疗",label:"H1609 肿瘤化学药物治疗"}, {value:"C0405 昆虫学",label:"C0405 昆虫学"}, {value:"F0306 检测技术及装置",label:"F0306 检测技术及装置"}, {value:"E0310 生物医用高分子材料",label:"E0310 生物医用高分子材料"}, {value:"D0601 物理海洋学",label:"D0601 物理海洋学"}, {value:"D0714 区域环境质量与安全",label:"D0714 区域环境质量与安全"}, {value:"H1008 自身免疫性疾病",label:"H1008 自身免疫性疾病"}, {value:"B0804 分离工程",label:"B0804 分离工程"}, {value:"D0703 地下水科学（含地热地质学）",label:"D0703 地下水科学（含地热地质学）"}, {value:"E0903 水环境与生态水利",label:"E0903 水环境与生态水利"}, {value:"H1615 呼吸系统肿瘤",label:"H1615 呼吸系统肿瘤"}, {value:"C2007 食品安全与质量控制",label:"C2007 食品安全与质量控制"}, {value:"B0403 谱学方法与理论",label:"B0403 谱学方法与理论"}, {value:"E0907 岩土力学与岩土工程",label:"E0907 岩土力学与岩土工程"}, {value:"D0409 应用地球物理学",label:"D0409 应用地球物理学"}, {value:"C2005 食品加工的生物学基础",label:"C2005 食品加工的生物学基础"}, {value:"D0201 古生物学和古生态学",label:"D0201 古生物学和古生态学"}, {value:"E0511 机械测试理论与技术",label:"E0511 机械测试理论与技术"}, {value:"D0603 海洋地质学",label:"D0603 海洋地质学"}, {value:"E0801 建筑学",label:"E0801 建筑学"}, {value:"H0910 脑、脊髓、周围神经损伤及修复",label:"H0910 脑、脊髓、周围神经损伤及修复"}, {value:"E0901 水文、水资源",label:"E0901 水文、水资源"}, {value:"B0811 资源与环境化工",label:"B0811 资源与环境化工"}, {value:"A0206 爆炸与冲击动力学",label:"A0206 爆炸与冲击动力学"}, {value:"C1507 植物营养学",label:"C1507 植物营养学"}, {value:"F0303 系统建模理论与仿真技术",label:"F0303 系统建模理论与仿真技术"}, {value:"B0203 胶体与界面化学",label:"B0203 胶体与界面化学"}, {value:"H0215 动脉粥样硬化与动脉硬化",label:"H0215 动脉粥样硬化与动脉硬化"}, {value:"D0507 气候学与气候系统",label:"D0507 气候学与气候系统"}, {value:"E0502 传动机械学",label:"E0502 传动机械学"}, {value:"H1611 肿瘤生物治疗",label:"H1611 肿瘤生物治疗"}, {value:"E0802 城乡规划",label:"E0802 城乡规划"}, {value:"D0401 大地测量学",label:"D0401 大地测量学"}, {value:"C0306 生态系统生态学",label:"C0306 生态系统生态学"}, {value:"H0605 骨、关节、软组织损伤与修复",label:"H0605 骨、关节、软组织损伤与修复"}, {value:"F0503 传输与交换光子学",label:"F0503 传输与交换光子学"}, {value:"E0706 电力电子学",label:"E0706 电力电子学"}, {value:"H1619 泌尿系统肿瘤",label:"H1619 泌尿系统肿瘤"}, {value:"H1618 神经系统肿瘤（含特殊感受器肿瘤）",label:"H1618 神经系统肿瘤（含特殊感受器肿瘤）"}, {value:"B0204 电化学",label:"B0204 电化学"}, {value:"B0401 分离分析",label:"B0401 分离分析"}, {value:"F0506 激光",label:"F0506 激光"}, {value:"E0501 机构学与机器人",label:"E0501 机构学与机器人"}, {value:"E0416 材料冶金过程工程",label:"E0416 材料冶金过程工程"}, {value:"E0601 工程热力学",label:"E0601 工程热力学"}, {value:"D0410 空间物理",label:"D0410 空间物理"}, {value:"H0912 神经变性、再生及相关疾病",label:"H0912 神经变性、再生及相关疾病"}, {value:"H2610 非传染病流行病学",label:"H2610 非传染病流行病学"}, {value:"G0102 运筹与管理",label:"G0102 运筹与管理"}, {value:"E0103 金属非晶态、准晶和纳米晶材料",label:"E0103 金属非晶态、准晶和纳米晶材料"}, {value:"H0902 认知功能障碍",label:"H0902 认知功能障碍"}, {value:"E0210 无机非金属能量转换与存储材料",label:"E0210 无机非金属能量转换与存储材料"}, {value:"H1625 头颈部及颌面肿瘤",label:"H1625 头颈部及颌面肿瘤"}, {value:"C0801 分子免疫",label:"C0801 分子免疫"}, {value:"C0601 植物遗传学",label:"C0601 植物遗传学"}, {value:"B01 合成化学",label:"B01 合成化学"}, {value:"E0208 无机非金属基复合材料",label:"E0208 无机非金属基复合材料"}, {value:"B0304 结构化学",label:"B0304 结构化学"}, {value:"H0713 糖尿病",label:"H0713 糖尿病"}, {value:"H3008 药剂学",label:"H3008 药剂学"}, {value:"F0101 信息论",label:"F0101 信息论"}, {value:"D0702 水文学",label:"D0702 水文学"}, {value:"H3001 合成药物化学",label:"H3001 合成药物化学"}, {value:"C2002 食品生物化学",label:"C2002 食品生物化学"}, {value:"F0108 多媒体通信",label:"F0108 多媒体通信"}, {value:"E0607 可再生与替代能源利用中的工程热物理问题",label:"E0607 可再生与替代能源利用中的工程热物理问题"}, {value:"G0406 卫生管理与政策",label:"G0406 卫生管理与政策"}, {value:"C0108 病毒学",label:"C0108 病毒学"}, {value:"A0110 概率论与随机分析",label:"A0110 概率论与随机分析"}, {value:"C0101 微生物资源、分类与系统发育",label:"C0101 微生物资源、分类与系统发育"}, {value:"A0205 生物力学",label:"A0205 生物力学"}, {value:"D0712 环境变化与预测",label:"D0712 环境变化与预测"}, {value:"G0207 市场营销",label:"G0207 市场营销"}, {value:"H0609 骨、关节、软组织退行性病变",label:"H0609 骨、关节、软组织退行性病变"}, {value:"E0213 无机非金属类生物材料",label:"E0213 无机非金属类生物材料"}, {value:"D0211 构造地质学与活动构造",label:"D0211 构造地质学与活动构造"}, {value:"E0101 金属结构材料",label:"E0101 金属结构材料"}, {value:"D0207 石油、天然气地质学",label:"D0207 石油、天然气地质学"}, {value:"H3002 天然药物化学",label:"H3002 天然药物化学"}, {value:"H3105 抗肿瘤药物药理",label:"H3105 抗肿瘤药物药理"}, {value:"G0114 信息系统与管理",label:"G0114 信息系统与管理"}, {value:"E0803 建筑物理",label:"E0803 建筑物理"}, {value:"B0701 分子探针",label:"B0701 分子探针"}, {value:"D0105 区域可持续发展",label:"D0105 区域可持续发展"}, {value:"A0303 恒星与星际物质",label:"A0303 恒星与星际物质"}, {value:"C1402 农业昆虫学",label:"C1402 农业昆虫学"}, {value:"E0411 矿物工程与物质分离科学",label:"E0411 矿物工程与物质分离科学"}, {value:"H2603 人类营养",label:"H2603 人类营养"}, {value:"B0104 高分子合成",label:"B0104 高分子合成"}, {value:"E0512 微/纳机械系统",label:"E0512 微/纳机械系统"}, {value:"B0106 超分子化学与组装",label:"B0106 超分子化学与组装"}, {value:"C2003 食品发酵与酿造",label:"C2003 食品发酵与酿造"}, {value:"E0307 聚合物共混与复合材料",label:"E0307 聚合物共混与复合材料"}, {value:"G0306 金融管理",label:"G0306 金融管理"}, {value:"A0308 天文技术和方法",label:"A0308 天文技术和方法"}, {value:"E0403 石油天然气开采",label:"E0403 石油天然气开采"}, {value:"B0307 高分子物理与高分子物理化学",label:"B0307 高分子物理与高分子物理化学"}, {value:"C1102 系统生理学",label:"C1102 系统生理学"}, {value:"F0401 半导体材料",label:"F0401 半导体材料"}, {value:"G0205 财务管理",label:"G0205 财务管理"}, {value:"E0707 电机及其系统",label:"E0707 电机及其系统"}, {value:"G0412 资源管理与政策",label:"G0412 资源管理与政策"}, {value:"D0205 矿床学",label:"D0205 矿床学"}, {value:"A06",label:"A06"}, {value:"C0709 细胞信号转导",label:"C0709 细胞信号转导"}, {value:"C1406 生物防治",label:"C1406 生物防治"}, {value:"A0103 几何学",label:"A0103 几何学"}, {value:"D0711 第四纪地质学",label:"D0711 第四纪地质学"}, {value:"E0111 金属材料的腐蚀与防护",label:"E0111 金属材料的腐蚀与防护"}, {value:"H1603 肿瘤遗传与表观遗传",label:"H1603 肿瘤遗传与表观遗传"}, {value:"H2607 卫生毒理",label:"H2607 卫生毒理"}, {value:"C0202 植物分类学",label:"C0202 植物分类学"}, {value:"C0203 植物进化生物学",label:"C0203 植物进化生物学"}, {value:"C0103 微生物遗传与育种",label:"C0103 微生物遗传与育种"}, {value:"G0304 经济发展与贸易",label:"G0304 经济发展与贸易"}, {value:"G0109 管理系统工程",label:"G0109 管理系统工程"}, {value:"C1405 植物化学保护",label:"C1405 植物化学保护"}, {value:"H1205 视网膜、脉络膜及玻璃体相关疾病",label:"H1205 视网膜、脉络膜及玻璃体相关疾病"}, {value:"F0402 集成电路设计",label:"F0402 集成电路设计"}, {value:"H0206 冠状动脉性心脏病",label:"H0206 冠状动脉性心脏病"}, {value:"D0402 地震学",label:"D0402 地震学"}, {value:"B0402 电分析化学",label:"B0402 电分析化学"}, {value:"G0211 运营管理",label:"G0211 运营管理"}, {value:"C0105 环境微生物学",label:"C0105 环境微生物学"}, {value:"H1005 炎症、感染与免疫",label:"H1005 炎症、感染与免疫"}, {value:"E0110 金属材料表面科学与工程",label:"E0110 金属材料表面科学与工程"}, {value:"C1702 草地科学",label:"C1702 草地科学"}, {value:"F0501 光学信息获取、显示与处理",label:"F0501 光学信息获取、显示与处理"}, {value:"E0504 机械结构强度学",label:"E0504 机械结构强度学"}, {value:"H1805 医学超声与声学造影剂",label:"H1805 医学超声与声学造影剂"}, {value:"D0705 环境地质学和灾害地质学",label:"D0705 环境地质学和灾害地质学"}, {value:"E0209 半导体材料",label:"E0209 半导体材料"}, {value:"E0412 冶金物理化学与冶金原理",label:"E0412 冶金物理化学与冶金原理"}, {value:"H2501 老年医学",label:"H2501 老年医学"}, {value:"D0301 同位素地球化学",label:"D0301 同位素地球化学"}, {value:"H2801 中药资源",label:"H2801 中药资源"}, {value:"E0902 农业水利",label:"E0902 农业水利"}, {value:"E0908 水工结构和材料及施工",label:"E0908 水工结构和材料及施工"}, {value:"B0808 精细化工与绿色制造",label:"B0808 精细化工与绿色制造"}, {value:"D02 地质学",label:"D02 地质学"}, {value:"F0107 水域通信",label:"F0107 水域通信"}, {value:"B0101 元素化学",label:"B0101 元素化学"}, {value:"H1610 肿瘤物理治疗",label:"H1610 肿瘤物理治疗"}, {value:"E0602 内流流体力学",label:"E0602 内流流体力学"}, {value:"C1610 林木遗传育种学",label:"C1610 林木遗传育种学"}, {value:"F0605 知识表示与处理",label:"F0605 知识表示与处理"}, {value:"C1302 作物生理学",label:"C1302 作物生理学"}, {value:"H0903 躯体感觉、疼痛与镇痛",label:"H0903 躯体感觉、疼痛与镇痛"}, {value:"A0302 星系和类星体",label:"A0302 星系和类星体"}, {value:"D0204 岩石学",label:"D0204 岩石学"}, {value:"E0203 结构陶瓷",label:"E0203 结构陶瓷"}, {value:"H0205 心电活动异常与心律失常",label:"H0205 心电活动异常与心律失常"}, {value:"C2004 食品营养",label:"C2004 食品营养"}, {value:"C1604 林产化学",label:"C1604 林产化学"}, {value:"D0608 海洋环境科学",label:"D0608 海洋环境科学"}, {value:"H2901 中西医结合基础理论",label:"H2901 中西医结合基础理论"}, {value:"B0306 化学反应机制",label:"B0306 化学反应机制"}, {value:"G0117 金融工程",label:"G0117 金融工程"}, {value:"H1808 分子影像与分子探针",label:"H1808 分子影像与分子探针"}, {value:"C1003 组织工程学",label:"C1003 组织工程学"}, {value:"E0409 矿山岩体力学与岩层控制",label:"E0409 矿山岩体力学与岩层控制"}, {value:"F0404 半导体电子器件与集成",label:"F0404 半导体电子器件与集成"}, {value:"E0108 金属材料的力学行为",label:"E0108 金属材料的力学行为"}, {value:"G0202 组织理论与组织行为",label:"G0202 组织理论与组织行为"}, {value:"C0403 动物生理及行为学",label:"C0403 动物生理及行为学"}, {value:"A03 天文学",label:"A03 天文学"}, {value:"G0203 企业技术管理与创新管理",label:"G0203 企业技术管理与创新管理"}, {value:"F0109 光通信",label:"F0109 光通信"}, {value:"E0507 机械仿生学",label:"E0507 机械仿生学"}, {value:"G0206 会计与审计",label:"G0206 会计与审计"}, {value:"H1511 急重症医学/创伤/烧伤/整形其他科学问题",label:"H1511 急重症医学/创伤/烧伤/整形其他科学问题"}, {value:"B0508 电化学能源化学",label:"B0508 电化学能源化学"}, {value:"C1301 作物学基础",label:"C1301 作物学基础"}, {value:"D0503 大气遥感和大气探测",label:"D0503 大气遥感和大气探测"}, {value:"C0303 生理生态学",label:"C0303 生理生态学"}, {value:"C0607 生物信息学",label:"C0607 生物信息学"}, {value:"H2601 环境卫生",label:"H2601 环境卫生"}, {value:"D0206 沉积学和盆地动力学",label:"D0206 沉积学和盆地动力学"}, {value:"C1002 生物材料",label:"C1002 生物材料"}, {value:"H1701 康复医学",label:"H1701 康复医学"}, {value:"F0105 移动通信",label:"F0105 移动通信"}, {value:"F0508 应用光学",label:"F0508 应用光学"}, {value:"H1906 寄生虫、寄生虫感染与宿主免疫",label:"H1906 寄生虫、寄生虫感染与宿主免疫"}, {value:"H3102 心脑血管药物药理",label:"H3102 心脑血管药物药理"}, {value:"C0308 全球变化生态学",label:"C0308 全球变化生态学"}, {value:"H1604 肿瘤免疫",label:"H1604 肿瘤免疫"}, {value:"H3101 神经精神药物药理",label:"H3101 神经精神药物药理"}, {value:"C1603 木材物理学",label:"C1603 木材物理学"}, {value:"F06 人工智能",label:"F06 人工智能"}, {value:"F0112 雷达原理与雷达信号",label:"F0112 雷达原理与雷达信号"}, {value:"C1503 观赏园艺学",label:"C1503 观赏园艺学"}, {value:"G0103 决策理论与方法",label:"G0103 决策理论与方法"}, {value:"E0414 钢铁冶金",label:"E0414 钢铁冶金"}, {value:"C1605 森林生物学",label:"C1605 森林生物学"}, {value:"C1609 森林健康",label:"C1609 森林健康"}, {value:"D0512 大气环境与全球气候变化",label:"D0512 大气环境与全球气候变化"}, {value:"F01 电子学与信息系统",label:"F01 电子学与信息系统"}, {value:"A02 力学",label:"A02 力学"}, {value:"E0314 高分子材料结构与性能",label:"E0314 高分子材料结构与性能"}, {value:"H1901 病原细菌、细菌感染与宿主免疫",label:"H1901 病原细菌、细菌感染与宿主免疫"}, {value:"F0120 电磁波",label:"F0120 电磁波"}, {value:"B08 化学工程与工业化学",label:"B08 化学工程与工业化学"}, {value:"C0312 保护生物学与恢复生态学",label:"C0312 保护生物学与恢复生态学"}, {value:"D0708 生物地球化学",label:"D0708 生物地球化学"}, {value:"H2818 民族药学",label:"H2818 民族药学"}, {value:"F0113 信息获取与处理",label:"F0113 信息获取与处理"}, {value:"D0108 测量与地图学",label:"D0108 测量与地图学"}, {value:"H0503 泌尿系统损伤与修复",label:"H0503 泌尿系统损伤与修复"}, {value:"H1103 皮肤免疫性疾病",label:"H1103 皮肤免疫性疾病"}, {value:"H1607 肿瘤干细胞",label:"H1607 肿瘤干细胞"}, {value:"H2609 传染病流行病学",label:"H2609 传染病流行病学"}, {value:"C0305 群落生态学",label:"C0305 群落生态学"}, {value:"E0605 多相流热物理学",label:"E0605 多相流热物理学"}, {value:"C2101 认知心理学",label:"C2101 认知心理学"}, {value:"H1405 牙周及口腔黏膜疾病",label:"H1405 牙周及口腔黏膜疾病"}, {value:"F0509 光学和光电子材料",label:"F0509 光学和光电子材料"}, {value:"G0413 区域发展管理",label:"G0413 区域发展管理"}, {value:"C2006 食品贮藏与保鲜",label:"C2006 食品贮藏与保鲜"}, {value:"F0405 半导体物理",label:"F0405 半导体物理"}, {value:"G0309 区域经济与产业经济",label:"G0309 区域经济与产业经济"}, {value:"B03 化学理论与机制",label:"B03 化学理论与机制"}, {value:"G0110 工业工程与管理",label:"G0110 工业工程与管理"}, {value:"H0913 神经电活动异常与发作性疾病",label:"H0913 神经电活动异常与发作性疾病"}, {value:"D0510 大气化学",label:"D0510 大气化学"}, {value:"F0512 生物、医学光学与光子学",label:"F0512 生物、医学光学与光子学"}, {value:"E0107 金属材料的微观结构",label:"E0107 金属材料的微观结构"}, {value:"C0604 人类遗传学",label:"C0604 人类遗传学"}, {value:"G0201 战略管理",label:"G0201 战略管理"}, {value:"E0106 金属材料的合金相、相变及合金设计",label:"E0106 金属材料的合金相、相变及合金设计"}, {value:"H0422 新生儿相关疾病",label:"H0422 新生儿相关疾病"}, {value:"H1601 肿瘤病因",label:"H1601 肿瘤病因"}, {value:"B0303 化学动态学",label:"B0303 化学动态学"}, {value:"F0305 生物系统分析与调控",label:"F0305 生物系统分析与调控"}, {value:"H0212 心力衰竭",label:"H0212 心力衰竭"}, {value:"H1801 磁共振结构成像与疾病诊断",label:"H1801 磁共振结构成像与疾病诊断"}, {value:"C1611 经济林学",label:"C1611 经济林学"}, {value:"C1801 基础兽医学",label:"C1801 基础兽医学"}, {value:"E0102 金属基复合材料",label:"E0102 金属基复合材料"}, {value:"G03 经济科学",label:"G03 经济科学"}, {value:"H0107 支气管哮喘",label:"H0107 支气管哮喘"}, {value:"C1808 临床兽医学",label:"C1808 临床兽医学"}, {value:"F0125 医学信息检测与处理",label:"F0125 医学信息检测与处理"}, {value:"F0505 非线性光学与量子光学",label:"F0505 非线性光学与量子光学"}, {value:"C1607 森林培育学",label:"C1607 森林培育学"}, {value:"E0701 电磁场与电路",label:"E0701 电磁场与电路"}, {value:"H0317 肝纤维化、肝硬化与门脉高压症",label:"H0317 肝纤维化、肝硬化与门脉高压症"}, {value:"H2709 中医外科",label:"H2709 中医外科"}, {value:"A0109 数学物理",label:"A0109 数学物理"}, {value:"D0304 矿床地球化学",label:"D0304 矿床地球化学"}, {value:"F0111 信号理论与信号处理",label:"F0111 信号理论与信号处理"}, {value:"G0111 物流与供应链理论",label:"G0111 物流与供应链理论"}, {value:"G0307 人口资源环境经济与劳动经济",label:"G0307 人口资源环境经济与劳动经济"}, {value:"H0818 淋巴瘤及其他淋巴增殖性疾病",label:"H0818 淋巴瘤及其他淋巴增殖性疾病"}, {value:"D01 地理学",label:"D01 地理学"}, {value:"E0608 工程热物理相关交叉领域",label:"E0608 工程热物理相关交叉领域"}, {value:"D0303 岩石地球化学",label:"D0303 岩石地球化学"}, {value:"H1006 器官移植与移植免疫",label:"H1006 器官移植与移植免疫"}, {value:"H2810 中药抗肿瘤药理",label:"H2810 中药抗肿瘤药理"}, {value:"H1806 核医学",label:"H1806 核医学"}, {value:"D0611 极地科学",label:"D0611 极地科学"}, {value:"H1612 肿瘤综合治疗",label:"H1612 肿瘤综合治疗"}, {value:"C0704 细胞增殖与分化",label:"C0704 细胞增殖与分化"}, {value:"D0506 大气动力学",label:"D0506 大气动力学"}, {value:"B0107 绿色合成",label:"B0107 绿色合成"}, {value:"C0902 细胞神经生物学",label:"C0902 细胞神经生物学"}, {value:"F0309 机器人学与机器人技术",label:"F0309 机器人学与机器人技术"}, {value:"H2903 中医药学研究新技术和新方法",label:"H2903 中医药学研究新技术和新方法"}, {value:"A0101 数论",label:"A0101 数论"}, {value:"H0214 血压调节异常与高血压病",label:"H0214 血压调节异常与高血压病"}, {value:"H0914 脑功能保护、治疗与康复",label:"H0914 脑功能保护、治疗与康复"}, {value:"C0301 分子与进化生态学",label:"C0301 分子与进化生态学"}, {value:"H0905 神经发育、遗传、代谢相关疾病",label:"H0905 神经发育、遗传、代谢相关疾病"}, {value:"E02 无机非金属材料",label:"E02 无机非金属材料"}, {value:"H0420 妊娠及妊娠相关性疾病",label:"H0420 妊娠及妊娠相关性疾病"}, {value:"G0204 人力资源管理",label:"G0204 人力资源管理"}, {value:"H2710 中医骨伤科",label:"H2710 中医骨伤科"}, {value:"C0901 分子神经生物学",label:"C0901 分子神经生物学"}, {value:"E0109 金属材料的凝固与结晶学",label:"E0109 金属材料的凝固与结晶学"}, {value:"E0422 资源利用科学及其他",label:"E0422 资源利用科学及其他"}, {value:"F02 计算机科学",label:"F02 计算机科学"}, {value:"D0203 矿物学(含矿物物理学）",label:"D0203 矿物学(含矿物物理学）"}, {value:"E0402 煤炭地下开采",label:"E0402 煤炭地下开采"}, {value:"H3110 药物代谢与药物动力学",label:"H3110 药物代谢与药物动力学"}, {value:"B04 化学测量学",label:"B04 化学测量学"}, {value:"E0313 高分子材料与环境",label:"E0313 高分子材料与环境"}, {value:"B0801 化工热力学",label:"B0801 化工热力学"}, {value:"C0106 病原细菌与放线菌生物学",label:"C0106 病原细菌与放线菌生物学"}, {value:"C1612 园林学",label:"C1612 园林学"}, {value:"C1803 兽医免疫学",label:"C1803 兽医免疫学"}, {value:"H1304 听觉异常与平衡障碍",label:"H1304 听觉异常与平衡障碍"}, {value:"E0205 水泥与耐火材料",label:"E0205 水泥与耐火材料"}, {value:"E0705 高电压与绝缘",label:"E0705 高电压与绝缘"}, {value:"E0904 河流海岸动力学与泥沙研究",label:"E0904 河流海岸动力学与泥沙研究"}, {value:"H0510 继发性肾脏疾病",label:"H0510 继发性肾脏疾病"}, {value:"E0201 人工晶体",label:"E0201 人工晶体"}, {value:"B0504 复合与杂化材料化学",label:"B0504 复合与杂化材料化学"}, {value:"D0508 数值预报与数值模拟",label:"D0508 数值预报与数值模拟"}, {value:"C1001 生物力学与生物流变学",label:"C1001 生物力学与生物流变学"}, {value:"C1807 兽医药理学与毒理学",label:"C1807 兽医药理学与毒理学"}, {value:"H0111 急性肺损伤和急性呼吸窘迫综合征",label:"H0111 急性肺损伤和急性呼吸窘迫综合征"}, {value:"H2201 放射医学",label:"H2201 放射医学"}, {value:"C2001 食品原料学",label:"C2001 食品原料学"}, {value:"C0701 细胞及亚细胞结构与功能",label:"C0701 细胞及亚细胞结构与功能"}, {value:"H1809 医学图像数据处理与分析",label:"H1809 医学图像数据处理与分析"}, {value:"G01 管理科学与工程",label:"G01 管理科学与工程"}, {value:"A01 数学",label:"A01 数学"}, {value:"B0305 光化学与光谱学",label:"B0305 光化学与光谱学"}, {value:"H1402 颅颌面部骨、软骨组织的研究",label:"H1402 颅颌面部骨、软骨组织的研究"}, {value:"B0302 化学热力学",label:"B0302 化学热力学"}, {value:"B0503 有机高分子结构材料化学",label:"B0503 有机高分子结构材料化学"}, {value:"E05 机械工程",label:"E05 机械工程"}, {value:"H1201 角膜及眼表疾病",label:"H1201 角膜及眼表疾病"}, {value:"A0507 同步辐射技术及其应用",label:"A0507 同步辐射技术及其应用"}, {value:"C0309 微生物生态学",label:"C0309 微生物生态学"}, {value:"D0604 海洋化学",label:"D0604 海洋化学"}, {value:"H1404 牙体牙髓及根尖周组织疾病",label:"H1404 牙体牙髓及根尖周组织疾病"}, {value:"C1804 兽医寄生虫学",label:"C1804 兽医寄生虫学"}, {value:"H1502 多脏器衰竭",label:"H1502 多脏器衰竭"}, {value:"H1624 骨与软组织肿瘤",label:"H1624 骨与软组织肿瘤"}, {value:"C0205 植物生殖生物学",label:"C0205 植物生殖生物学"}, {value:"F0504 红外与太赫兹物理及技术",label:"F0504 红外与太赫兹物理及技术"}, {value:"A0304 太阳和太阳系",label:"A0304 太阳和太阳系"}, {value:"G0401 公共管理",label:"G0401 公共管理"}, {value:"C0310 污染生态学",label:"C0310 污染生态学"}, {value:"F0602 机器学习",label:"F0602 机器学习"}, {value:"H1204 青光眼、视神经及视路相关疾病",label:"H1204 青光眼、视神经及视路相关疾病"}, {value:"A04 物理学Ⅰ",label:"A04 物理学Ⅰ"}, {value:"E0415 有色金属冶金",label:"E0415 有色金属冶金"}, {value:"H2806 中药制剂",label:"H2806 中药制剂"}, {value:"C0706 细胞凋亡、坏死和自噬",label:"C0706 细胞凋亡、坏死和自噬"}, {value:"H1608 肿瘤诊断",label:"H1608 肿瘤诊断"}, {value:"H2611 流行病学方法与卫生统计",label:"H2611 流行病学方法与卫生统计"}, {value:"C0304 种群生态学",label:"C0304 种群生态学"}, {value:"G0404 科技管理与政策",label:"G0404 科技管理与政策"}, {value:"H2809 中药心脑血管药理",label:"H2809 中药心脑血管药理"}, {value:"B0706 化学生物学理论与技术",label:"B0706 化学生物学理论与技术"}, {value:"H0109 肺循环及肺血管疾病",label:"H0109 肺循环及肺血管疾病"}, {value:"F0406 集成电路器件、制造与封装",label:"F0406 集成电路器件、制造与封装"}, {value:"F0601 人工智能基础",label:"F0601 人工智能基础"}, {value:"C1202 生殖生物学",label:"C1202 生殖生物学"}, {value:"E0905 水力学与水信息学",label:"E0905 水力学与水信息学"}, {value:"F0119 电磁场",label:"F0119 电磁场"}, {value:"A0104 拓扑学",label:"A0104 拓扑学"}, {value:"D0208 煤地质学",label:"D0208 煤地质学"}, {value:"H2401 地方病学",label:"H2401 地方病学"}, {value:"C0506 环境生物物理",label:"C0506 环境生物物理"}, {value:"H2005 临床分子生物学检验",label:"H2005 临床分子生物学检验"}, {value:"H1408 牙缺损、缺失及牙颌畸形的修复与矫治",label:"H1408 牙缺损、缺失及牙颌畸形的修复与矫治"}, {value:"H1507 创面愈合与瘢痕",label:"H1507 创面愈合与瘢痕"}, {value:"H2602 职业卫生",label:"H2602 职业卫生"}, {value:"B0605 放射化学与辐射化学",label:"B0605 放射化学与辐射化学"}, {value:"H2705 中医方剂",label:"H2705 中医方剂"}, {value:"H0318 肝再生、肝保护、肝衰竭、人工肝",label:"H0318 肝再生、肝保护、肝衰竭、人工肝"}, {value:"C0201 植物结构生物学",label:"C0201 植物结构生物学"}, {value:"F0507 光谱技术",label:"F0507 光谱技术"}, {value:"E01 金属材料",label:"E01 金属材料"}, {value:"E04 冶金与矿业",label:"E04 冶金与矿业"}, {value:"C0605 基因组学",label:"C0605 基因组学"}, {value:"H2704 治则与治法",label:"H2704 治则与治法"}, {value:"H3010 药物分析",label:"H3010 药物分析"}, {value:"F0123 敏感电子学与传感器",label:"F0123 敏感电子学与传感器"}, {value:"E0113 金属制备与加工的材料科学基础",label:"E0113 金属制备与加工的材料科学基础"}, {value:"H0404 女性生殖内分泌异常及相关疾病",label:"H0404 女性生殖内分泌异常及相关疾病"}, {value:"C0404 动物资源与保护",label:"C0404 动物资源与保护"}, {value:"H0919 精神分裂症和其他精神障碍",label:"H0919 精神分裂症和其他精神障碍"}, {value:"C0805 免疫调节",label:"C0805 免疫调节"}, {value:"H1802 fMRI与脑、脊髓功能异常检测",label:"H1802 fMRI与脑、脊髓功能异常检测"}, {value:"C0602 动物遗传学",label:"C0602 动物遗传学"}, {value:"D0212 大地构造学",label:"D0212 大地构造学"}, {value:"B0406 化学分析与应用",label:"B0406 化学分析与应用"}, {value:"H1819 纳米医学",label:"H1819 纳米医学"}, {value:"F0124 生物电子学与生物信息处理",label:"F0124 生物电子学与生物信息处理"}, {value:"F0407 微纳机电器件与控制系统",label:"F0407 微纳机电器件与控制系统"}, {value:"H0310 胃肠道免疫相关疾病",label:"H0310 胃肠道免疫相关疾病"}, {value:"C1306 作物分子育种",label:"C1306 作物分子育种"}, {value:"E0417 粉末冶金与粉体工程",label:"E0417 粉末冶金与粉体工程"}, {value:"E0906 水力机械及其系统",label:"E0906 水力机械及其系统"}, {value:"H0509 原发性肾脏疾病",label:"H0509 原发性肾脏疾病"}, {value:"G0409 公共安全与危机管理",label:"G0409 公共安全与危机管理"}, {value:"H0108 慢性阻塞性肺疾病",label:"H0108 慢性阻塞性肺疾病"}, {value:"H0314 肝脏代谢障碍及相关疾病",label:"H0314 肝脏代谢障碍及相关疾病"}, {value:"C1006 纳米生物学",label:"C1006 纳米生物学"}, {value:"F0122 物理电子学",label:"F0122 物理电子学"}, {value:"H0921 心境障碍、心理生理障碍和心身疾病",label:"H0921 心境障碍、心理生理障碍和心身疾病"}, {value:"C0311 土壤生态学",label:"C0311 土壤生态学"}, {value:"G0414 信息资源管理",label:"G0414 信息资源管理"}, {value:"H0716 能量代谢调节异常及肥胖",label:"H0716 能量代谢调节异常及肥胖"}, {value:"H0726 骨转换、骨代谢异常和骨质疏松",label:"H0726 骨转换、骨代谢异常和骨质疏松"}, {value:"E0211 无机非金属类高温超导与磁性材料",label:"E0211 无机非金属类高温超导与磁性材料"}, {value:"G0107 管理统计理论与方法",label:"G0107 管理统计理论与方法"}, {value:"F0115 图像处理",label:"F0115 图像处理"}, {value:"H3004 生物技术药物",label:"H3004 生物技术药物"}, {value:"E0303 纤维",label:"E0303 纤维"}, {value:"H2804 中药质量评价",label:"H2804 中药质量评价"}, {value:"B0802 传递过程",label:"B0802 传递过程"}, {value:"D0103 景观地理学",label:"D0103 景观地理学"}, {value:"G0105 评价理论与方法",label:"G0105 评价理论与方法"}, {value:"H3111 临床药理",label:"H3111 临床药理"}, {value:"F0307 导航、制导与控制",label:"F0307 导航、制导与控制"}, {value:"H2711 中医妇科",label:"H2711 中医妇科"}, {value:"D05 大气科学",label:"D05 大气科学"}, {value:"H0104 呼吸系统炎症与感染",label:"H0104 呼吸系统炎症与感染"}, {value:"H1816 介入医学与工程",label:"H1816 介入医学与工程"}, {value:"F03 自动化",label:"F03 自动化"}, {value:"H0306 消化道内环境紊乱、黏膜屏障障碍及相关疾病",label:"H0306 消化道内环境紊乱、黏膜屏障障碍及相关疾病"}, {value:"H2703 证候基础",label:"H2703 证候基础"}, {value:"E06 工程热物理与能源利用",label:"E06 工程热物理与能源利用"}, {value:"H1301 嗅觉、鼻及前颅底疾病",label:"H1301 嗅觉、鼻及前颅底疾病"}, {value:"E0606 热物性与热物理测试技术",label:"E0606 热物性与热物理测试技术"}, {value:"C0504 膜生物化学与膜生物物理学",label:"C0504 膜生物化学与膜生物物理学"}, {value:"E0315 高分子材料的加工与成型",label:"E0315 高分子材料的加工与成型"}, {value:"D0502 边界层大气物理学和大气湍流",label:"D0502 边界层大气物理学和大气湍流"}, {value:"G0305 货币政策与财税政策",label:"G0305 货币政策与财税政策"}, {value:"H0424 精子发生异常与男性不育",label:"H0424 精子发生异常与男性不育"}, {value:"H1409 口腔颌面组织生物力学和生物材料",label:"H1409 口腔颌面组织生物力学和生物材料"}, {value:"H2101 特种医学(航空、航天、航海、潜水、高原、极地等极端环境)",label:"H2101 特种医学(航空、航天、航海、潜水、高原、极地等极端环境)"}, {value:"C1103 整合生理学",label:"C1103 整合生理学"}, {value:"H0604 骨、关节、软组织医用材料",label:"H0604 骨、关节、软组织医用材料"}, {value:"D0607 海洋监测、调查技术",label:"D0607 海洋监测、调查技术"}, {value:"G0407 教育管理与政策",label:"G0407 教育管理与政策"}, {value:"H0907 神经免疫调节异常及神经免疫相关疾病",label:"H0907 神经免疫调节异常及神经免疫相关疾病"}, {value:"H1620 男性生殖系统肿瘤",label:"H1620 男性生殖系统肿瘤"}, {value:"E0909 海岸工程",label:"E0909 海岸工程"}, {value:"A0306 天体测量和天文地球动力学",label:"A0306 天体测量和天文地球动力学"}, {value:"H2808 中药神经精神药理",label:"H2808 中药神经精神药理"}, {value:"B0809 材料化工与产品工程",label:"B0809 材料化工与产品工程"}, {value:"D0610 海洋遥感",label:"D0610 海洋遥感"}, {value:"E0703 电器及其系统",label:"E0703 电器及其系统"}, {value:"H0208 心肌炎和心肌病",label:"H0208 心肌炎和心肌病"}, {value:"C1613 荒漠化与水土保持",label:"C1613 荒漠化与水土保持"}, {value:"H0712 血糖调控异常与胰岛素抵抗",label:"H0712 血糖调控异常与胰岛素抵抗"}, {value:"E0407 钻井工程与地热开采",label:"E0407 钻井工程与地热开采"}, {value:"G0411 环境与生态管理",label:"G0411 环境与生态管理"}, {value:"A0113 控制论中的数学方法",label:"A0113 控制论中的数学方法"}, {value:"A0301 宇宙学",label:"A0301 宇宙学"}, {value:"C0903 发育神经生物学",label:"C0903 发育神经生物学"}, {value:"D0407 地球内部物理学",label:"D0407 地球内部物理学"}, {value:"D0605 河口海岸学",label:"D0605 河口海岸学"}, {value:"G02 工商管理",label:"G02 工商管理"}, {value:"G0405 创新管理与政策",label:"G0405 创新管理与政策"}, {value:"H3007 药物设计与药物信息",label:"H3007 药物设计与药物信息"}, {value:"C1004 生物图像与生物电子学",label:"C1004 生物图像与生物电子学"}, {value:"H0801 造血、造血调控与造血微环境异常",label:"H0801 造血、造血调控与造血微环境异常"}, {value:"H0220 血管发生异常及血管结构与功能异常",label:"H0220 血管发生异常及血管结构与功能异常"}, {value:"H0321 消化系统器官移植",label:"H0321 消化系统器官移植"}, {value:"A0401",label:"A0401"}, {value:"D0408 地球动力学",label:"D0408 地球动力学"}, {value:"G0108 管理心理与行为",label:"G0108 管理心理与行为"}, {value:"G0115 知识管理",label:"G0115 知识管理"}, {value:"H3104 抗炎与免疫药物药理",label:"H3104 抗炎与免疫药物药理"}, {value:"C07 细胞生物学",label:"C07 细胞生物学"}, {value:"C1703 养蚕学",label:"C1703 养蚕学"}, {value:"H1614 肿瘤研究体系新技术",label:"H1614 肿瘤研究体系新技术"}, {value:"H1908 病原生物变异与耐药",label:"H1908 病原生物变异与耐药"}, {value:"C0302 行为生态学",label:"C0302 行为生态学"}, {value:"F0408 新型信息器件",label:"F0408 新型信息器件"}, {value:"H0419 胎儿发育与产前诊断",label:"H0419 胎儿发育与产前诊断"}, {value:"B06 环境化学",label:"B06 环境化学"}, {value:"C05 生物物理、生物化学与分子生物学",label:"C05 生物物理、生物化学与分子生物学"}, {value:"C0406 实验动物学",label:"C0406 实验动物学"}, {value:"D0505 天气学",label:"D0505 天气学"}, {value:"F0117 多媒体信息处理",label:"F0117 多媒体信息处理"}, {value:"H2006 临床检验新技术",label:"H2006 临床检验新技术"}, {value:"F0607 认知与神经科学启发的人工智能",label:"F0607 认知与神经科学启发的人工智能"}, {value:"H0320 胰腺外分泌功能异常与胰腺炎",label:"H0320 胰腺外分泌功能异常与胰腺炎"}, {value:"H2606 儿童少年卫生",label:"H2606 儿童少年卫生"}, {value:"H2812 中药抗炎与免疫药理",label:"H2812 中药抗炎与免疫药理"}, {value:"B05 材料化学与能源化学",label:"B05 材料化学与能源化学"}, {value:"E0702 电工材料特性及其应用",label:"E0702 电工材料特性及其应用"}, {value:"H0813 造血干细胞移植及并发症",label:"H0813 造血干细胞移植及并发症"}, {value:"A0201 力学中的基本问题和方法",label:"A0201 力学中的基本问题和方法"}, {value:"E03 有机高分子材料",label:"E03 有机高分子材料"}, {value:"E0713 电能储存与节电技术",label:"E0713 电能储存与节电技术"}, {value:"G0208 生产与质量管理",label:"G0208 生产与质量管理"}, {value:"G0116 风险管理",label:"G0116 风险管理"}, {value:"H2805 中药炮制",label:"H2805 中药炮制"}, {value:"H2811 中药内分泌及代谢药理",label:"H2811 中药内分泌及代谢药理"}, {value:"A0115 数理逻辑和与计算机相关的数学",label:"A0115 数理逻辑和与计算机相关的数学"}, {value:"C0508 生物物理、生物化学与分子生物学研究的新方法与新技术",label:"C0508 生物物理、生物化学与分子生物学研究的新方法与新技术"}, {value:"C1606 森林土壤学",label:"C1606 森林土壤学"}, {value:"H0511 肾衰竭",label:"H0511 肾衰竭"}, {value:"C0802 细胞免疫",label:"C0802 细胞免疫"}, {value:"C1802 兽医病理学",label:"C1802 兽医病理学"}, {value:"D0104 自然资源管理",label:"D0104 自然资源管理"}, {value:"H1014 疫苗和佐剂研究/接种/免疫防治",label:"H1014 疫苗和佐剂研究/接种/免疫防治"}, {value:"C0702 细胞生长与分裂",label:"C0702 细胞生长与分裂"}, {value:"D0210 前寒武纪地质学",label:"D0210 前寒武纪地质学"}, {value:"D0213 数学地质学与遥感地质学",label:"D0213 数学地质学与遥感地质学"}, {value:"H0704 胰岛发育、胰岛细胞分化再生及功能调控异常与胰岛移植",label:"H0704 胰岛发育、胰岛细胞分化再生及功能调控异常与胰岛移植"}, {value:"H1505 烧伤",label:"H1505 烧伤"}, {value:"H0201 心脏结构与功能异常",label:"H0201 心脏结构与功能异常"}, {value:"H1822 组织工程与再生医学",label:"H1822 组织工程与再生医学"}, {value:"H0204 心脏发育异常与先天性心脏病",label:"H0204 心脏发育异常与先天性心脏病"}, {value:"H1818 药物、基因载体系统",label:"H1818 药物、基因载体系统"}, {value:"C2117 认知的脑结构与神经基础",label:"C2117 认知的脑结构与神经基础"}, {value:"H2605 妇幼保健",label:"H2605 妇幼保健"}, {value:"C0307 景观与区域生态学",label:"C0307 景观与区域生态学"}, {value:"F0116 图像表征与显示",label:"F0116 图像表征与显示"}, {value:"H1004 免疫识别/免疫耐受/免疫调节异常",label:"H1004 免疫识别/免疫耐受/免疫调节异常"}, {value:"H1401 口腔颅颌面组织生长发育及牙再生",label:"H1401 口腔颅颌面组织生长发育及牙再生"}, {value:"H3106 抗感染药物药理",label:"H3106 抗感染药物药理"}, {value:"B0202 表面化学",label:"B0202 表面化学"}, {value:"B0806 系统过程与化工安全",label:"B0806 系统过程与化工安全"}, {value:"H1003 免疫反应相关因子与疾病",label:"H1003 免疫反应相关因子与疾病"}, {value:"H2816 中药药代动力学",label:"H2816 中药药代动力学"}, {value:"B0604 理论环境化学",label:"B0604 理论环境化学"}, {value:"C0107 病原真菌学",label:"C0107 病原真菌学"}, {value:"F04 半导体科学与信息器件",label:"F04 半导体科学与信息器件"}, {value:"H0110 间质性肺疾病",label:"H0110 间质性肺疾病"}, {value:"H0307 消化道动力异常及功能性胃肠病",label:"H0307 消化道动力异常及功能性胃肠病"}, {value:"H0406 子宫内膜异位症与子宫腺肌症",label:"H0406 子宫内膜异位症与子宫腺肌症"}, {value:"H0425 女性不孕不育与辅助生殖",label:"H0425 女性不孕不育与辅助生殖"}, {value:"H1504 创伤",label:"H1504 创伤"}, {value:"E0104 极端条件下使用的金属材料",label:"E0104 极端条件下使用的金属材料"}, {value:"H0606 骨、关节、软组织移植与重建",label:"H0606 骨、关节、软组织移植与重建"}, {value:"C2105 发展心理学",label:"C2105 发展心理学"}, {value:"H1508 体表组织器官畸形、损伤与修复、再生",label:"H1508 体表组织器官畸形、损伤与修复、再生"}, {value:"H3107 代谢性疾病药物药理",label:"H3107 代谢性疾病药物药理"}, {value:"C0603 微生物遗传学",label:"C0603 微生物遗传学"}, {value:"G0213 创业管理",label:"G0213 创业管理"}, {value:"H1202 晶状体与白内障",label:"H1202 晶状体与白内障"}, {value:"H0417 胚胎着床及早期胚胎发育异常",label:"H0417 胚胎着床及早期胚胎发育异常"}, {value:"H0601 运动系统结构、功能和发育异常",label:"H0601 运动系统结构、功能和发育异常"}, {value:"C1106 运动生理学",label:"C1106 运动生理学"}, {value:"E0214 其他无机非金属材料",label:"E0214 其他无机非金属材料"}, {value:"F0114 探测与成像",label:"F0114 探测与成像"}, {value:"H0216 主动脉疾病",label:"H0216 主动脉疾病"}, {value:"C1608 森林经理学",label:"C1608 森林经理学"}, {value:"G0118 工程管理",label:"G0118 工程管理"}, {value:"G0119 交通运输管理",label:"G0119 交通运输管理"}, {value:"H2301 法医毒理、病理及毒物分析",label:"H2301 法医毒理、病理及毒物分析"}, {value:"E0420 矿冶生态与环境工程",label:"E0420 矿冶生态与环境工程"}, {value:"H0217 周围血管疾病",label:"H0217 周围血管疾病"}, {value:"H1626 皮肤、体表及其他部位肿瘤",label:"H1626 皮肤、体表及其他部位肿瘤"}, {value:"C1806 中兽医学",label:"C1806 中兽医学"}, {value:"F0118 电路与系统",label:"F0118 电路与系统"}, {value:"H0316 炎性及感染性肝病",label:"H0316 炎性及感染性肝病"}, {value:"H2720 民族医学",label:"H2720 民族医学"}, {value:"E0709 气体放电与放电等离子体技术",label:"E0709 气体放电与放电等离子体技术"}, {value:"H1605 肿瘤预防",label:"H1605 肿瘤预防"}, {value:"G0104 博弈理论与方法",label:"G0104 博弈理论与方法"}, {value:"H0512 肾移植",label:"H0512 肾移植"}, {value:"H0719 脂代谢异常",label:"H0719 脂代谢异常"}, {value:"C02 植物学",label:"C02 植物学"}, {value:"C0910 痛觉神经生物学",label:"C0910 痛觉神经生物学"}, {value:"H0918 物质依赖和其他成瘾性障碍",label:"H0918 物质依赖和其他成瘾性障碍"}, {value:"G0113 系统可靠性与管理",label:"G0113 系统可靠性与管理"}, {value:"G0210 电子商务",label:"G0210 电子商务"}, {value:"H3003 微生物药物",label:"H3003 微生物药物"}, {value:"C0313 生态安全评价",label:"C0313 生态安全评价"}, {value:"C0803 免疫应答",label:"C0803 免疫应答"}, {value:"C1105 营养与代谢生理学",label:"C1105 营养与代谢生理学"}, {value:"G0212 项目管理",label:"G0212 项目管理"}, {value:"B0308 化学信息学",label:"B0308 化学信息学"}, {value:"H2807 中药药性理论",label:"H2807 中药药性理论"}, {value:"E09 水利科学与海洋工程",label:"E09 水利科学与海洋工程"}, {value:"H0709 甲状腺/甲状旁腺疾病及功能异常",label:"H0709 甲状腺/甲状旁腺疾病及功能异常"}, {value:"H1820 医用生物材料与植入科学",label:"H1820 医用生物材料与植入科学"}, {value:"C06 遗传学与生物信息学",label:"C06 遗传学与生物信息学"}, {value:"D0511 云雾物理化学与人工影响天气",label:"D0511 云雾物理化学与人工影响天气"}, {value:"D04 地球物理学和空间物理学",label:"D04 地球物理学和空间物理学"}, {value:"H0911 周围神经、神经-肌肉接头、肌肉、自主神经疾病",label:"H0911 周围神经、神经-肌肉接头、肌肉、自主神经疾病"}, {value:"E0202 玻璃材料",label:"E0202 玻璃材料"}, {value:"G0106 预测理论与方法",label:"G0106 预测理论与方法"}, {value:"H2702 病因病机",label:"H2702 病因病机"}, {value:"H3112 药物毒理",label:"H3112 药物毒理"}, {value:"B0505 智能与仿生材料化学",label:"B0505 智能与仿生材料化学"}, {value:"C1504 设施园艺学",label:"C1504 设施园艺学"}, {value:"H1206 视觉、视光学与近视、弱视及眼肌疾病",label:"H1206 视觉、视光学与近视、弱视及眼肌疾病"}, {value:"D0403 地磁学",label:"D0403 地磁学"}, {value:"H2814 中药消化与呼吸药理",label:"H2814 中药消化与呼吸药理"}, {value:"D0509 应用气象学",label:"D0509 应用气象学"}, {value:"E0302 橡胶及弹性体",label:"E0302 橡胶及弹性体"}, {value:"H0811 出血、凝血与血栓",label:"H0811 出血、凝血与血栓"}, {value:"H2819 中药学其他科学问题",label:"H2819 中药学其他科学问题"}, {value:"H3005 海洋药物",label:"H3005 海洋药物"}, {value:"E0311 智能材料",label:"E0311 智能材料"}, {value:"H1803 磁共振成像技术与造影剂",label:"H1803 磁共振成像技术与造影剂"}, {value:"H2712 中医儿科",label:"H2712 中医儿科"}, {value:"C0503 蛋白质组学",label:"C0503 蛋白质组学"}, {value:"C1305 作物杂种优势及其利用",label:"C1305 作物杂种优势及其利用"}, {value:"C1505 园艺作物采后生物学",label:"C1505 园艺作物采后生物学"}, {value:"D0411 地球物理实验与仪器",label:"D0411 地球物理实验与仪器"}, {value:"G0209 企业信息管理",label:"G0209 企业信息管理"}, {value:"H1907 传染病媒介生物",label:"H1907 传染病媒介生物"}, {value:"H2706 中医诊断",label:"H2706 中医诊断"}, {value:"C0401 动物形态学及胚胎学",label:"C0401 动物形态学及胚胎学"}, {value:"D0404 地球电磁学",label:"D0404 地球电磁学"}, {value:"H2604 食品卫生",label:"H2604 食品卫生"}, {value:"F0310 人工智能驱动的自动化",label:"F0310 人工智能驱动的自动化"}, {value:"H0113 睡眠呼吸障碍",label:"H0113 睡眠呼吸障碍"}, {value:"D0707 生物地质学",label:"D0707 生物地质学"}, {value:"H2721 中医学其他科学问题",label:"H2721 中医学其他科学问题"}, {value:"H0213 心脏/血管移植和辅助循环",label:"H0213 心脏/血管移植和辅助循环"}, {value:"H1303 耳及侧颅底疾病",label:"H1303 耳及侧颅底疾病"}, {value:"A0307 天体力学和人造卫星动力学",label:"A0307 天体力学和人造卫星动力学"}, {value:"C1110 人体解剖学",label:"C1110 人体解剖学"}, {value:"E0404 化石能源储存与输送",label:"E0404 化石能源储存与输送"}, {value:"H1208 眼遗传性疾病",label:"H1208 眼遗传性疾病"}, {value:"C0703 细胞周期与调控",label:"C0703 细胞周期与调控"}, {value:"H0920 神经症和应激相关障碍",label:"H0920 神经症和应激相关障碍"}, {value:"H1102 皮肤遗传及相关疾病",label:"H1102 皮肤遗传及相关疾病"}, {value:"H1623 内分泌系统肿瘤",label:"H1623 内分泌系统肿瘤"}, {value:"H2002 临床微生物学检验",label:"H2002 临床微生物学检验"}, {value:"C0904 系统神经生物学",label:"C0904 系统神经生物学"}, {value:"C1704 养蜂学",label:"C1704 养蜂学"}, {value:"E0708 脉冲功率技术",label:"E0708 脉冲功率技术"}, {value:"H1407 味觉、口颌面疼痛、咬合及颞下颌关节疾病",label:"H1407 味觉、口颌面疼痛、咬合及颞下颌关节疾病"}, {value:"C1407 农业有害生物检疫与入侵生物学",label:"C1407 农业有害生物检疫与入侵生物学"}, {value:"E0712 生物电磁技术",label:"E0712 生物电磁技术"}, {value:"H0923 儿童和青少年精神障碍",label:"H0923 儿童和青少年精神障碍"}, {value:"H2802 中药鉴定",label:"H2802 中药鉴定"}, {value:"G0410 社会福利管理",label:"G0410 社会福利管理"}, {value:"A0802",label:"A0802"}, {value:"C0505 系统生物学",label:"C0505 系统生物学"}, {value:"C1506 食用真菌学",label:"C1506 食用真菌学"}, {value:"D0306 实验地球化学和计算地球化学",label:"D0306 实验地球化学和计算地球化学"}, {value:"H1403 口腔颌面部遗传性疾病和发育畸形及软组织缺损修复",label:"H1403 口腔颌面部遗传性疾病和发育畸形及软组织缺损修复"}, {value:"H2701 脏腑气血津液体质",label:"H2701 脏腑气血津液体质"}, {value:"D0305 同位素和化学年代学",label:"D0305 同位素和化学年代学"}, {value:"E0301 塑料",label:"E0301 塑料"}, {value:"F0204 计算机硬件技术",label:"F0204 计算机硬件技术"}, {value:"H1406 唾液、涎腺疾病、口腔颌面脉管神经及颌骨良性疾病",label:"H1406 唾液、涎腺疾病、口腔颌面脉管神经及颌骨良性疾病"}, {value:"H1804 X射线与CT、电子与离子束、放射诊断与质量控制",label:"H1804 X射线与CT、电子与离子束、放射诊断与质量控制"}, {value:"C0913 学习与记忆",label:"C0913 学习与记忆"}, {value:"C1403 农田草害",label:"C1403 农田草害"}, {value:"C1408 植物保护生物技术",label:"C1408 植物保护生物技术"}, {value:"C03 生态学",label:"C03 生态学"}, {value:"H0928 神经系统和精神疾病诊疗新技术",label:"H0928 神经系统和精神疾病诊疗新技术"}, {value:"D0501 对流层大气物理学",label:"D0501 对流层大气物理学"}, {value:"H16 肿瘤学",label:"H16 肿瘤学"}, {value:"H1807 医学光子学、光谱与光学成像",label:"H1807 医学光子学、光谱与光学成像"}, {value:"C0707 细胞运动与微环境",label:"C0707 细胞运动与微环境"}, {value:"D0405 重力学",label:"D0405 重力学"}, {value:"F0606 智能系统与应用",label:"F0606 智能系统与应用"}, {value:"H1912 病原生物与感染其他科学问题",label:"H1912 病原生物与感染其他科学问题"}, {value:"H2817 中药毒理",label:"H2817 中药毒理"}, {value:"C0104 微生物学研究的新技术与新方法",label:"C0104 微生物学研究的新技术与新方法"}, {value:"F0110 量子通信与量子信息处理",label:"F0110 量子通信与量子信息处理"}, {value:"H19 医学病原生物与感染",label:"H19 医学病原生物与感染"}, {value:"H2716 中医老年病",label:"H2716 中医老年病"}, {value:"C01 微生物学",label:"C01 微生物学"}, {value:"D0202 地层学",label:"D0202 地层学"}, {value:"E0419 资源循环科学",label:"E0419 资源循环科学"}, {value:"E0710 电磁环境与电磁兼容",label:"E0710 电磁环境与电磁兼容"}, {value:"H0430 生殖系统/围生医学/新生儿疾病其他科学问题",label:"H0430 生殖系统/围生医学/新生儿疾病其他科学问题"}, {value:"H0717 代谢综合征",label:"H0717 代谢综合征"}, {value:"B0805 化工装备与过程强化",label:"B0805 化工装备与过程强化"}, {value:"H1305 耳鼻咽喉遗传与发育相关疾病",label:"H1305 耳鼻咽喉遗传与发育相关疾病"}, {value:"E0401 金属与非金属地下开采",label:"E0401 金属与非金属地下开采"}, {value:"H0904 运动调节与运动障碍",label:"H0904 运动调节与运动障碍"}, {value:"G04 宏观管理与政策",label:"G04 宏观管理与政策"}, {value:"H1903 病原真菌、真菌感染与宿主免疫",label:"H1903 病原真菌、真菌感染与宿主免疫"}, {value:"H2707 经络与腧穴",label:"H2707 经络与腧穴"}, {value:"C0705 细胞衰老",label:"C0705 细胞衰老"}, {value:"C0809 疫苗研究",label:"C0809 疫苗研究"}, {value:"G0302 行为经济与实验经济",label:"G0302 行为经济与实验经济"}, {value:"H1104 皮肤感染",label:"H1104 皮肤感染"}, {value:"H3108 消化与呼吸系统药物药理",label:"H3108 消化与呼吸系统药物药理"}, {value:"C2103 医学心理学",label:"C2103 医学心理学"}, {value:"G0301 博弈论与信息经济",label:"G0301 博弈论与信息经济"}, {value:"H0711 糖尿病发生的遗传和环境因素",label:"H0711 糖尿病发生的遗传和环境因素"}, {value:"H0720 脂肪细胞分化及功能异常",label:"H0720 脂肪细胞分化及功能异常"}, {value:"H2719 按摩推拿",label:"H2719 按摩推拿"}, {value:"G0112 服务科学与工程",label:"G0112 服务科学与工程"}, {value:"H0929 神经系统和精神疾病其他科学问题",label:"H0929 神经系统和精神疾病其他科学问题"}, {value:"C0915 神经系统结构与功能异常",label:"C0915 神经系统结构与功能异常"}, {value:"C1101 细胞生理学",label:"C1101 细胞生理学"}, {value:"H2717 中医养生与康复",label:"H2717 中医养生与康复"}, {value:"H0505 泌尿系统免疫相关疾病",label:"H0505 泌尿系统免疫相关疾病"}, {value:"A0305 天体中基本物理过程的理论和实验",label:"A0305 天体中基本物理过程的理论和实验"}, {value:"B0407 仪器创制",label:"B0407 仪器创制"}, {value:"E0711 超导电工学",label:"E0711 超导电工学"}, {value:"H1101 皮肤形态、结构和功能异常",label:"H1101 皮肤形态、结构和功能异常"}, {value:"B0405 化学成像",label:"B0405 化学成像"}, {value:"C0207 植物学研究的新技术、新方法",label:"C0207 植物学研究的新技术、新方法"}, {value:"C04 动物学",label:"C04 动物学"}, {value:"F0511 大气、海洋与环境光学",label:"F0511 大气、海洋与环境光学"}, {value:"H1106 皮肤附属器及相关疾病",label:"H1106 皮肤附属器及相关疾病"}, {value:"H2713 中医眼科",label:"H2713 中医眼科"}, {value:"E0418 特殊冶金、外场冶金与冶金新理论、新方法",label:"E0418 特殊冶金、外场冶金与冶金新理论、新方法"}, {value:"C0906 视觉神经生物学",label:"C0906 视觉神经生物学"}, {value:"D0307 宇宙化学与比较行星学",label:"D0307 宇宙化学与比较行星学"}, {value:"H0602 运动系统遗传性疾病",label:"H0602 运动系统遗传性疾病"}, {value:"H2004 临床免疫学检验",label:"H2004 临床免疫学检验"}, {value:"H0415 男性性功能障碍",label:"H0415 男性性功能障碍"}, {value:"C1007 组织工程研究的新技术与新方法",label:"C1007 组织工程研究的新技术与新方法"}, {value:"H0516 血液净化和替代治疗",label:"H0516 血液净化和替代治疗"}, {value:"H2302 法医物证学、法医人类学",label:"H2302 法医物证学、法医人类学"}, {value:"C0710 细胞物质运输",label:"C0710 细胞物质运输"}, {value:"C0711 细胞呼吸与代谢",label:"C0711 细胞呼吸与代谢"}, {value:"E0405 露天开采与边坡工程",label:"E0405 露天开采与边坡工程"}, {value:"H0805 血小板异常及相关疾病",label:"H0805 血小板异常及相关疾病"}, {value:"D0504 中层与行星大气物理学",label:"D0504 中层与行星大气物理学"}, {value:"D06 海洋科学",label:"D06 海洋科学"}, {value:"H0202 循环系统遗传性疾病",label:"H0202 循环系统遗传性疾病"}, {value:"H0313 肝胆胰免疫及相关疾病",label:"H0313 肝胆胰免疫及相关疾病"}, {value:"H0819 骨髓瘤及其他浆细胞疾病",label:"H0819 骨髓瘤及其他浆细胞疾病"}, {value:"H0909 神经系统炎症及感染性疾病",label:"H0909 神经系统炎症及感染性疾病"}, {value:"H1001 免疫器官/组织/细胞的发育分化异常",label:"H1001 免疫器官/组织/细胞的发育分化异常"}, {value:"H1826 影像医学与生物医学工程其他科学问题",label:"H1826 影像医学与生物医学工程其他科学问题"}, {value:"C0608 遗传学研究新技术与新方法",label:"C0608 遗传学研究新技术与新方法"}, {value:"C1307 作物种子学",label:"C1307 作物种子学"}, {value:"H0222 循环系统疾病诊疗新技术",label:"H0222 循环系统疾病诊疗新技术"}, {value:"C1111 人体组织与胚胎学",label:"C1111 人体组织与胚胎学"}, {value:"G0402 政策科学理论与方法",label:"G0402 政策科学理论与方法"}, {value:"H0418 胎盘结构与功能异常",label:"H0418 胎盘结构与功能异常"}, {value:"H0607 骨、关节、软组织感染",label:"H0607 骨、关节、软组织感染"}, {value:"H1501 心肺复苏",label:"H1501 心肺复苏"}, {value:"C0911 行为神经生物学",label:"C0911 行为神经生物学"}, {value:"F05 光学和光电子学",label:"F05 光学和光电子学"}, {value:"G0312 资源环境政策与管理",label:"G0312 资源环境政策与管理"}, {value:"H1203 巩膜、葡萄膜、眼免疫",label:"H1203 巩膜、葡萄膜、眼免疫"}, {value:"H1911 病原生物与感染研究与诊疗新技术",label:"H1911 病原生物与感染研究与诊疗新技术"}, {value:"D0302 微量元素地球化学",label:"D0302 微量元素地球化学"}, {value:"F0516 交叉学科中的光学问题",label:"F0516 交叉学科中的光学问题"}, {value:"H0210 心脏瓣膜疾病",label:"H0210 心脏瓣膜疾病"}, {value:"H0807 骨髓增生异常综合征",label:"H0807 骨髓增生异常综合征"}, {value:"H1108 皮肤及其附属器疾病其他科学问题",label:"H1108 皮肤及其附属器疾病其他科学问题"}, {value:"H1812 生物医学传感",label:"H1812 生物医学传感"}, {value:"H0513 前列腺疾病",label:"H0513 前列腺疾病"}, {value:"C2107 社会心理学",label:"C2107 社会心理学"}, {value:"F0510 空间光学",label:"F0510 空间光学"}, {value:"H1007 超敏反应性疾病",label:"H1007 超敏反应性疾病"}, {value:"H2608 卫生分析化学",label:"H2608 卫生分析化学"}, {value:"C10 生物力学与组织工程学",label:"C10 生物力学与组织工程学"}, {value:"C1614 林业研究的新技术与新方法",label:"C1614 林业研究的新技术与新方法"}, {value:"D0602 海洋物理学",label:"D0602 海洋物理学"}, {value:"H0603 运动系统免疫相关疾病",label:"H0603 运动系统免疫相关疾病"}, {value:"H0612 运动系统疾病诊疗新技术",label:"H0612 运动系统疾病诊疗新技术"}, {value:"H0916 睡眠与睡眠障碍",label:"H0916 睡眠与睡眠障碍"}, {value:"H1821 细胞移植、组织再生与生物反应器",label:"H1821 细胞移植、组织再生与生物反应器"}, {value:"G0303 计量经济与经济计算",label:"G0303 计量经济与经济计算"}, {value:"H1509 体表组织器官移植与再造",label:"H1509 体表组织器官移植与再造"}, {value:"A0805",label:"A0805"}, {value:"H0312 胃肠道及腹腔感染性疾病",label:"H0312 胃肠道及腹腔感染性疾病"}, {value:"H0506 泌尿系统结石",label:"H0506 泌尿系统结石"}, {value:"A0803",label:"A0803"}, {value:"E0112 金属材料的磨损与磨蚀",label:"E0112 金属材料的磨损与磨蚀"}, {value:"H1016 免疫相关疾病其他科学问题",label:"H1016 免疫相关疾病其他科学问题"}, {value:"C1601 森林资源学",label:"C1601 森林资源学"}, {value:"D0412 空间环境和空间天气",label:"D0412 空间环境和空间天气"}, {value:"G0101 管理理论与研究方法论",label:"G0101 管理理论与研究方法论"}, {value:"H0106 气道重塑与气道疾病",label:"H0106 气道重塑与气道疾病"}, {value:"H0223 循环系统疾病其他科学问题",label:"H0223 循环系统疾病其他科学问题"}, {value:"H0610 骨、关节、软组织运动损伤",label:"H0610 骨、关节、软组织运动损伤"}, {value:"H1015 免疫相关疾病诊疗新技术",label:"H1015 免疫相关疾病诊疗新技术"}, {value:"H1813 生物医学系统建模及仿真",label:"H1813 生物医学系统建模及仿真"}, {value:"H1825 用于检测、分析、成像及治疗的医学器件和仪器",label:"H1825 用于检测、分析、成像及治疗的医学器件和仪器"}, {value:"F0604 自然语言处理",label:"F0604 自然语言处理"}, {value:"H0315 药物、毒物及酒精性消化系统疾病",label:"H0315 药物、毒物及酒精性消化系统疾病"}, {value:"H2001 临床生物化学检验",label:"H2001 临床生物化学检验"}, {value:"H3103 老年病药物药理",label:"H3103 老年病药物药理"}, {value:"B0704 生物合成化学",label:"B0704 生物合成化学"}, {value:"H0427 生殖免疫相关疾病",label:"H0427 生殖免疫相关疾病"}, {value:"H1207 全身疾病眼部表现、眼眶疾病",label:"H1207 全身疾病眼部表现、眼眶疾病"}, {value:"E0312 仿生材料",label:"E0312 仿生材料"}, {value:"A0801",label:"A0801"}, {value:"C1107 特殊环境生理学",label:"C1107 特殊环境生理学"}, {value:"C1906 水产生物免疫学与病害控制",label:"C1906 水产生物免疫学与病害控制"}, {value:"H0502 泌尿系统遗传性疾病",label:"H0502 泌尿系统遗传性疾病"}, {value:"H1302 咽喉及颈部疾病",label:"H1302 咽喉及颈部疾病"}, {value:"H1811 人体医学信号检测、识别、处理与分析",label:"H1811 人体医学信号检测、识别、处理与分析"}, {value:"H2003 临床细胞学和血液学检验",label:"H2003 临床细胞学和血液学检验"}, {value:"F0701 教育信息科学与技术",label:"F0701 教育信息科学与技术"}, {value:"H0322 消化系统疾病诊疗新技术",label:"H0322 消化系统疾病诊疗新技术"}, {value:"H09 神经系统和精神疾病",label:"H09 神经系统和精神疾病"}, {value:"H2813 中药抗病毒与感染药理",label:"H2813 中药抗病毒与感染药理"}, {value:"H10 医学免疫学",label:"H10 医学免疫学"}, {value:"C0109 支原体、立克次氏体与衣原体",label:"C0109 支原体、立克次氏体与衣原体"}, {value:"H3109 血液、泌尿与生殖系统药物药理",label:"H3109 血液、泌尿与生殖系统药物药理"}, {value:"C16 林学",label:"C16 林学"}, {value:"H1105 非感染性皮肤病",label:"H1105 非感染性皮肤病"}, {value:"C1104 生物节律",label:"C1104 生物节律"}, {value:"C1602 森林资源信息学",label:"C1602 森林资源信息学"}, {value:"H02 循环系统",label:"H02 循环系统"}, {value:"H0301 消化系统发育异常",label:"H0301 消化系统发育异常"}, {value:"C1901 水产基础生物学",label:"C1901 水产基础生物学"}, {value:"H0514 膀胱疾病",label:"H0514 膀胱疾病"}, {value:"H1910 性传播疾病",label:"H1910 性传播疾病"}, {value:"B07 化学生物学",label:"B07 化学生物学"}, {value:"D0209 勘探技术与地质钻探学",label:"D0209 勘探技术与地质钻探学"}, {value:"F0121 微波光子学",label:"F0121 微波光子学"}, {value:"H3009 药物材料",label:"H3009 药物材料"}, {value:"H3113 药理学其他科学问题",label:"H3113 药理学其他科学问题"}, {value:"C2102 生理心理学",label:"C2102 生理心理学"}, {value:"E0212 古陶瓷与传统陶瓷",label:"E0212 古陶瓷与传统陶瓷"}, {value:"H0319 胆石成因、胆石症及胆道系统炎症",label:"H0319 胆石成因、胆石症及胆道系统炎症"}, {value:"H0416 卵子发生与受精异常",label:"H0416 卵子发生与受精异常"}, {value:"H2815 中药泌尿与生殖药理",label:"H2815 中药泌尿与生殖药理"}, {value:"B0509 可再生与可持续能源化学",label:"B0509 可再生与可持续能源化学"}, {value:"E0413 冶金化工与冶金反应工程学",label:"E0413 冶金化工与冶金反应工程学"}, {value:"H0410 男性生殖系统结构、功能与发育异常",label:"H0410 男性生殖系统结构、功能与发育异常"}, {value:"H0613 运动系统疾病其他科学问题",label:"H0613 运动系统疾病其他科学问题"}, {value:"C0712 细胞变异与转化",label:"C0712 细胞变异与转化"}, {value:"H2402 职业病学",label:"H2402 职业病学"}, {value:"C0907 听觉神经生物学",label:"C0907 听觉神经生物学"}, {value:"C0916 神经科学研究的新技术和新方法",label:"C0916 神经科学研究的新技术和新方法"}, {value:"E0408 地下空间工程",label:"E0408 地下空间工程"}, {value:"H0402 女性生殖系统损伤与修复",label:"H0402 女性生殖系统损伤与修复"}, {value:"H0806 再生障碍性贫血和骨髓衰竭",label:"H0806 再生障碍性贫血和骨髓衰竭"}, {value:"A0310 天文学同其他学科的交叉",label:"A0310 天文学同其他学科的交叉"}, {value:"C2108 应用心理学",label:"C2108 应用心理学"}, {value:"F0702 信息与数学交叉问题",label:"F0702 信息与数学交叉问题"}, {value:"H0221 循环系统免疫相关疾病",label:"H0221 循环系统免疫相关疾病"}, {value:"H0407 女性盆底功能障碍",label:"H0407 女性盆底功能障碍"}, {value:"H1410 口腔颌面疾病诊疗新技术",label:"H1410 口腔颌面疾病诊疗新技术"}, {value:"H18 影像医学与生物医学工程",label:"H18 影像医学与生物医学工程"}, {value:"C2106 教育心理学",label:"C2106 教育心理学"}, {value:"H0611 运动系统畸形与矫正",label:"H0611 运动系统畸形与矫正"}, {value:"C09 神经科学",label:"C09 神经科学"}, {value:"F0308 智能制造自动化系统理论与技术",label:"F0308 智能制造自动化系统理论与技术"}, {value:"D03 地球化学",label:"D03 地球化学"}, {value:"F0208 计算机网络",label:"F0208 计算机网络"}, {value:"C0806 免疫遗传",label:"C0806 免疫遗传"}, {value:"C0810 抗体工程研究",label:"C0810 抗体工程研究"}, {value:"H0515 尿动力学",label:"H0515 尿动力学"}, {value:"H0803 红细胞异常及相关疾病",label:"H0803 红细胞异常及相关疾病"}, {value:"H2714 中医耳鼻喉科",label:"H2714 中医耳鼻喉科"}, {value:"C08 免疫学",label:"C08 免疫学"}, {value:"D0513 气象观测原理、方法及数据分析",label:"D0513 气象观测原理、方法及数据分析"}, {value:"H0815 遗传性血液病",label:"H0815 遗传性血液病"}, {value:"H0908 神经系统屏障和脑脊液异常及相关疾病",label:"H0908 神经系统屏障和脑脊液异常及相关疾病"}, {value:"H1503 中毒",label:"H1503 中毒"}, {value:"H1613 肿瘤康复（包括社会心理康复）",label:"H1613 肿瘤康复（包括社会心理康复）"}, {value:"A0804",label:"A0804"}, {value:"C0807 生殖免疫",label:"C0807 生殖免疫"}, {value:"D0214 火山学",label:"D0214 火山学"}, {value:"E0304 涂料",label:"E0304 涂料"}, {value:"H0116 肺移植和肺保护",label:"H0116 肺移植和肺保护"}, {value:"H0426 生殖医学工程",label:"H0426 生殖医学工程"}, {value:"H1010 固有免疫异常",label:"H1010 固有免疫异常"}, {value:"C1112 衰老生物学",label:"C1112 衰老生物学"}, {value:"C2115 认知语言学",label:"C2115 认知语言学"}, {value:"D0606 工程海洋学",label:"D0606 工程海洋学"}, {value:"E0308 特殊与极端环境下的高分子材料",label:"E0308 特殊与极端环境下的高分子材料"}, {value:"H0501 泌尿系统结构、功能与发育异常",label:"H0501 泌尿系统结构、功能与发育异常"}, {value:"H0518 泌尿系统疾病其他科学问题",label:"H0518 泌尿系统疾病其他科学问题"}, {value:"H0808 骨髓增殖性疾病",label:"H0808 骨髓增殖性疾病"}, {value:"D0710 环境生物学",label:"D0710 环境生物学"}, {value:"H1211 眼科疾病其他科学问题",label:"H1211 眼科疾病其他科学问题"}, {value:"B0506 含能材料化学",label:"B0506 含能材料化学"}, {value:"C1005 仿生学",label:"C1005 仿生学"}, {value:"G0215 创业与中小企业管理",label:"G0215 创业与中小企业管理"}, {value:"H0718 糖代谢异常",label:"H0718 糖代谢异常"}, {value:"H1009 继发及原发性免疫缺陷性疾病",label:"H1009 继发及原发性免疫缺陷性疾病"}, {value:"H31 药理学",label:"H31 药理学"}, {value:"H0303 消化道结构与功能异常",label:"H0303 消化道结构与功能异常"}, {value:"H1209 眼组织移植",label:"H1209 眼组织移植"}, {value:"H0401 女性生殖系统结构、功能与发育异常",label:"H0401 女性生殖系统结构、功能与发育异常"}, {value:"H0507 肾脏物质转运异常",label:"H0507 肾脏物质转运异常"}, {value:"H0730 内分泌系统疾病/代谢异常与营养支持其他科学问题",label:"H0730 内分泌系统疾病/代谢异常与营养支持其他科学问题"}, {value:"H1815 治疗计划、导航与机器人辅助",label:"H1815 治疗计划、导航与机器人辅助"}, {value:"C0507 空间生物学",label:"C0507 空间生物学"}, {value:"C0808 黏膜和局部免疫",label:"C0808 黏膜和局部免疫"}, {value:"C0908 化学感受神经生物学",label:"C0908 化学感受神经生物学"}, {value:"C1904 水产生物营养与饲料学",label:"C1904 水产生物营养与饲料学"}, {value:"H0219 微循环与休克",label:"H0219 微循环与休克"}, {value:"H2612 预防医学其他科学问题",label:"H2612 预防医学其他科学问题"}, {value:"E08 建筑环境与结构工程",label:"E08 建筑环境与结构工程"}, {value:"H0118 呼吸系统疾病其他科学问题",label:"H0118 呼吸系统疾病其他科学问题"}, {value:"H0304 肝胆胰结构与功能异常",label:"H0304 肝胆胰结构与功能异常"}, {value:"H0707 内分泌系统免疫相关疾病",label:"H0707 内分泌系统免疫相关疾病"}, {value:"H30 药物学",label:"H30 药物学"}, {value:"H3011 药物资源",label:"H3011 药物资源"}, {value:"C0804 免疫耐受",label:"C0804 免疫耐受"}, {value:"C1902 水产生物遗传育种学",label:"C1902 水产生物遗传育种学"}, {value:"H0814 血型与输血",label:"H0814 血型与输血"}, {value:"H1411 口腔颌面疾病其他科学问题",label:"H1411 口腔颌面疾病其他科学问题"}, {value:"H0728 遗传性代谢缺陷",label:"H0728 遗传性代谢缺陷"}, {value:"A0903",label:"A0903"}, {value:"E0114 金属材料跨学科应用基础",label:"E0114 金属材料跨学科应用基础"}, {value:"H15 急重症医学/创伤/烧伤/整形",label:"H15 急重症医学/创伤/烧伤/整形"}, {value:"H1814 医学信息系统与远程医疗",label:"H1814 医学信息系统与远程医疗"}, {value:"H27 中医学",label:"H27 中医学"}, {value:"C0708 细胞极性建立与维持",label:"C0708 细胞极性建立与维持"}, {value:"D0706 环境大气科学",label:"D0706 环境大气科学"}, {value:"E0306 高分子助剂",label:"E0306 高分子助剂"}, {value:"H0302 消化系统遗传性疾病",label:"H0302 消化系统遗传性疾病"}, {value:"H0403 女性生殖系统炎症与感染",label:"H0403 女性生殖系统炎症与感染"}, {value:"H07 内分泌系统/代谢和营养支持",label:"H07 内分泌系统/代谢和营养支持"}, {value:"H2303 法医精神病学及法医临床学",label:"H2303 法医精神病学及法医临床学"}, {value:"C2104 工程心理学",label:"C2104 工程心理学"}, {value:"H0517 泌尿系统疾病诊疗新技术",label:"H0517 泌尿系统疾病诊疗新技术"}, {value:"H1002 免疫应答异常",label:"H1002 免疫应答异常"}, {value:"H1510 颅颌面畸形与矫正",label:"H1510 颅颌面畸形与矫正"}, {value:"H2007 检验医学其他科学问题",label:"H2007 检验医学其他科学问题"}, {value:"H26 预防医学",label:"H26 预防医学"}, {value:"A0309 中、西方天文学史",label:"A0309 中、西方天文学史"}, {value:"C0914 认知神经生物学",label:"C0914 认知神经生物学"}, {value:"G0214 国际商务与跨文化管理",label:"G0214 国际商务与跨文化管理"}, {value:"H04 生殖系统/围生医学/新生儿",label:"H04 生殖系统/围生医学/新生儿"}, {value:"H0413 男性生殖内分泌异常及相关疾病",label:"H0413 男性生殖内分泌异常及相关疾病"}, {value:"H28 中药学",label:"H28 中药学"}, {value:"E0406 海洋、空间及其他矿物资源开采与利用",label:"E0406 海洋、空间及其他矿物资源开采与利用"}, {value:"H0101 肺及气道结构、功能及发育异常",label:"H0101 肺及气道结构、功能及发育异常"}, {value:"H0323 消化系统疾病其他科学问题",label:"H0323 消化系统疾病其他科学问题"}, {value:"H1810 脑电图、脑磁图与脑机交互",label:"H1810 脑电图、脑磁图与脑机交互"}, {value:"H1905 其他病原微生物及感染与宿主免疫",label:"H1905 其他病原微生物及感染与宿主免疫"}, {value:"C0713 细胞生物学研究中的新方法",label:"C0713 细胞生物学研究中的新方法"}, {value:"H0411 男性生殖系统损伤与修复",label:"H0411 男性生殖系统损伤与修复"}, {value:"H1824 电磁与物理治疗",label:"H1824 电磁与物理治疗"}, {value:"H3006 特种药物",label:"H3006 特种药物"}, {value:"B0507 碳基能源化学",label:"B0507 碳基能源化学"}, {value:"C0905 计算神经生物学",label:"C0905 计算神经生物学"}, {value:"C1008 生物系统工程研究的新技术与新方法",label:"C1008 生物系统工程研究的新技术与新方法"}, {value:"H0105 呼吸系统免疫性疾病及变应性肺疾病",label:"H0105 呼吸系统免疫性疾病及变应性肺疾病"}, {value:"H0429 生殖系统/围生医学/新生儿疾病相关诊疗新技术",label:"H0429 生殖系统/围生医学/新生儿疾病相关诊疗新技术"}, {value:"H1011 神经内分泌免疫异常",label:"H1011 神经内分泌免疫异常"}, {value:"H1107 皮肤及其附属器疾病诊疗新技术",label:"H1107 皮肤及其附属器疾病诊疗新技术"}, {value:"A0901",label:"A0901"}, {value:"D0406 地热学",label:"D0406 地热学"}, {value:"E07 电气科学与工程",label:"E07 电气科学与工程"}, {value:"G0313 区域发展管理",label:"G0313 区域发展管理"}, {value:"H0423 避孕、节育与妊娠终止",label:"H0423 避孕、节育与妊娠终止"}, {value:"H0708 松果体/下丘脑/垂体疾病及功能异常",label:"H0708 松果体/下丘脑/垂体疾病及功能异常"}, {value:"B0510 能量转换材料化学",label:"B0510 能量转换材料化学"}, {value:"H0421 分娩与产褥",label:"H0421 分娩与产褥"}, {value:"H0710 肾上腺疾病及功能异常",label:"H0710 肾上腺疾病及功能异常"}, {value:"H0817 血液系统疾病其他科学问题",label:"H0817 血液系统疾病其他科学问题"}, {value:"H1307 耳鼻咽喉疾病其他科学问题",label:"H1307 耳鼻咽喉疾病其他科学问题"}, {value:"B0606 安全与防护化学",label:"B0606 安全与防护化学"}, {value:"F0514 微纳光子学",label:"F0514 微纳光子学"}, {value:"H03 消化系统",label:"H03 消化系统"}, {value:"H0809 血液系统免疫相关疾病",label:"H0809 血液系统免疫相关疾病"}, {value:"H0816 血液系统疾病诊疗新技术",label:"H0816 血液系统疾病诊疗新技术"}, {value:"H12 眼科学",label:"H12 眼科学"}, {value:"H25 老年医学",label:"H25 老年医学"}, {value:"C1903 水产资源与保护学",label:"C1903 水产资源与保护学"}, {value:"H1012 黏膜免疫疾病",label:"H1012 黏膜免疫疾病"}, {value:"H05 泌尿系统",label:"H05 泌尿系统"}, {value:"H0706 内分泌系统遗传性疾病",label:"H0706 内分泌系统遗传性疾病"}, {value:"H0901 意识障碍",label:"H0901 意识障碍"}, {value:"C14 植物保护学",label:"C14 植物保护学"}, {value:"G0310 公共安全与危机管理",label:"G0310 公共安全与危机管理"}, {value:"G0408 文化与休闲产业管理",label:"G0408 文化与休闲产业管理"}, {value:"H0309 胃酸分泌异常及酸相关性疾病",label:"H0309 胃酸分泌异常及酸相关性疾病"}, {value:"H1210 眼科疾病诊疗新技术",label:"H1210 眼科疾病诊疗新技术"}, {value:"H1909 医院获得性感染",label:"H1909 医院获得性感染"}, {value:"H3012 药物学其他科学问题",label:"H3012 药物学其他科学问题"}, {value:"B0703 化学遗传学",label:"B0703 化学遗传学"}, {value:"C18 兽医学",label:"C18 兽医学"}, {value:"H0207 肺源性心脏病",label:"H0207 肺源性心脏病"}, {value:"H1817 康复工程与智能控制",label:"H1817 康复工程与智能控制"}, {value:"C1409 植物免疫学",label:"C1409 植物免疫学"}, {value:"E0305 黏合剂",label:"E0305 黏合剂"}, {value:"H0727 营养不良与营养支持",label:"H0727 营养不良与营养支持"}, {value:"C1905 水产养殖学",label:"C1905 水产养殖学"}, {value:"G0216 非营利组织管理",label:"G0216 非营利组织管理"}, {value:"H0114 纵隔与胸膜疾病",label:"H0114 纵隔与胸膜疾病"}, {value:"H0504 泌尿系统感染",label:"H0504 泌尿系统感染"}, {value:"H0722 核酸代谢异常",label:"H0722 核酸代谢异常"}, {value:"H0729 内分泌系统疾病/代谢异常与营养支持领域相关新技术",label:"H0729 内分泌系统疾病/代谢异常与营养支持领域相关新技术"}, {value:"H0917 器质性精神疾病",label:"H0917 器质性精神疾病"}, {value:"H2304 法医学其他科学问题",label:"H2304 法医学其他科学问题"}, {value:"H2715 中医口腔科",label:"H2715 中医口腔科"}, {value:"C0811 免疫学研究新技术与新方法",label:"C0811 免疫学研究新技术与新方法"}, {value:"C13 作物学",label:"C13 作物学"}, {value:"C2111 运动心理学",label:"C2111 运动心理学"}, {value:"C2113 应激心理学",label:"C2113 应激心理学"}, {value:"H0308 消化系统内分泌及神经体液调节异常",label:"H0308 消化系统内分泌及神经体液调节异常"}, {value:"H0414 男性生殖系统遗传性疾病",label:"H0414 男性生殖系统遗传性疾病"}, {value:"H1823 人工器官与特殊感受器仿生医学",label:"H1823 人工器官与特殊感受器仿生医学"}, {value:"C12 发育生物学与生殖生物学",label:"C12 发育生物学与生殖生物学"}, {value:"C1404 农田鼠害及其他有害生物",label:"C1404 农田鼠害及其他有害生物"}, {value:"G0314 信息资源管理",label:"G0314 信息资源管理"}, {value:"H0508 肾脏内分泌功能异常",label:"H0508 肾脏内分泌功能异常"}, {value:"H0705 内分泌系统炎症与感染",label:"H0705 内分泌系统炎症与感染"}, {value:"H0714 其他组织的内分泌功能异常",label:"H0714 其他组织的内分泌功能异常"}, {value:"H0804 白细胞异常及相关疾病",label:"H0804 白细胞异常及相关疾病"}, {value:"H0915 节律调控与节律紊乱",label:"H0915 节律调控与节律紊乱"}, {value:"A0904",label:"A0904"}, {value:"C2112 实验心理学",label:"C2112 实验心理学"}, {value:"H01 呼吸系统",label:"H01 呼吸系统"}, {value:"H0724 微量元素、维生素代谢异常",label:"H0724 微量元素、维生素代谢异常"}, {value:"H08 血液系统",label:"H08 血液系统"}, {value:"H1013 疾病的系统免疫学",label:"H1013 疾病的系统免疫学"}, {value:"H13 耳鼻咽喉头颈科学",label:"H13 耳鼻咽喉头颈科学"}, {value:"C0509 生命科学基础研究相关的新仪器研制",label:"C0509 生命科学基础研究相关的新仪器研制"}, {value:"H0218 淋巴管与淋巴循环疾病",label:"H0218 淋巴管与淋巴循环疾病"}, {value:"H0608 骨、关节、软组织疲劳与恢复",label:"H0608 骨、关节、软组织疲劳与恢复"}, {value:"C1109 整合生物学",label:"C1109 整合生物学"}, {value:"H0117 呼吸系统疾病诊疗新技术",label:"H0117 呼吸系统疾病诊疗新技术"}, {value:"H0922 人格障碍、冲动控制障碍和性心理异常",label:"H0922 人格障碍、冲动控制障碍和性心理异常"}, {value:"H11 皮肤及其附属器",label:"H11 皮肤及其附属器"}, {value:"H1306 耳鼻咽喉疾病诊疗新技术",label:"H1306 耳鼻咽喉疾病诊疗新技术"}, {value:"H17 康复医学",label:"H17 康复医学"}, {value:"C11 生理学与整合生物学",label:"C11 生理学与整合生物学"}, {value:"H0305 腹壁/腹膜结构及功能异常",label:"H0305 腹壁/腹膜结构及功能异常"}, {value:"H0311 消化系统血管及循环障碍性疾病",label:"H0311 消化系统血管及循环障碍性疾病"}, {value:"C0909 触觉神经生物学",label:"C0909 触觉神经生物学"}, {value:"C2110 遗传心理学",label:"C2110 遗传心理学"}, {value:"G0403 非营利组织管理",label:"G0403 非营利组织管理"}, {value:"H0102 呼吸系统遗传性疾病",label:"H0102 呼吸系统遗传性疾病"}, {value:"H0405 女性生殖系统遗传性疾病",label:"H0405 女性生殖系统遗传性疾病"}, {value:"H06 运动系统",label:"H06 运动系统"}, {value:"H0802 造血相关器官结构及功能异常",label:"H0802 造血相关器官结构及功能异常"}, {value:"H0924 其他精神障碍与精神卫生问题",label:"H0924 其他精神障碍与精神卫生问题"}, {value:"H14 口腔颅颌面科学",label:"H14 口腔颅颌面科学"}, {value:"H1902 病原放线菌、放线菌感染与宿主免疫",label:"H1902 病原放线菌、放线菌感染与宿主免疫"}, {value:"C0510 合成生物学",label:"C0510 合成生物学"}, {value:"C15 园艺学与植物营养学",label:"C15 园艺学与植物营养学"}, {value:"C21 心理学",label:"C21 心理学"}, {value:"H0112 呼吸衰竭与呼吸支持",label:"H0112 呼吸衰竭与呼吸支持"}, {value:"H20 检验医学",label:"H20 检验医学"}, {value:"H29 中西医结合",label:"H29 中西医结合"}, {value:"A0902",label:"A0902"}, {value:"E0421 矿冶装备工艺原理",label:"E0421 矿冶装备工艺原理"}, {value:"G0311 劳动就业与社会保障",label:"G0311 劳动就业与社会保障"}, {value:"H0103 呼吸调控异常",label:"H0103 呼吸调控异常"}, {value:"H0412 男性生殖系统炎症与感染",label:"H0412 男性生殖系统炎症与感染"}, {value:"H0721 氨基酸代谢异常",label:"H0721 氨基酸代谢异常"}, {value:"H0810 血液系统感染性疾病",label:"H0810 血液系统感染性疾病"}, {value:"H1616 血液淋巴肿瘤（白血病除外）",label:"H1616 血液淋巴肿瘤（白血病除外）"}, {value:"H23 法医学",label:"H23 法医学"}, {value:"C0912 神经信息学",label:"C0912 神经信息学"}, {value:"C1907 养殖与渔业工程学",label:"C1907 养殖与渔业工程学"}, {value:"F0513 能源与照明光子学",label:"F0513 能源与照明光子学"}, {value:"H0409 乳腺结构、功能及发育异常",label:"H0409 乳腺结构、功能及发育异常"}, {value:"H0725 钙磷代谢异常",label:"H0725 钙磷代谢异常"}, {value:"H0927 危机干预",label:"H0927 危机干预"}, {value:"A0905",label:"A0905"}, {value:"A0906",label:"A0906"}, {value:"C1108 比较生理学",label:"C1108 比较生理学"}, {value:"C2114 行为心理学",label:"C2114 行为心理学"}, {value:"H0115 胸廓/膈肌结构、功能及发育异常",label:"H0115 胸廓/膈肌结构、功能及发育异常"}, {value:"H0408 女性性功能障碍",label:"H0408 女性性功能障碍"}, {value:"H0925 精神疾病的心理测量和评估",label:"H0925 精神疾病的心理测量和评估"}, {value:"H0926 心理咨询与心理治疗",label:"H0926 心理咨询与心理治疗"}, {value:"H21 特种医学",label:"H21 特种医学"}, {value:"C17 畜牧学与草地科学",label:"C17 畜牧学与草地科学"}, {value:"C20 食品科学",label:"C20 食品科学"}, {value:"C2109 个性心理学",label:"C2109 个性心理学"}, {value:"H0701 松果体/下丘脑/垂体发育及结构异常",label:"H0701 松果体/下丘脑/垂体发育及结构异常"}, {value:"C1908 水产生物研究的新技术和新方法",label:"C1908 水产生物研究的新技术和新方法"}, {value:"C2116 认知模拟",label:"C2116 认知模拟"}, {value:"F0515 光子集成技术与器件",label:"F0515 光子集成技术与器件"}, {value:"H0211 心包疾病",label:"H0211 心包疾病"}, {value:"D0308 气体地球化学",label:"D0308 气体地球化学"}, {value:"H0428 生殖系统移植",label:"H0428 生殖系统移植"}, {value:"H0702 甲状腺/甲状旁腺发育及结构异常",label:"H0702 甲状腺/甲状旁腺发育及结构异常"}, {value:"H0723 水、电解质代谢障碍及酸碱平衡异常",label:"H0723 水、电解质代谢障碍及酸碱平衡异常"}, {value:"H1506 冻伤",label:"H1506 冻伤"}, {value:"D07 环境地球科学",label:"D07 环境地球科学"}, {value:"H0209 感染性心内膜炎",label:"H0209 感染性心内膜炎"}, {value:"H0703 肾上腺发育及结构异常",label:"H0703 肾上腺发育及结构异常"}, {value:"H22 放射医学",label:"H22 放射医学"}, {value:"H24 地方病学/职业病学",label:"H24 地方病学/职业病学"}, {value:"L00",label:"L00"}, {value:"L0012",label:"L0012"}, {value:"L0014",label:"L0014"}
+      ],
+      sanjixueke:[
+        {value:"H1617 消化系统肿瘤",label:"H1617 消化系统肿瘤"}, {value:"H2902 中西医结合临床基础",label:"H2902 中西医结合临床基础"}, {value:"H2708 中医内科",label:"H2708 中医内科"}, {value:"A05 物理学Ⅱ",label:"A05 物理学Ⅱ"}, {value:"H1606 肿瘤复发与转移",label:"H1606 肿瘤复发与转移"}, {value:"D0704 工程地质学",label:"D0704 工程地质学"}, {value:"E080402 污水处理与资源化",label:"E080402 污水处理与资源化"}, {value:"H0203 心肌细胞/血管细胞损伤、修复、重构和再生",label:"H0203 心肌细胞/血管细胞损伤、修复、重构和再生"}, {value:"D0106 遥感机理与方法",label:"D0106 遥感机理与方法"}, {value:"H1602 肿瘤发生",label:"H1602 肿瘤发生"}, {value:"H0906 脑血管结构、功能异常及相关疾病",label:"H0906 脑血管结构、功能异常及相关疾病"}, {value:"D0709 环境地球化学",label:"D0709 环境地球化学"}, {value:"D0609 生物海洋学与海洋生物资源",label:"D0609 生物海洋学与海洋生物资源"}, {value:"H1904 病毒、病毒感染与宿主免疫",label:"H1904 病毒、病毒感染与宿主免疫"}, {value:"F020502 计算机图像与视频处理",label:"F020502 计算机图像与视频处理"}, {value:"D010702 遥感信息分析与应用",label:"D010702 遥感信息分析与应用"}, {value:"D010105 综合自然地理学",label:"D010105 综合自然地理学"}, {value:"H2718 中医针灸",label:"H2718 中医针灸"}, {value:"B010503 功能配合物化学",label:"B010503 功能配合物化学"}, {value:"H1622 乳腺肿瘤",label:"H1622 乳腺肿瘤"}, {value:"B020103 多相催化",label:"B020103 多相催化"}, {value:"H1621 女性生殖系统肿瘤",label:"H1621 女性生殖系统肿瘤"}, {value:"H2803 中药药效物质",label:"H2803 中药药效物质"}, {value:"H0812 白血病",label:"H0812 白血病"}, {value:"H1609 肿瘤化学药物治疗",label:"H1609 肿瘤化学药物治疗"}, {value:"D0601 物理海洋学",label:"D0601 物理海洋学"}, {value:"H1008 自身免疫性疾病",label:"H1008 自身免疫性疾病"}, {value:"D0703 地下水科学（含地热地质学）",label:"D0703 地下水科学（含地热地质学）"}, {value:"H1615 呼吸系统肿瘤",label:"H1615 呼吸系统肿瘤"}, {value:"D0603 海洋地质学",label:"D0603 海洋地质学"}, {value:"H0910 脑、脊髓、周围神经损伤及修复",label:"H0910 脑、脊髓、周围神经损伤及修复"}, {value:"A040204 表面、界面和低维系统的电子结构及电学性质",label:"A040204 表面、界面和低维系统的电子结构及电学性质"}, {value:"H0215 动脉粥样硬化与动脉硬化",label:"H0215 动脉粥样硬化与动脉硬化"}, {value:"D0507 气候学与气候系统",label:"D0507 气候学与气候系统"}, {value:"F060301 模式识别基础理论与方法",label:"F060301 模式识别基础理论与方法"}, {value:"H1611 肿瘤生物治疗",label:"H1611 肿瘤生物治疗"}, {value:"H0605 骨、关节、软组织损伤与修复",label:"H0605 骨、关节、软组织损伤与修复"}, {value:"H1619 泌尿系统肿瘤",label:"H1619 泌尿系统肿瘤"}, {value:"H1618 神经系统肿瘤（含特殊感受器肿瘤）",label:"H1618 神经系统肿瘤（含特殊感受器肿瘤）"}, {value:"B010301 新试剂与新反应",label:"B010301 新试剂与新反应"}, {value:"D010701 空间数据组织与管理",label:"D010701 空间数据组织与管理"}, {value:"E050802 塑性加工工艺、模具与装备",label:"E050802 塑性加工工艺、模具与装备"}, {value:"H0912 神经变性、再生及相关疾病",label:"H0912 神经变性、再生及相关疾病"}, {value:"H2610 非传染病流行病学",label:"H2610 非传染病流行病学"}, {value:"G0102 运筹与管理",label:"G0102 运筹与管理"}, {value:"H0902 认知功能障碍",label:"H0902 认知功能障碍"}, {value:"H1625 头颈部及颌面肿瘤",label:"H1625 头颈部及颌面肿瘤"}, {value:"B01 合成化学",label:"B01 合成化学"}, {value:"B010305 不对称合成",label:"B010305 不对称合成"}, {value:"E050303 机械结构与系统动力学",label:"E050303 机械结构与系统动力学"}, {value:"H0713 糖尿病",label:"H0713 糖尿病"}, {value:"H3008 药剂学",label:"H3008 药剂学"}, {value:"D0702 水文学",label:"D0702 水文学"}, {value:"H3001 合成药物化学",label:"H3001 合成药物化学"}, {value:"D040901 勘探地球物理学",label:"D040901 勘探地球物理学"}, {value:"B0102 无机合成",label:"B0102 无机合成"}, {value:"C130401 稻类作物种质资源与遗传育种",label:"C130401 稻类作物种质资源与遗传育种"}, {value:"C170102 家畜遗传育种学",label:"C170102 家畜遗传育种学"}, {value:"C180501 病原学",label:"C180501 病原学"}, {value:"D070104 土壤生物学",label:"D070104 土壤生物学"}, {value:"E030901 光电磁信息功能材料",label:"E030901 光电磁信息功能材料"}, {value:"D0712 环境变化与预测",label:"D0712 环境变化与预测"}, {value:"H0609 骨、关节、软组织退行性病变",label:"H0609 骨、关节、软组织退行性病变"}, {value:"D0207 石油、天然气地质学",label:"D0207 石油、天然气地质学"}, {value:"H3002 天然药物化学",label:"H3002 天然药物化学"}, {value:"H3105 抗肿瘤药物药理",label:"H3105 抗肿瘤药物药理"}, {value:"A040408 量子光学和量子信息",label:"A040408 量子光学和量子信息"}, {value:"D010201 经济地理学",label:"D010201 经济地理学"}, {value:"H2603 人类营养",label:"H2603 人类营养"}, {value:"E010501 金属光、电、磁功能材料",label:"E010501 金属光、电、磁功能材料"}, {value:"E020603 新型碳功能材料",label:"E020603 新型碳功能材料"}, {value:"E050901 切削、磨削加工工艺与装备",label:"E050901 切削、磨削加工工艺与装备"}, {value:"C010201 微生物生理与代谢",label:"C010201 微生物生理与代谢"}, {value:"E070602 电力电子系统及其控制",label:"E070602 电力电子系统及其控制"}, {value:"A010801 几何、物理和力学中的偏微分方程",label:"A010801 几何、物理和力学中的偏微分方程"}, {value:"A011201 线性与非线性规划",label:"A011201 线性与非线性规划"}, {value:"B060202 水污染控制与化学修复",label:"B060202 水污染控制与化学修复"}, {value:"E050601 设计理论与方法",label:"E050601 设计理论与方法"}, {value:"G0412 资源管理与政策",label:"G0412 资源管理与政策"}, {value:"G0205 财务管理",label:"G0205 财务管理"}, {value:"F020601 密码学",label:"F020601 密码学"}, {value:"D0205 矿床学",label:"D0205 矿床学"}, {value:"A06",label:"A06"}, {value:"C0709 细胞信号转导",label:"C0709 细胞信号转导"}, {value:"A011701 偏微分方程数值计算",label:"A011701 偏微分方程数值计算"}, {value:"D0711 第四纪地质学",label:"D0711 第四纪地质学"}, {value:"E050803 焊接结构、工艺与装备",label:"E050803 焊接结构、工艺与装备"}, {value:"H1603 肿瘤遗传与表观遗传",label:"H1603 肿瘤遗传与表观遗传"}, {value:"H2607 卫生毒理",label:"H2607 卫生毒理"}, {value:"D010104 冰冻圈地理学",label:"D010104 冰冻圈地理学"}, {value:"C130301 作物栽培学",label:"C130301 作物栽培学"}, {value:"C130402 麦类作物种质资源与遗传育种",label:"C130402 麦类作物种质资源与遗传育种"}, {value:"E091002 船舶和水下航行器",label:"E091002 船舶和水下航行器"}, {value:"D070105 土壤侵蚀与水土保持",label:"D070105 土壤侵蚀与水土保持"}, {value:"E0207 无机非金属类光电信息与功能材料",label:"E0207 无机非金属类光电信息与功能材料"}, {value:"H1205 视网膜、脉络膜及玻璃体相关疾病",label:"H1205 视网膜、脉络膜及玻璃体相关疾病"}, {value:"A0402 凝聚态物性Ⅱ",label:"A0402 凝聚态物性Ⅱ"}, {value:"D010203 城市地理学",label:"D010203 城市地理学"}, {value:"H0206 冠状动脉性心脏病",label:"H0206 冠状动脉性心脏病"}, {value:"D0402 地震学",label:"D0402 地震学"}, {value:"F020204 数据库与数据工程",label:"F020204 数据库与数据工程"}, {value:"D071301 污染物迁移、转化、归趋动力学",label:"D071301 污染物迁移、转化、归趋动力学"}, {value:"H1005 炎症、感染与免疫",label:"H1005 炎症、感染与免疫"}, {value:"E050302 机械系统动态监测、诊断与维护",label:"E050302 机械系统动态监测、诊断与维护"}, {value:"B0702 生物分子的化学生物学",label:"B0702 生物分子的化学生物学"}, {value:"E080505 混凝土结构材料",label:"E080505 混凝土结构材料"}, {value:"G020703 营销战略",label:"G020703 营销战略"}, {value:"B050101 晶态固体材料化学",label:"B050101 晶态固体材料化学"}, {value:"F010202 信息系统安全",label:"F010202 信息系统安全"}, {value:"H1805 医学超声与声学造影剂",label:"H1805 医学超声与声学造影剂"}, {value:"G0406 卫生管理与政策",label:"G0406 卫生管理与政策"}, {value:"D0705 环境地质学和灾害地质学",label:"D0705 环境地质学和灾害地质学"}, {value:"E0209 半导体材料",label:"E0209 半导体材料"}, {value:"H2501 老年医学",label:"H2501 老年医学"}, {value:"D0301 同位素地球化学",label:"D0301 同位素地球化学"}, {value:"H2801 中药资源",label:"H2801 中药资源"}, {value:"B060101 环境分析化学",label:"B060101 环境分析化学"}, {value:"D070106 土壤肥力与土壤养分循环",label:"D070106 土壤肥力与土壤养分循环"}, {value:"B080303 催化材料与催化剂工程",label:"B080303 催化材料与催化剂工程"}, {value:"E080703 道路工程",label:"E080703 道路工程"}, {value:"D02 地质学",label:"D02 地质学"}, {value:"B0404 化学与生物传感",label:"B0404 化学与生物传感"}, {value:"H1610 肿瘤物理治疗",label:"H1610 肿瘤物理治疗"}, {value:"B010205 纳米与团簇化学",label:"B010205 纳米与团簇化学"}, {value:"F020501 计算机图形学",label:"F020501 计算机图形学"}, {value:"E0403 石油天然气开采",label:"E0403 石油天然气开采"}, {value:"E080201 城乡规划设计与理论",label:"E080201 城乡规划设计与理论"}, {value:"C1302 作物生理学",label:"C1302 作物生理学"}, {value:"B0106 超分子化学与组装",label:"B0106 超分子化学与组装"}, {value:"H0903 躯体感觉、疼痛与镇痛",label:"H0903 躯体感觉、疼痛与镇痛"}, {value:"D0204 岩石学",label:"D0204 岩石学"}, {value:"E070401 电力系统分析",label:"E070401 电力系统分析"}, {value:"D010101 地貌学",label:"D010101 地貌学"}, {value:"B010307 功能有机分子的设计与合成",label:"B010307 功能有机分子的设计与合成"}, {value:"C140102 植物真菌病害",label:"C140102 植物真菌病害"}, {value:"A011602 图论",label:"A011602 图论"}, {value:"H0205 心电活动异常与心律失常",label:"H0205 心电活动异常与心律失常"}, {value:"D0608 海洋环境科学",label:"D0608 海洋环境科学"}, {value:"H2901 中西医结合基础理论",label:"H2901 中西医结合基础理论"}, {value:"A020317 计算固体力学",label:"A020317 计算固体力学"}, {value:"E080301 建筑热环境",label:"E080301 建筑热环境"}, {value:"G0117 金融工程",label:"G0117 金融工程"}, {value:"H1808 分子影像与分子探针",label:"H1808 分子影像与分子探针"}, {value:"C050102 生物大分子空间结构测定",label:"C050102 生物大分子空间结构测定"}, {value:"E0409 矿山岩体力学与岩层控制",label:"E0409 矿山岩体力学与岩层控制"}, {value:"B070102 天然产物与分子探针",label:"B070102 天然产物与分子探针"}, {value:"G0304 经济发展与贸易",label:"G0304 经济发展与贸易"}, {value:"A040407 微纳光学与光子学",label:"A040407 微纳光学与光子学"}, {value:"A020602 冲击动力学",label:"A020602 冲击动力学"}, {value:"F030101 随机系统分析与控制",label:"F030101 随机系统分析与控制"}, {value:"B070501 先导化合物发现与结构优化",label:"B070501 先导化合物发现与结构优化"}, {value:"C060101 植物分子遗传",label:"C060101 植物分子遗传"}, {value:"A03 天文学",label:"A03 天文学"}, {value:"A040203 电子输运过程",label:"A040203 电子输运过程"}, {value:"G0203 企业技术管理与创新管理",label:"G0203 企业技术管理与创新管理"}, {value:"C020604 植物化学",label:"C020604 植物化学"}, {value:"E051102 机械测试理论、方法与技术",label:"E051102 机械测试理论、方法与技术"}, {value:"E080601 地基与基础工程",label:"E080601 地基与基础工程"}, {value:"G0206 会计与审计",label:"G0206 会计与审计"}, {value:"B050205 光电磁功能分子",label:"B050205 光电磁功能分子"}, {value:"B010504 金属有机化学",label:"B010504 金属有机化学"}, {value:"E080101 建筑设计与理论",label:"E080101 建筑设计与理论"}, {value:"H1511 急重症医学/创伤/烧伤/整形其他科学问题",label:"H1511 急重症医学/创伤/烧伤/整形其他科学问题"}, {value:"A050105 统计物理学与复杂系统",label:"A050105 统计物理学与复杂系统"}, {value:"B080402 膜材料与膜分离",label:"B080402 膜材料与膜分离"}, {value:"F020514 语言文字信息处理",label:"F020514 语言文字信息处理"}, {value:"C200301 食品微生物",label:"C200301 食品微生物"}, {value:"D0503 大气遥感和大气探测",label:"D0503 大气遥感和大气探测"}, {value:"A020316 实验固体力学",label:"A020316 实验固体力学"}, {value:"E050301 振动/噪声测试、分析与控制",label:"E050301 振动/噪声测试、分析与控制"}, {value:"F020709 新型感知计算及网络",label:"F020709 新型感知计算及网络"}, {value:"H2601 环境卫生",label:"H2601 环境卫生"}, {value:"D0206 沉积学和盆地动力学",label:"D0206 沉积学和盆地动力学"}, {value:"D010202 社会、文化地理学",label:"D010202 社会、文化地理学"}, {value:"C1002 生物材料",label:"C1002 生物材料"}, {value:"E0707 电机及其系统",label:"E0707 电机及其系统"}, {value:"H1701 康复医学",label:"H1701 康复医学"}, {value:"H1906 寄生虫、寄生虫感染与宿主免疫",label:"H1906 寄生虫、寄生虫感染与宿主免疫"}, {value:"H3102 心脑血管药物药理",label:"H3102 心脑血管药物药理"}, {value:"E080511 混凝土结构材料",label:"E080511 混凝土结构材料"}, {value:"H1604 肿瘤免疫",label:"H1604 肿瘤免疫"}, {value:"H3101 神经精神药物药理",label:"H3101 神经精神药物药理"}, {value:"B0301 理论与计算化学",label:"B0301 理论与计算化学"}, {value:"A020202 动力系统的分岔与混沌",label:"A020202 动力系统的分岔与混沌"}, {value:"C050201 蛋白质与多肽生物化学",label:"C050201 蛋白质与多肽生物化学"}, {value:"E0213 无机非金属类生物材料",label:"E0213 无机非金属类生物材料"}, {value:"F06 人工智能",label:"F06 人工智能"}, {value:"F020506 生物信息计算与系统",label:"F020506 生物信息计算与系统"}, {value:"E0414 钢铁冶金",label:"E0414 钢铁冶金"}, {value:"G0202 组织理论与组织行为",label:"G0202 组织理论与组织行为"}, {value:"A020305 复合材料力学",label:"A020305 复合材料力学"}, {value:"D0512 大气环境与全球气候变化",label:"D0512 大气环境与全球气候变化"}, {value:"C010103 真菌资源、分类及系统发育",label:"C010103 真菌资源、分类及系统发育"}, {value:"F01 电子学与信息系统",label:"F01 电子学与信息系统"}, {value:"D071404 生态恢复及其环境效应",label:"D071404 生态恢复及其环境效应"}, {value:"A02 力学",label:"A02 力学"}, {value:"H1901 病原细菌、细菌感染与宿主免疫",label:"H1901 病原细菌、细菌感染与宿主免疫"}, {value:"D070103 土壤化学",label:"D070103 土壤化学"}, {value:"B08 化学工程与工业化学",label:"B08 化学工程与工业化学"}, {value:"E080801 地震工程",label:"E080801 地震工程"}, {value:"D0708 生物地球化学",label:"D0708 生物地球化学"}, {value:"H2818 民族药学",label:"H2818 民族药学"}, {value:"A020204 非线性振动及其控制",label:"A020204 非线性振动及其控制"}, {value:"D0108 测量与地图学",label:"D0108 测量与地图学"}, {value:"A050401 离子束与物质相互作用和辐照损伤",label:"A050401 离子束与物质相互作用和辐照损伤"}, {value:"H0503 泌尿系统损伤与修复",label:"H0503 泌尿系统损伤与修复"}, {value:"H1103 皮肤免疫性疾病",label:"H1103 皮肤免疫性疾病"}, {value:"H1607 肿瘤干细胞",label:"H1607 肿瘤干细胞"}, {value:"H2609 传染病流行病学",label:"H2609 传染病流行病学"}, {value:"E060407 燃烧污染物生成和防治",label:"E060407 燃烧污染物生成和防治"}, {value:"B0304 结构化学",label:"B0304 结构化学"}, {value:"E010503 金属生物医用材料",label:"E010503 金属生物医用材料"}, {value:"G021101 企业物流与供应链管理",label:"G021101 企业物流与供应链管理"}, {value:"C050103 生物大分子相互作用",label:"C050103 生物大分子相互作用"}, {value:"A010601 非线性泛函分析",label:"A010601 非线性泛函分析"}, {value:"C2101 认知心理学",label:"C2101 认知心理学"}, {value:"D020101 古生物学",label:"D020101 古生物学"}, {value:"H1405 牙周及口腔黏膜疾病",label:"H1405 牙周及口腔黏膜疾病"}, {value:"D070107 土壤污染与修复",label:"D070107 土壤污染与修复"}, {value:"C040501 昆虫系统及分类学",label:"C040501 昆虫系统及分类学"}, {value:"E011002 金属材料表面改性及涂层",label:"E011002 金属材料表面改性及涂层"}, {value:"E0309 有机高分子功能材料",label:"E0309 有机高分子功能材料"}, {value:"E030905 有机无机复合功能材料",label:"E030905 有机无机复合功能材料"}, {value:"E080401 给水处理",label:"E080401 给水处理"}, {value:"F020202 软件工程",label:"F020202 软件工程"}, {value:"F030401 复杂系统理论",label:"F030401 复杂系统理论"}, {value:"G0103 决策理论与方法",label:"G0103 决策理论与方法"}, {value:"A040405 光与物质的相互作用",label:"A040405 光与物质的相互作用"}, {value:"B03 化学理论与机制",label:"B03 化学理论与机制"}, {value:"G0110 工业工程与管理",label:"G0110 工业工程与管理"}, {value:"H0913 神经电活动异常与发作性疾病",label:"H0913 神经电活动异常与发作性疾病"}, {value:"B020106 光催化",label:"B020106 光催化"}, {value:"E080502 钢结构与空间结构",label:"E080502 钢结构与空间结构"}, {value:"F0207 计算机网络",label:"F0207 计算机网络"}, {value:"D0510 大气化学",label:"D0510 大气化学"}, {value:"A011403 生物数学",label:"A011403 生物数学"}, {value:"F030115 故障诊断与容错控制",label:"F030115 故障诊断与容错控制"}, {value:"E080701 桥梁工程",label:"E080701 桥梁工程"}, {value:"A050202 量子色动力学、强相互作用和强子物理",label:"A050202 量子色动力学、强相互作用和强子物理"}, {value:"C200701 食品检验学",label:"C200701 食品检验学"}, {value:"E050202 流体传动",label:"E050202 流体传动"}, {value:"A011103 数据分析与统计计算",label:"A011103 数据分析与统计计算"}, {value:"C130403 玉米及其他禾谷类作物种质资源与遗传育种",label:"C130403 玉米及其他禾谷类作物种质资源与遗传育种"}, {value:"D0401 大地测量学",label:"D0401 大地测量学"}, {value:"C150103 果树分子生物学",label:"C150103 果树分子生物学"}, {value:"E050501 机械摩擦、磨损与控制",label:"E050501 机械摩擦、磨损与控制"}, {value:"G0201 战略管理",label:"G0201 战略管理"}, {value:"G0308 农林经济管理",label:"G0308 农林经济管理"}, {value:"E051002 数字化制造与智能制造",label:"E051002 数字化制造与智能制造"}, {value:"A020306 智能材料与结构力学",label:"A020306 智能材料与结构力学"}, {value:"F030103 离散、混杂与切换系统分析与控制",label:"F030103 离散、混杂与切换系统分析与控制"}, {value:"H0422 新生儿相关疾病",label:"H0422 新生儿相关疾病"}, {value:"H1601 肿瘤病因",label:"H1601 肿瘤病因"}, {value:"H0212 心力衰竭",label:"H0212 心力衰竭"}, {value:"H1801 磁共振结构成像与疾病诊断",label:"H1801 磁共振结构成像与疾病诊断"}, {value:"C030801 陆地生态系统与全球变化",label:"C030801 陆地生态系统与全球变化"}, {value:"B081005 能源转换与储存工程技术",label:"B081005 能源转换与储存工程技术"}, {value:"G03 经济科学",label:"G03 经济科学"}, {value:"C020408 植物的生长发育",label:"C020408 植物的生长发育"}, {value:"E031002 载体与缓释材料",label:"E031002 载体与缓释材料"}, {value:"E010301 非晶态金属材料",label:"E010301 非晶态金属材料"}, {value:"E080504 新型结构与新材料结构",label:"E080504 新型结构与新材料结构"}, {value:"A020403 空气动力学",label:"A020403 空气动力学"}, {value:"F020517 新应用领域中的基础研究",label:"F020517 新应用领域中的基础研究"}, {value:"H0107 支气管哮喘",label:"H0107 支气管哮喘"}, {value:"E080404 城镇固体废弃物处置与资源化",label:"E080404 城镇固体废弃物处置与资源化"}, {value:"C040201 动物分类学",label:"C040201 动物分类学"}, {value:"E090301 水环境污染与修复",label:"E090301 水环境污染与修复"}, {value:"H0317 肝纤维化、肝硬化与门脉高压症",label:"H0317 肝纤维化、肝硬化与门脉高压症"}, {value:"H2709 中医外科",label:"H2709 中医外科"}, {value:"F040306 半导体光伏材料与器件",label:"F040306 半导体光伏材料与器件"}, {value:"D0304 矿床地球化学",label:"D0304 矿床地球化学"}, {value:"G0111 物流与供应链理论",label:"G0111 物流与供应链理论"}, {value:"H0818 淋巴瘤及其他淋巴增殖性疾病",label:"H0818 淋巴瘤及其他淋巴增殖性疾病"}, {value:"D01 地理学",label:"D01 地理学"}, {value:"E0608 工程热物理相关交叉领域",label:"E0608 工程热物理相关交叉领域"}, {value:"D010103 生物地理学",label:"D010103 生物地理学"}, {value:"B040302 分子光谱",label:"B040302 分子光谱"}, {value:"B081001 煤与天然气化工",label:"B081001 煤与天然气化工"}, {value:"F0605 知识表示与处理",label:"F0605 知识表示与处理"}, {value:"C010301 微生物功能基因",label:"C010301 微生物功能基因"}, {value:"D0303 岩石地球化学",label:"D0303 岩石地球化学"}, {value:"E080503 组合结构与混合结构",label:"E080503 组合结构与混合结构"}, {value:"H1006 器官移植与移植免疫",label:"H1006 器官移植与移植免疫"}, {value:"H2810 中药抗肿瘤药理",label:"H2810 中药抗肿瘤药理"}, {value:"A010504 调和分析与小波分析",label:"A010504 调和分析与小波分析"}, {value:"F010401 异构网络",label:"F010401 异构网络"}, {value:"G030902 产业经济管理",label:"G030902 产业经济管理"}, {value:"H1806 核医学",label:"H1806 核医学"}, {value:"D0611 极地科学",label:"D0611 极地科学"}, {value:"H1612 肿瘤综合治疗",label:"H1612 肿瘤综合治疗"}, {value:"A020401 湍流与流动稳定性",label:"A020401 湍流与流动稳定性"}, {value:"C020407 植物生长调节物质",label:"C020407 植物生长调节物质"}, {value:"C0704 细胞增殖与分化",label:"C0704 细胞增殖与分化"}, {value:"D0506 大气动力学",label:"D0506 大气动力学"}, {value:"C010803 人类病毒学",label:"C010803 人类病毒学"}, {value:"E020801 复合材料的制备",label:"E020801 复合材料的制备"}, {value:"E041003 岩爆与瓦斯灾害",label:"E041003 岩爆与瓦斯灾害"}, {value:"E011101 金属常温腐蚀与防护",label:"E011101 金属常温腐蚀与防护"}, {value:"B030104 计算模拟方法与应用",label:"B030104 计算模拟方法与应用"}, {value:"A020415 计算流体力学",label:"A020415 计算流体力学"}, {value:"B0105 配位合成化学",label:"B0105 配位合成化学"}, {value:"B040402 探针标记与传感",label:"B040402 探针标记与传感"}, {value:"H2903 中医药学研究新技术和新方法",label:"H2903 中医药学研究新技术和新方法"}, {value:"E041102 矿物加工工程",label:"E041102 矿物加工工程"}, {value:"H0214 血压调节异常与高血压病",label:"H0214 血压调节异常与高血压病"}, {value:"H0914 脑功能保护、治疗与康复",label:"H0914 脑功能保护、治疗与康复"}, {value:"A010702 定性理论与稳定性理论",label:"A010702 定性理论与稳定性理论"}, {value:"C150203 蔬菜分子生物学",label:"C150203 蔬菜分子生物学"}, {value:"E0310 生物医用高分子材料",label:"E0310 生物医用高分子材料"}, {value:"H0905 神经发育、遗传、代谢相关疾病",label:"H0905 神经发育、遗传、代谢相关疾病"}, {value:"E02 无机非金属材料",label:"E02 无机非金属材料"}, {value:"H0420 妊娠及妊娠相关性疾病",label:"H0420 妊娠及妊娠相关性疾病"}, {value:"C130404 大豆作物种质资源与遗传育种",label:"C130404 大豆作物种质资源与遗传育种"}, {value:"E010102 钢铁和有色合金结构材料",label:"E010102 钢铁和有色合金结构材料"}, {value:"H2710 中医骨伤科",label:"H2710 中医骨伤科"}, {value:"A050506 探测技术和谱仪",label:"A050506 探测技术和谱仪"}, {value:"C140602 植物害虫生物防治",label:"C140602 植物害虫生物防治"}, {value:"F02 计算机科学",label:"F02 计算机科学"}, {value:"F060302 图像识别与理解",label:"F060302 图像识别与理解"}, {value:"C0902 细胞神经生物学",label:"C0902 细胞神经生物学"}, {value:"C0901 分子神经生物学",label:"C0901 分子神经生物学"}, {value:"D0203 矿物学(含矿物物理学）",label:"D0203 矿物学(含矿物物理学）"}, {value:"E0402 煤炭地下开采",label:"E0402 煤炭地下开采"}, {value:"H3110 药物代谢与药物动力学",label:"H3110 药物代谢与药物动力学"}, {value:"A020601 爆炸力学",label:"A020601 爆炸力学"}, {value:"A040106 表面、薄膜和纳米结构的表征和分析",label:"A040106 表面、薄膜和纳米结构的表征和分析"}, {value:"E050902 非传统加工工艺与装备",label:"E050902 非传统加工工艺与装备"}, {value:"A0117 计算数学与科学工程计算",label:"A0117 计算数学与科学工程计算"}, {value:"E060405 动力装置中的燃烧",label:"E060405 动力装置中的燃烧"}, {value:"C030301 植物生理生态学",label:"C030301 植物生理生态学"}, {value:"F050304 光学与光纤传感材料、器件及技术",label:"F050304 光学与光纤传感材料、器件及技术"}, {value:"A010602 算子理论与算子代数",label:"A010602 算子理论与算子代数"}, {value:"A050106 相对论、引力与宇宙学",label:"A050106 相对论、引力与宇宙学"}, {value:"C020406 抗性生理",label:"C020406 抗性生理"}, {value:"C130406 棉麻类作物种质资源与遗传育种",label:"C130406 棉麻类作物种质资源与遗传育种"}, {value:"A040410 光学材料中物理问题及固体发光",label:"A040410 光学材料中物理问题及固体发光"}, {value:"A050306 中高能核物理",label:"A050306 中高能核物理"}, {value:"E080506 土木工程施工与管理",label:"E080506 土木工程施工与管理"}, {value:"B04 化学测量学",label:"B04 化学测量学"}, {value:"A040215 凝聚态物理中的新效应及其他问题",label:"A040215 凝聚态物理中的新效应及其他问题"}, {value:"B030101 量子化学",label:"B030101 量子化学"}, {value:"C140501 农药毒理学与有害生物抗药性",label:"C140501 农药毒理学与有害生物抗药性"}, {value:"A011703 一般反问题的计算方法",label:"A011703 一般反问题的计算方法"}, {value:"B080803 日用化学品",label:"B080803 日用化学品"}, {value:"A0108 偏微分方程",label:"A0108 偏微分方程"}, {value:"C1803 兽医免疫学",label:"C1803 兽医免疫学"}, {value:"A040206 超导电性",label:"A040206 超导电性"}, {value:"H1304 听觉异常与平衡障碍",label:"H1304 听觉异常与平衡障碍"}, {value:"C060604 非编码RNA调控与功能",label:"C060604 非编码RNA调控与功能"}, {value:"H0510 继发性肾脏疾病",label:"H0510 继发性肾脏疾病"}, {value:"A020302 损伤与断裂力学",label:"A020302 损伤与断裂力学"}, {value:"B0502 有机高分子功能材料化学",label:"B0502 有机高分子功能材料化学"}, {value:"E0201 人工晶体",label:"E0201 人工晶体"}, {value:"A010802 非线性椭圆和非线性抛物方程",label:"A010802 非线性椭圆和非线性抛物方程"}, {value:"A0111 数理统计",label:"A0111 数理统计"}, {value:"D0508 数值预报与数值模拟",label:"D0508 数值预报与数值模拟"}, {value:"E0603 传热传质学",label:"E0603 传热传质学"}, {value:"E060702 生物质能利用中的工程热物理问题",label:"E060702 生物质能利用中的工程热物理问题"}, {value:"A040205 介观系统和人工微结构的电子结构、光学和电学性质",label:"A040205 介观系统和人工微结构的电子结构、光学和电学性质"}, {value:"B060301 环境暴露与毒理学",label:"B060301 环境暴露与毒理学"}, {value:"C020601 植物资源评价",label:"C020601 植物资源评价"}, {value:"E020702 发光及显示材料",label:"E020702 发光及显示材料"}, {value:"B060201 大气污染控制化学",label:"B060201 大气污染控制化学"}, {value:"F020705 网络安全",label:"F020705 网络安全"}, {value:"E041604 金属成形与加工",label:"E041604 金属成形与加工"}, {value:"H0111 急性肺损伤和急性呼吸窘迫综合征",label:"H0111 急性肺损伤和急性呼吸窘迫综合征"}, {value:"H2201 放射医学",label:"H2201 放射医学"}, {value:"A040202 强关联电子系统",label:"A040202 强关联电子系统"}, {value:"A050301 原子核结构与特性研究",label:"A050301 原子核结构与特性研究"}, {value:"B060305 污染生态化学与生态风险",label:"B060305 污染生态化学与生态风险"}, {value:"C0701 细胞及亚细胞结构与功能",label:"C0701 细胞及亚细胞结构与功能"}, {value:"H1809 医学图像数据处理与分析",label:"H1809 医学图像数据处理与分析"}, {value:"B050202 生物医用高分子",label:"B050202 生物医用高分子"}, {value:"E050201 机械传动",label:"E050201 机械传动"}, {value:"G01 管理科学与工程",label:"G01 管理科学与工程"}, {value:"A01 数学",label:"A01 数学"}, {value:"A040302 原子、分子、光子相互作用与光谱",label:"A040302 原子、分子、光子相互作用与光谱"}, {value:"B081003 生物质能源化工",label:"B081003 生物质能源化工"}, {value:"D010501 资源与可持续发展",label:"D010501 资源与可持续发展"}, {value:"E0804 环境工程",label:"E0804 环境工程"}, {value:"F010301 无线通信",label:"F010301 无线通信"}, {value:"H1402 颅颌面部骨、软骨组织的研究",label:"H1402 颅颌面部骨、软骨组织的研究"}, {value:"C130405 油菜及其他油料作物种质资源与遗传育种",label:"C130405 油菜及其他油料作物种质资源与遗传育种"}, {value:"C170104 畜禽繁殖学",label:"C170104 畜禽繁殖学"}, {value:"E05 机械工程",label:"E05 机械工程"}, {value:"H1201 角膜及眼表疾病",label:"H1201 角膜及眼表疾病"}, {value:"C0309 微生物生态学",label:"C0309 微生物生态学"}, {value:"C200601 植物源食品贮藏与保鲜",label:"C200601 植物源食品贮藏与保鲜"}, {value:"D0201 古生物学和古生态学",label:"D0201 古生物学和古生态学"}, {value:"E080501 混凝土结构与砌体结构",label:"E080501 混凝土结构与砌体结构"}, {value:"A011705 数值代数",label:"A011705 数值代数"}, {value:"D0604 海洋化学",label:"D0604 海洋化学"}, {value:"H1404 牙体牙髓及根尖周组织疾病",label:"H1404 牙体牙髓及根尖周组织疾病"}, {value:"D021101 构造地质学",label:"D021101 构造地质学"}, {value:"C1804 兽医寄生虫学",label:"C1804 兽医寄生虫学"}, {value:"E050401 机械结构损伤、疲劳与断裂",label:"E050401 机械结构损伤、疲劳与断裂"}, {value:"E080102 建筑历史与理论",label:"E080102 建筑历史与理论"}, {value:"H1502 多脏器衰竭",label:"H1502 多脏器衰竭"}, {value:"H1624 骨与软组织肿瘤",label:"H1624 骨与软组织肿瘤"}, {value:"C010202 微生物生物化学",label:"C010202 微生物生物化学"}, {value:"C040504 昆虫生理生化",label:"C040504 昆虫生理生化"}, {value:"D070102 土壤物理学",label:"D070102 土壤物理学"}, {value:"E020402 压电与铁电陶瓷材料",label:"E020402 压电与铁电陶瓷材料"}, {value:"F020510 计算机辅助技术",label:"F020510 计算机辅助技术"}, {value:"A040208 低维、介观和人工微结构的磁性",label:"A040208 低维、介观和人工微结构的磁性"}, {value:"E080802 风工程",label:"E080802 风工程"}, {value:"H1204 青光眼、视神经及视路相关疾病",label:"H1204 青光眼、视神经及视路相关疾病"}, {value:"A04 物理学Ⅰ",label:"A04 物理学Ⅰ"}, {value:"B0807 生物化工与轻化工",label:"B0807 生物化工与轻化工"}, {value:"G0204 人力资源管理",label:"G0204 人力资源管理"}, {value:"B0203 胶体与界面化学",label:"B0203 胶体与界面化学"}, {value:"C050203 酶学",label:"C050203 酶学"}, {value:"E020701 微电子与光电子材料",label:"E020701 微电子与光电子材料"}, {value:"F020304 并行与分布式处理",label:"F020304 并行与分布式处理"}, {value:"H2806 中药制剂",label:"H2806 中药制剂"}, {value:"D040103 卫星大地测量学（含导航学）",label:"D040103 卫星大地测量学（含导航学）"}, {value:"E050903 超精密加工工艺与装备",label:"E050903 超精密加工工艺与装备"}, {value:"A050501 束流物理与加速器技术",label:"A050501 束流物理与加速器技术"}, {value:"C0706 细胞凋亡、坏死和自噬",label:"C0706 细胞凋亡、坏死和自噬"}, {value:"H1608 肿瘤诊断",label:"H1608 肿瘤诊断"}, {value:"H2611 流行病学方法与卫生统计",label:"H2611 流行病学方法与卫生统计"}, {value:"C020201 种子植物分类",label:"C020201 种子植物分类"}, {value:"C170106 家禽营养学",label:"C170106 家禽营养学"}, {value:"H2809 中药心脑血管药理",label:"H2809 中药心脑血管药理"}, {value:"C020409 植物次生代谢与调控",label:"C020409 植物次生代谢与调控"}, {value:"E080509 结构健康监测",label:"E080509 结构健康监测"}, {value:"H0109 肺循环及肺血管疾病",label:"H0109 肺循环及肺血管疾病"}, {value:"A010301 整体微分几何",label:"A010301 整体微分几何"}, {value:"E020301 先进结构陶瓷",label:"E020301 先进结构陶瓷"}, {value:"A020308 微纳米力学",label:"A020308 微纳米力学"}, {value:"E050103 机器人机械学",label:"E050103 机器人机械学"}, {value:"C040204 动物进化",label:"C040204 动物进化"}, {value:"D0208 煤地质学",label:"D0208 煤地质学"}, {value:"E060105 制冷",label:"E060105 制冷"}, {value:"H2401 地方病学",label:"H2401 地方病学"}, {value:"C140104 植物病毒病害",label:"C140104 植物病毒病害"}, {value:"A010804 非线性发展方程和无穷维动力系统",label:"A010804 非线性发展方程和无穷维动力系统"}, {value:"E0210 无机非金属能量转换与存储材料",label:"E0210 无机非金属能量转换与存储材料"}, {value:"H2005 临床分子生物学检验",label:"H2005 临床分子生物学检验"}, {value:"H1408 牙缺损、缺失及牙颌畸形的修复与矫治",label:"H1408 牙缺损、缺失及牙颌畸形的修复与矫治"}, {value:"H1507 创面愈合与瘢痕",label:"H1507 创面愈合与瘢痕"}, {value:"H2602 职业卫生",label:"H2602 职业卫生"}, {value:"H2705 中医方剂",label:"H2705 中医方剂"}, {value:"A040503 超声学、量子声学和声学效应",label:"A040503 超声学、量子声学和声学效应"}, {value:"C1805 兽医传染病学",label:"C1805 兽医传染病学"}, {value:"H0318 肝再生、肝保护、肝衰竭、人工肝",label:"H0318 肝再生、肝保护、肝衰竭、人工肝"}, {value:"A040409 非线性光学",label:"A040409 非线性光学"}, {value:"E080405 空气污染治理",label:"E080405 空气污染治理"}, {value:"F030301 动态系统建模理论与方法",label:"F030301 动态系统建模理论与方法"}, {value:"E01 金属材料",label:"E01 金属材料"}, {value:"E021002 无机非金属能量存储材料",label:"E021002 无机非金属能量存储材料"}, {value:"E04 冶金与矿业",label:"E04 冶金与矿业"}, {value:"B040401 传感原理及方法",label:"B040401 传感原理及方法"}, {value:"H2704 治则与治法",label:"H2704 治则与治法"}, {value:"H3010 药物分析",label:"H3010 药物分析"}, {value:"C161002 林木遗传改良",label:"C161002 林木遗传改良"}, {value:"F010201 信息系统建模与仿真",label:"F010201 信息系统建模与仿真"}, {value:"F020503 虚拟现实与增强现实技术",label:"F020503 虚拟现实与增强现实技术"}, {value:"A020311 岩体力学和土力学",label:"A020311 岩体力学和土力学"}, {value:"A010701 泛函微分方程",label:"A010701 泛函微分方程"}, {value:"C140601 植物病害生物防治",label:"C140601 植物病害生物防治"}, {value:"H0404 女性生殖内分泌异常及相关疾病",label:"H0404 女性生殖内分泌异常及相关疾病"}, {value:"B0602 污染控制与化学修复",label:"B0602 污染控制与化学修复"}, {value:"C0404 动物资源与保护",label:"C0404 动物资源与保护"}, {value:"G030803 农村改革与发展",label:"G030803 农村改革与发展"}, {value:"H0919 精神分裂症和其他精神障碍",label:"H0919 精神分裂症和其他精神障碍"}, {value:"B010401 聚合反应与方法",label:"B010401 聚合反应与方法"}, {value:"B060103 水污染化学",label:"B060103 水污染化学"}, {value:"C150101 果树生理与栽培学",label:"C150101 果树生理与栽培学"}, {value:"B040303 质谱分析",label:"B040303 质谱分析"}, {value:"F010103 信源编码与信道编码",label:"F010103 信源编码与信道编码"}, {value:"H1802 fMRI与脑、脊髓功能异常检测",label:"H1802 fMRI与脑、脊髓功能异常检测"}, {value:"A010704 微分动力系统与哈密顿系统",label:"A010704 微分动力系统与哈密顿系统"}, {value:"A020502 细胞、亚细胞、生物大分子力学",label:"A020502 细胞、亚细胞、生物大分子力学"}, {value:"C170105 单胃动物营养学",label:"C170105 单胃动物营养学"}, {value:"B050803 化学电源",label:"B050803 化学电源"}, {value:"B080702 生化反应过程与分离工程",label:"B080702 生化反应过程与分离工程"}, {value:"C020303 植物进化与发育",label:"C020303 植物进化与发育"}, {value:"D0212 大地构造学",label:"D0212 大地构造学"}, {value:"F020605 系统安全",label:"F020605 系统安全"}, {value:"C020301 植物系统发育",label:"C020301 植物系统发育"}, {value:"C010501 陆生环境微生物学",label:"C010501 陆生环境微生物学"}, {value:"H1819 纳米医学",label:"H1819 纳米医学"}, {value:"A010201 群及其表示",label:"A010201 群及其表示"}, {value:"C010603 人类病原细菌与放线菌生物学",label:"C010603 人类病原细菌与放线菌生物学"}, {value:"E060303 对流传热传质",label:"E060303 对流传热传质"}, {value:"E0805 结构工程",label:"E0805 结构工程"}, {value:"H0310 胃肠道免疫相关疾病",label:"H0310 胃肠道免疫相关疾病"}, {value:"C1306 作物分子育种",label:"C1306 作物分子育种"}, {value:"E0417 粉末冶金与粉体工程",label:"E0417 粉末冶金与粉体工程"}, {value:"H0509 原发性肾脏疾病",label:"H0509 原发性肾脏疾病"}, {value:"A010205 环与代数",label:"A010205 环与代数"}, {value:"B0201 催化化学",label:"B0201 催化化学"}, {value:"B0402 电分析化学",label:"B0402 电分析化学"}, {value:"E010302 纳米晶金属材料",label:"E010302 纳米晶金属材料"}, {value:"E041203 电（化学）冶金与电池电化学",label:"E041203 电（化学）冶金与电池电化学"}, {value:"F020708 移动网络计算",label:"F020708 移动网络计算"}, {value:"G0409 公共安全与危机管理",label:"G0409 公共安全与危机管理"}, {value:"H0108 慢性阻塞性肺疾病",label:"H0108 慢性阻塞性肺疾病"}, {value:"H0314 肝脏代谢障碍及相关疾病",label:"H0314 肝脏代谢障碍及相关疾病"}, {value:"A010503 单复变函数论",label:"A010503 单复变函数论"}, {value:"B0501 无机与纳米材料化学",label:"B0501 无机与纳米材料化学"}, {value:"E090303 水利工程对生态与环境的影响",label:"E090303 水利工程对生态与环境的影响"}, {value:"A050409 新概念、新原理、新方法",label:"A050409 新概念、新原理、新方法"}, {value:"A050610 低温等离子体及其应用",label:"A050610 低温等离子体及其应用"}, {value:"C040301 动物生理生化",label:"C040301 动物生理生化"}, {value:"C160402 木质纤维利用基础",label:"C160402 木质纤维利用基础"}, {value:"F0301 控制理论与方法",label:"F0301 控制理论与方法"}, {value:"H0921 心境障碍、心理生理障碍和心身疾病",label:"H0921 心境障碍、心理生理障碍和心身疾病"}, {value:"C130410 其他作物种质资源与遗传育种",label:"C130410 其他作物种质资源与遗传育种"}, {value:"C150102 果树种质资源与遗传育种学",label:"C150102 果树种质资源与遗传育种学"}, {value:"C170202 草种质资源与育种",label:"C170202 草种质资源与育种"}, {value:"A011102 时间序列与多元分析",label:"A011102 时间序列与多元分析"}, {value:"G0306 金融管理",label:"G0306 金融管理"}, {value:"H0716 能量代谢调节异常及肥胖",label:"H0716 能量代谢调节异常及肥胖"}, {value:"H0726 骨转换、骨代谢异常和骨质疏松",label:"H0726 骨转换、骨代谢异常和骨质疏松"}, {value:"A011002 随机分析与随机过程",label:"A011002 随机分析与随机过程"}, {value:"A040207 磁有序系统",label:"A040207 磁有序系统"}, {value:"D0211 构造地质学与活动构造",label:"D0211 构造地质学与活动构造"}, {value:"G0107 管理统计理论与方法",label:"G0107 管理统计理论与方法"}, {value:"G030802 农业经济管理",label:"G030802 农业经济管理"}, {value:"C170107 反刍动物营养学",label:"C170107 反刍动物营养学"}, {value:"C200402 膳食与营养",label:"C200402 膳食与营养"}, {value:"E050602 概念设计与优化设计",label:"E050602 概念设计与优化设计"}, {value:"A050103 量子物理及其应用",label:"A050103 量子物理及其应用"}, {value:"A0504 核技术及其应用",label:"A0504 核技术及其应用"}, {value:"B080703 工业生物催化",label:"B080703 工业生物催化"}, {value:"D070101 土壤地理学",label:"D070101 土壤地理学"}, {value:"E0704 电力系统",label:"E0704 电力系统"}, {value:"H3004 生物技术药物",label:"H3004 生物技术药物"}, {value:"A050608 磁约束等离子体",label:"A050608 磁约束等离子体"}, {value:"E010101 新型金属结构材料",label:"E010101 新型金属结构材料"}, {value:"H2804 中药质量评价",label:"H2804 中药质量评价"}, {value:"C150303 观赏作物分子生物学",label:"C150303 观赏作物分子生物学"}, {value:"E0208 无机非金属基复合材料",label:"E0208 无机非金属基复合材料"}, {value:"E050503 机械表面效应与表面技术",label:"E050503 机械表面效应与表面技术"}, {value:"E080602 岩土工程减灾",label:"E080602 岩土工程减灾"}, {value:"F010404 移动互联网",label:"F010404 移动互联网"}, {value:"D0103 景观地理学",label:"D0103 景观地理学"}, {value:"A020501 组织与器官系统力学",label:"A020501 组织与器官系统力学"}, {value:"G0105 评价理论与方法",label:"G0105 评价理论与方法"}, {value:"H3111 临床药理",label:"H3111 临床药理"}, {value:"A030801 光学、紫外和红外天文技术与方法",label:"A030801 光学、紫外和红外天文技术与方法"}, {value:"F020603 信息隐藏",label:"F020603 信息隐藏"}, {value:"F050105 光学成像、图像分析与处理",label:"F050105 光学成像、图像分析与处理"}, {value:"H2711 中医妇科",label:"H2711 中医妇科"}, {value:"C030602 森林生态学",label:"C030602 森林生态学"}, {value:"C080101 分子免疫",label:"C080101 分子免疫"}, {value:"D05 大气科学",label:"D05 大气科学"}, {value:"E090705 岩土体应力变形及灾害",label:"E090705 岩土体应力变形及灾害"}, {value:"H0104 呼吸系统炎症与感染",label:"H0104 呼吸系统炎症与感染"}, {value:"H1816 介入医学与工程",label:"H1816 介入医学与工程"}, {value:"F03 自动化",label:"F03 自动化"}, {value:"H0306 消化道内环境紊乱、黏膜屏障障碍及相关疾病",label:"H0306 消化道内环境紊乱、黏膜屏障障碍及相关疾病"}, {value:"H2703 证候基础",label:"H2703 证候基础"}, {value:"A020402 水动力学",label:"A020402 水动力学"}, {value:"B060102 大气污染化学",label:"B060102 大气污染化学"}, {value:"C200502 畜产食品",label:"C200502 畜产食品"}, {value:"E0204 功能陶瓷",label:"E0204 功能陶瓷"}, {value:"E06 工程热物理与能源利用",label:"E06 工程热物理与能源利用"}, {value:"H1301 嗅觉、鼻及前颅底疾病",label:"H1301 嗅觉、鼻及前颅底疾病"}, {value:"A010902 可积系统及其应用",label:"A010902 可积系统及其应用"}, {value:"E080510 既有结构性能评价与修复",label:"E080510 既有结构性能评价与修复"}, {value:"G010903 管理系统复杂性",label:"G010903 管理系统复杂性"}, {value:"F050602 激光与物质相互作用",label:"F050602 激光与物质相互作用"}, {value:"B040103 色谱分析",label:"B040103 色谱分析"}, {value:"C060605 转录与调控",label:"C060605 转录与调控"}, {value:"D0502 边界层大气物理学和大气湍流",label:"D0502 边界层大气物理学和大气湍流"}, {value:"D071302 污染物生物有效性与生态毒理",label:"D071302 污染物生物有效性与生态毒理"}, {value:"A030304 晚期演化和致密天体及其相关高能过程",label:"A030304 晚期演化和致密天体及其相关高能过程"}, {value:"C040302 动物行为学",label:"C040302 动物行为学"}, {value:"H0424 精子发生异常与男性不育",label:"H0424 精子发生异常与男性不育"}, {value:"H1409 口腔颌面组织生物力学和生物材料",label:"H1409 口腔颌面组织生物力学和生物材料"}, {value:"H2101 特种医学(航空、航天、航海、潜水、高原、极地等极端环境)",label:"H2101 特种医学(航空、航天、航海、潜水、高原、极地等极端环境)"}, {value:"A040102 软物质和液体的结构与性质",label:"A040102 软物质和液体的结构与性质"}, {value:"A040406 超强、超快光物理",label:"A040406 超强、超快光物理"}, {value:"E031401 结构与性能关系",label:"E031401 结构与性能关系"}, {value:"E080803 结构振动控制",label:"E080803 结构振动控制"}, {value:"H0604 骨、关节、软组织医用材料",label:"H0604 骨、关节、软组织医用材料"}, {value:"C150202 蔬菜种质资源与遗传育种学",label:"C150202 蔬菜种质资源与遗传育种学"}, {value:"D071303 污染物区域空间过程与生态风险",label:"D071303 污染物区域空间过程与生态风险"}, {value:"E091001 海洋工程的基础理论",label:"E091001 海洋工程的基础理论"}, {value:"G0109 管理系统工程",label:"G0109 管理系统工程"}, {value:"G0305 货币政策与财税政策",label:"G0305 货币政策与财税政策"}, {value:"G030702 人口资源环境经济",label:"G030702 人口资源环境经济"}, {value:"B010101 主族元素化学",label:"B010101 主族元素化学"}, {value:"F020104 算法及其复杂性",label:"F020104 算法及其复杂性"}, {value:"F030209 微纳控制系统",label:"F030209 微纳控制系统"}, {value:"F040202 模拟、混合信号、射频集成电路设计",label:"F040202 模拟、混合信号、射频集成电路设计"}, {value:"A010303 几何分析",label:"A010303 几何分析"}, {value:"D0607 海洋监测、调查技术",label:"D0607 海洋监测、调查技术"}, {value:"E030701 材料的设计与制备",label:"E030701 材料的设计与制备"}, {value:"G0407 教育管理与政策",label:"G0407 教育管理与政策"}, {value:"H0907 神经免疫调节异常及神经免疫相关疾病",label:"H0907 神经免疫调节异常及神经免疫相关疾病"}, {value:"H1620 男性生殖系统肿瘤",label:"H1620 男性生殖系统肿瘤"}, {value:"B081101 矿产资源高效利用",label:"B081101 矿产资源高效利用"}, {value:"F010402 自组网络",label:"F010402 自组网络"}, {value:"H2808 中药神经精神药理",label:"H2808 中药神经精神药理"}, {value:"D0610 海洋遥感",label:"D0610 海洋遥感"}, {value:"E050702 仿生机械设计与制造",label:"E050702 仿生机械设计与制造"}, {value:"E070403 电力系统保护",label:"E070403 电力系统保护"}, {value:"E080507 结构分析、计算与设计理论",label:"E080507 结构分析、计算与设计理论"}, {value:"G011401 信息系统及其管理",label:"G011401 信息系统及其管理"}, {value:"H0208 心肌炎和心肌病",label:"H0208 心肌炎和心肌病"}, {value:"C050202 代谢生物化学",label:"C050202 代谢生物化学"}, {value:"F010304 超宽带通信",label:"F010304 超宽带通信"}, {value:"F010810 医学信息检测方法与技术",label:"F010810 医学信息检测方法与技术"}, {value:"B070505 农用化学品发现与机制",label:"B070505 农用化学品发现与机制"}, {value:"H0712 血糖调控异常与胰岛素抵抗",label:"H0712 血糖调控异常与胰岛素抵抗"}, {value:"A0303 恒星与星际物质",label:"A0303 恒星与星际物质"}, {value:"B010306 天然产物全合成",label:"B010306 天然产物全合成"}, {value:"B020403 界面与纳米电化学",label:"B020403 界面与纳米电化学"}, {value:"B0305 光化学与光谱学",label:"B0305 光化学与光谱学"}, {value:"C140106 植物抗病性",label:"C140106 植物抗病性"}, {value:"E0407 钻井工程与地热开采",label:"E0407 钻井工程与地热开采"}, {value:"G0411 环境与生态管理",label:"G0411 环境与生态管理"}, {value:"E050502 机械润滑、密封与控制",label:"E050502 机械润滑、密封与控制"}, {value:"A040303 原子分子碰撞过程及相互作用",label:"A040303 原子分子碰撞过程及相互作用"}, {value:"A050601 等离子体中的基本过程与特性",label:"A050601 等离子体中的基本过程与特性"}, {value:"C0606 基因表达调控与表观遗传学",label:"C0606 基因表达调控与表观遗传学"}, {value:"A011603 代数组合与组合矩阵论",label:"A011603 代数组合与组合矩阵论"}, {value:"A020312 结构力学与结构优化",label:"A020312 结构力学与结构优化"}, {value:"D0407 地球内部物理学",label:"D0407 地球内部物理学"}, {value:"D0605 河口海岸学",label:"D0605 河口海岸学"}, {value:"E0903 水环境与生态水利",label:"E0903 水环境与生态水利"}, {value:"F020703 网络资源共享与管理",label:"F020703 网络资源共享与管理"}, {value:"G02 工商管理",label:"G02 工商管理"}, {value:"G0405 创新管理与政策",label:"G0405 创新管理与政策"}, {value:"H3007 药物设计与药物信息",label:"H3007 药物设计与药物信息"}, {value:"A050408 核技术在工、农业和医学中的应用",label:"A050408 核技术在工、农业和医学中的应用"}, {value:"C050204 糖生物化学",label:"C050204 糖生物化学"}, {value:"C0903 发育神经生物学",label:"C0903 发育神经生物学"}, {value:"C110201 循环生理",label:"C110201 循环生理"}, {value:"A040209 介电、压电、热电和铁电性质",label:"A040209 介电、压电、热电和铁电性质"}, {value:"A040211 极端条件下的凝聚态物理",label:"A040211 极端条件下的凝聚态物理"}, {value:"E060203 流体机械内部流动",label:"E060203 流体机械内部流动"}, {value:"H0801 造血、造血调控与造血微环境异常",label:"H0801 造血、造血调控与造血微环境异常"}, {value:"E020401 精细功能陶瓷",label:"E020401 精细功能陶瓷"}, {value:"F010406 计算机通信",label:"F010406 计算机通信"}, {value:"G030602 金融市场管理",label:"G030602 金融市场管理"}, {value:"H0220 血管发生异常及血管结构与功能异常",label:"H0220 血管发生异常及血管结构与功能异常"}, {value:"H0321 消化系统器官移植",label:"H0321 消化系统器官移植"}, {value:"A040103",label:"A040103"}, {value:"B040101 样品处理",label:"B040101 样品处理"}, {value:"C200703 食品生物污染与控制",label:"C200703 食品生物污染与控制"}, {value:"D0408 地球动力学",label:"D0408 地球动力学"}, {value:"A010202 李群与李代数",label:"A010202 李群与李代数"}, {value:"C160902 森林害虫",label:"C160902 森林害虫"}, {value:"E080202 风景园林规划设计与理论",label:"E080202 风景园林规划设计与理论"}, {value:"E090701 岩土体本构关系与数值模拟",label:"E090701 岩土体本构关系与数值模拟"}, {value:"G0108 管理心理与行为",label:"G0108 管理心理与行为"}, {value:"G0115 知识管理",label:"G0115 知识管理"}, {value:"H3104 抗炎与免疫药物药理",label:"H3104 抗炎与免疫药物药理"}, {value:"C07 细胞生物学",label:"C07 细胞生物学"}, {value:"C1703 养蚕学",label:"C1703 养蚕学"}, {value:"E0410 安全科学与工程",label:"E0410 安全科学与工程"}, {value:"E070402 电力系统控制",label:"E070402 电力系统控制"}, {value:"E080704 铁道工程",label:"E080704 铁道工程"}, {value:"H1614 肿瘤研究体系新技术",label:"H1614 肿瘤研究体系新技术"}, {value:"H1908 病原生物变异与耐药",label:"H1908 病原生物变异与耐药"}, {value:"B080901 材料的功能设计与化工制备",label:"B080901 材料的功能设计与化工制备"}, {value:"D071402 自然灾害风险评估与公共安全",label:"D071402 自然灾害风险评估与公共安全"}, {value:"E090102 水文过程和模型及预报",label:"E090102 水文过程和模型及预报"}, {value:"H0419 胎儿发育与产前诊断",label:"H0419 胎儿发育与产前诊断"}, {value:"B081002 石油化工",label:"B081002 石油化工"}, {value:"E020501 新型水泥材料",label:"E020501 新型水泥材料"}, {value:"F0205 计算机应用技术",label:"F0205 计算机应用技术"}, {value:"B06 环境化学",label:"B06 环境化学"}, {value:"C05 生物物理、生物化学与分子生物学",label:"C05 生物物理、生物化学与分子生物学"}, {value:"C120106 细胞命运决定与分化及其微环境",label:"C120106 细胞命运决定与分化及其微环境"}, {value:"E021001 无机非金属能量转换材料",label:"E021001 无机非金属能量转换材料"}, {value:"E0901 水文、水资源",label:"E0901 水文、水资源"}, {value:"F020512 信息检索与挖掘",label:"F020512 信息检索与挖掘"}, {value:"A020405 多相流与渗流",label:"A020405 多相流与渗流"}, {value:"B080304 反应器工程及新型反应器",label:"B080304 反应器工程及新型反应器"}, {value:"C160502 树木抗逆生理学",label:"C160502 树木抗逆生理学"}, {value:"C170108 饲料学",label:"C170108 饲料学"}, {value:"D0505 天气学",label:"D0505 天气学"}, {value:"F0602 机器学习",label:"F0602 机器学习"}, {value:"G0114 信息系统与管理",label:"G0114 信息系统与管理"}, {value:"C150702 植物营养生理",label:"C150702 植物营养生理"}, {value:"H2006 临床检验新技术",label:"H2006 临床检验新技术"}, {value:"B010303 金属催化合成反应",label:"B010303 金属催化合成反应"}, {value:"C180802 兽医内科学",label:"C180802 兽医内科学"}, {value:"F040104 低维半导体材料",label:"F040104 低维半导体材料"}, {value:"F060307 目标检测、跟踪与识别",label:"F060307 目标检测、跟踪与识别"}, {value:"H0320 胰腺外分泌功能异常与胰腺炎",label:"H0320 胰腺外分泌功能异常与胰腺炎"}, {value:"H2606 儿童少年卫生",label:"H2606 儿童少年卫生"}, {value:"H2812 中药抗炎与免疫药理",label:"H2812 中药抗炎与免疫药理"}, {value:"A011708 有限元和边界元方法",label:"A011708 有限元和边界元方法"}, {value:"B030704 高分子结构、性能与动态过程",label:"B030704 高分子结构、性能与动态过程"}, {value:"B05 材料化学与能源化学",label:"B05 材料化学与能源化学"}, {value:"C020202 孢子植物分类",label:"C020202 孢子植物分类"}, {value:"C1501 果树学",label:"C1501 果树学"}, {value:"C170103 家禽遗传育种学",label:"C170103 家禽遗传育种学"}, {value:"E051001 数控技术与装备",label:"E051001 数控技术与装备"}, {value:"H0813 造血干细胞移植及并发症",label:"H0813 造血干细胞移植及并发症"}, {value:"A050504 反应堆物理与技术",label:"A050504 反应堆物理与技术"}, {value:"B0103 有机合成",label:"B0103 有机合成"}, {value:"B0601 环境污染化学",label:"B0601 环境污染化学"}, {value:"C010802 动物病毒学",label:"C010802 动物病毒学"}, {value:"D010204 乡村地理学",label:"D010204 乡村地理学"}, {value:"E0113 金属制备与加工的材料科学基础",label:"E0113 金属制备与加工的材料科学基础"}, {value:"E060202 动力装置内部流动",label:"E060202 动力装置内部流动"}, {value:"E090202 灌溉与排水",label:"E090202 灌溉与排水"}, {value:"C030604 水域生态学",label:"C030604 水域生态学"}, {value:"E03 有机高分子材料",label:"E03 有机高分子材料"}, {value:"A011405 分形论及应用",label:"A011405 分形论及应用"}, {value:"E0713 电能储存与节电技术",label:"E0713 电能储存与节电技术"}, {value:"A010501 多复变函数论",label:"A010501 多复变函数论"}, {value:"A040105 薄膜和纳米结构的形成",label:"A040105 薄膜和纳米结构的形成"}, {value:"G0116 风险管理",label:"G0116 风险管理"}, {value:"H2805 中药炮制",label:"H2805 中药炮制"}, {value:"H2811 中药内分泌及代谢药理",label:"H2811 中药内分泌及代谢药理"}, {value:"C0508 生物物理、生物化学与分子生物学研究的新方法与新技术",label:"C0508 生物物理、生物化学与分子生物学研究的新方法与新技术"}, {value:"C130104 农业信息学",label:"C130104 农业信息学"}, {value:"C1606 森林土壤学",label:"C1606 森林土壤学"}, {value:"C200504 粮油食品",label:"C200504 粮油食品"}, {value:"E090801 水工结构动静力性能分析与控制",label:"E090801 水工结构动静力性能分析与控制"}, {value:"E050102 机构运动学与动力学",label:"E050102 机构运动学与动力学"}, {value:"E050603 智能设计与数字化设计",label:"E050603 智能设计与数字化设计"}, {value:"H0511 肾衰竭",label:"H0511 肾衰竭"}, {value:"C0802 细胞免疫",label:"C0802 细胞免疫"}, {value:"C1802 兽医病理学",label:"C1802 兽医病理学"}, {value:"A020307 超常环境下材料和结构的力学行为",label:"A020307 超常环境下材料和结构的力学行为"}, {value:"A020414 实验流体力学",label:"A020414 实验流体力学"}, {value:"A040403 光源、光学器件和光学系统中的物理问题",label:"A040403 光源、光学器件和光学系统中的物理问题"}, {value:"C150705 作物－土壤互作过程与调控",label:"C150705 作物－土壤互作过程与调控"}, {value:"E050804 近净成形与快速制造",label:"E050804 近净成形与快速制造"}, {value:"F0206 信息安全",label:"F0206 信息安全"}, {value:"G011403 数据挖掘与商务分析",label:"G011403 数据挖掘与商务分析"}, {value:"H1014 疫苗和佐剂研究/接种/免疫防治",label:"H1014 疫苗和佐剂研究/接种/免疫防治"}, {value:"C030603 草地与荒漠生态",label:"C030603 草地与荒漠生态"}, {value:"C0702 细胞生长与分裂",label:"C0702 细胞生长与分裂"}, {value:"C200201 食品酶学",label:"C200201 食品酶学"}, {value:"D0210 前寒武纪地质学",label:"D0210 前寒武纪地质学"}, {value:"D0213 数学地质学与遥感地质学",label:"D0213 数学地质学与遥感地质学"}, {value:"E0907 岩土力学与岩土工程",label:"E0907 岩土力学与岩土工程"}, {value:"H0704 胰岛发育、胰岛细胞分化再生及功能调控异常与胰岛移植",label:"H0704 胰岛发育、胰岛细胞分化再生及功能调控异常与胰岛移植"}, {value:"A0302 星系和类星体",label:"A0302 星系和类星体"}, {value:"H1505 烧伤",label:"H1505 烧伤"}, {value:"A050104 量子信息学",label:"A050104 量子信息学"}, {value:"A050204 非标准模型及其唯象学",label:"A050204 非标准模型及其唯象学"}, {value:"A050507 辐射剂量学和辐射防护",label:"A050507 辐射剂量学和辐射防护"}, {value:"F010408 传感网络监测与定位",label:"F010408 传感网络监测与定位"}, {value:"H0201 心脏结构与功能异常",label:"H0201 心脏结构与功能异常"}, {value:"H1822 组织工程与再生医学",label:"H1822 组织工程与再生医学"}, {value:"A050304 重离子核物理",label:"A050304 重离子核物理"}, {value:"E010201 纤维、颗粒增强金属基复合材料",label:"E010201 纤维、颗粒增强金属基复合材料"}, {value:"G0401 公共管理",label:"G0401 公共管理"}, {value:"H0204 心脏发育异常与先天性心脏病",label:"H0204 心脏发育异常与先天性心脏病"}, {value:"H1818 药物、基因载体系统",label:"H1818 药物、基因载体系统"}, {value:"A040414 与光学有关的其他物理问题和交叉学科",label:"A040414 与光学有关的其他物理问题和交叉学科"}, {value:"B0204 电化学",label:"B0204 电化学"}, {value:"C030501 群落结构与动态",label:"C030501 群落结构与动态"}, {value:"E0808 防灾工程",label:"E0808 防灾工程"}, {value:"F010403 物联网通信",label:"F010403 物联网通信"}, {value:"A020205 多体系统动力学",label:"A020205 多体系统动力学"}, {value:"B020404 电催化与电合成",label:"B020404 电催化与电合成"}, {value:"C2117 认知的脑结构与神经基础",label:"C2117 认知的脑结构与神经基础"}, {value:"H2605 妇幼保健",label:"H2605 妇幼保健"}, {value:"E030703 纳米复合",label:"E030703 纳米复合"}, {value:"E050101 机构学与机器组成原理",label:"E050101 机构学与机器组成原理"}, {value:"F030114 优化控制与运行优化控制",label:"F030114 优化控制与运行优化控制"}, {value:"H1004 免疫识别/免疫耐受/免疫调节异常",label:"H1004 免疫识别/免疫耐受/免疫调节异常"}, {value:"C1604 林产化学",label:"C1604 林产化学"}, {value:"C200202 食品蛋白质",label:"C200202 食品蛋白质"}, {value:"E050904 高能束加工工艺与装备",label:"E050904 高能束加工工艺与装备"}, {value:"F030105 多智能体系统分析与协同控制",label:"F030105 多智能体系统分析与协同控制"}, {value:"H1401 口腔颅颌面组织生长发育及牙再生",label:"H1401 口腔颅颌面组织生长发育及牙再生"}, {value:"H3106 抗感染药物药理",label:"H3106 抗感染药物药理"}, {value:"C0801 分子免疫",label:"C0801 分子免疫"}, {value:"C180103 畜禽生理学",label:"C180103 畜禽生理学"}, {value:"E060304 相变传递过程",label:"E060304 相变传递过程"}, {value:"A0107 常微分方程与动力系统",label:"A0107 常微分方程与动力系统"}, {value:"A011402 经济数学与金融数学",label:"A011402 经济数学与金融数学"}, {value:"E041603 熔化、凝固过程与控制",label:"E041603 熔化、凝固过程与控制"}, {value:"B081105 环境治理的化工过程",label:"B081105 环境治理的化工过程"}, {value:"C161201 园林植物种质资源",label:"C161201 园林植物种质资源"}, {value:"E051103 机械传感器技术与测试仪器",label:"E051103 机械传感器技术与测试仪器"}, {value:"F020701 计算机网络体系结构",label:"F020701 计算机网络体系结构"}, {value:"H1003 免疫反应相关因子与疾病",label:"H1003 免疫反应相关因子与疾病"}, {value:"H2816 中药药代动力学",label:"H2816 中药药代动力学"}, {value:"A0116 组合数学",label:"A0116 组合数学"}, {value:"F04 半导体科学与信息器件",label:"F04 半导体科学与信息器件"}, {value:"H0110 间质性肺疾病",label:"H0110 间质性肺疾病"}, {value:"E0505 机械摩擦学与表面技术",label:"E0505 机械摩擦学与表面技术"}, {value:"F050302 光通信与光网络关键技术与器件",label:"F050302 光通信与光网络关键技术与器件"}, {value:"H0307 消化道动力异常及功能性胃肠病",label:"H0307 消化道动力异常及功能性胃肠病"}, {value:"A020301 弹性力学与塑性力学",label:"A020301 弹性力学与塑性力学"}, {value:"C010101 细菌资源、分类及系统发育",label:"C010101 细菌资源、分类及系统发育"}, {value:"C0601 植物遗传学",label:"C0601 植物遗传学"}, {value:"F050204 有机/聚合物光电子器件与光子器件",label:"F050204 有机/聚合物光电子器件与光子器件"}, {value:"H0406 子宫内膜异位症与子宫腺肌症",label:"H0406 子宫内膜异位症与子宫腺肌症"}, {value:"H0425 女性不孕不育与辅助生殖",label:"H0425 女性不孕不育与辅助生殖"}, {value:"H1504 创伤",label:"H1504 创伤"}, {value:"C080102 细胞免疫",label:"C080102 细胞免疫"}, {value:"E0104 极端条件下使用的金属材料",label:"E0104 极端条件下使用的金属材料"}, {value:"E0307 聚合物共混与复合材料",label:"E0307 聚合物共混与复合材料"}, {value:"E060403 煤与其他固体燃料的燃烧",label:"E060403 煤与其他固体燃料的燃烧"}, {value:"H0606 骨、关节、软组织移植与重建",label:"H0606 骨、关节、软组织移植与重建"}, {value:"B030404 纳米及介观结构",label:"B030404 纳米及介观结构"}, {value:"C030401 植物种群生态学",label:"C030401 植物种群生态学"}, {value:"C2105 发展心理学",label:"C2105 发展心理学"}, {value:"D0410 空间物理",label:"D0410 空间物理"}, {value:"F020106 形式化方法",label:"F020106 形式化方法"}, {value:"H1508 体表组织器官畸形、损伤与修复、再生",label:"H1508 体表组织器官畸形、损伤与修复、再生"}, {value:"H3107 代谢性疾病药物药理",label:"H3107 代谢性疾病药物药理"}, {value:"A011202 组合最优化",label:"A011202 组合最优化"}, {value:"B020304 界面组装与聚集体",label:"B020304 界面组装与聚集体"}, {value:"B030302 分子反应动力学",label:"B030302 分子反应动力学"}, {value:"C020401 光合作用",label:"C020401 光合作用"}, {value:"C031201 生物多样性",label:"C031201 生物多样性"}, {value:"C060201 动物分子遗传",label:"C060201 动物分子遗传"}, {value:"C161104 茶树培育",label:"C161104 茶树培育"}, {value:"E020703 特种无机涂层与薄膜",label:"E020703 特种无机涂层与薄膜"}, {value:"G0213 创业管理",label:"G0213 创业管理"}, {value:"H1202 晶状体与白内障",label:"H1202 晶状体与白内障"}, {value:"A030802 射电、毫米波和亚毫米波天文技术与方法",label:"A030802 射电、毫米波和亚毫米波天文技术与方法"}, {value:"B010102 过渡金属元素化学",label:"B010102 过渡金属元素化学"}, {value:"C1303 作物栽培与耕作学",label:"C1303 作物栽培与耕作学"}, {value:"H0417 胚胎着床及早期胚胎发育异常",label:"H0417 胚胎着床及早期胚胎发育异常"}, {value:"A040401 光的传播和成像",label:"A040401 光的传播和成像"}, {value:"A050101 物理学中的数学问题与计算方法",label:"A050101 物理学中的数学问题与计算方法"}, {value:"C030102 进化生态学",label:"C030102 进化生态学"}, {value:"H0601 运动系统结构、功能和发育异常",label:"H0601 运动系统结构、功能和发育异常"}, {value:"C0311 土壤生态学",label:"C0311 土壤生态学"}, {value:"C1106 运动生理学",label:"C1106 运动生理学"}, {value:"D010502 经济发展与环境质量",label:"D010502 经济发展与环境质量"}, {value:"H0216 主动脉疾病",label:"H0216 主动脉疾病"}, {value:"C160901 森林病理",label:"C160901 森林病理"}, {value:"D010703 空间定位数据分析与应用",label:"D010703 空间定位数据分析与应用"}, {value:"D041002 电离层物理学",label:"D041002 电离层物理学"}, {value:"E010803 金属材料的强化与韧化",label:"E010803 金属材料的强化与韧化"}, {value:"G0118 工程管理",label:"G0118 工程管理"}, {value:"G0119 交通运输管理",label:"G0119 交通运输管理"}, {value:"H2301 法医毒理、病理及毒物分析",label:"H2301 法医毒理、病理及毒物分析"}, {value:"C020101 植物形态结构与功能",label:"C020101 植物形态结构与功能"}, {value:"C0805 免疫调节",label:"C0805 免疫调节"}, {value:"D041003 磁层物理学",label:"D041003 磁层物理学"}, {value:"E010701 金属的晶体结构与缺陷及其表征方法",label:"E010701 金属的晶体结构与缺陷及其表征方法"}, {value:"E010901 金属的非平衡凝固与结晶",label:"E010901 金属的非平衡凝固与结晶"}, {value:"G041301 区域发展战略管理",label:"G041301 区域发展战略管理"}, {value:"B0104 高分子合成",label:"B0104 高分子合成"}, {value:"C031001 污染生态学",label:"C031001 污染生态学"}, {value:"C120110 干细胞干性维持与自我更新",label:"C120110 干细胞干性维持与自我更新"}, {value:"B0705 药物化学生物学",label:"B0705 药物化学生物学"}, {value:"C200501 水果、蔬菜",label:"C200501 水果、蔬菜"}, {value:"E020302 陶瓷基复合材料",label:"E020302 陶瓷基复合材料"}, {value:"H0217 周围血管疾病",label:"H0217 周围血管疾病"}, {value:"H1626 皮肤、体表及其他部位肿瘤",label:"H1626 皮肤、体表及其他部位肿瘤"}, {value:"B081104 绿色化工过程",label:"B081104 绿色化工过程"}, {value:"C160301 材性及其改良",label:"C160301 材性及其改良"}, {value:"C1806 中兽医学",label:"C1806 中兽医学"}, {value:"E041002 突水与防灭火",label:"E041002 突水与防灭火"}, {value:"H0316 炎性及感染性肝病",label:"H0316 炎性及感染性肝病"}, {value:"H2720 民族医学",label:"H2720 民族医学"}, {value:"C180701 兽医药理学",label:"C180701 兽医药理学"}, {value:"C200203 食品碳水化合物",label:"C200203 食品碳水化合物"}, {value:"E0709 气体放电与放电等离子体技术",label:"E0709 气体放电与放电等离子体技术"}, {value:"E090501 工程水力学",label:"E090501 工程水力学"}, {value:"F010405 通信网络与系统",label:"F010405 通信网络与系统"}, {value:"B050401 复合界面化学",label:"B050401 复合界面化学"}, {value:"C200506 食品配料及其他",label:"C200506 食品配料及其他"}, {value:"E060701 太阳能利用中的工程热物理问题",label:"E060701 太阳能利用中的工程热物理问题"}, {value:"F030212 楼宇监测与控制系统",label:"F030212 楼宇监测与控制系统"}, {value:"A010705 拓扑动力系统与遍历论",label:"A010705 拓扑动力系统与遍历论"}, {value:"A020503 仿生、生物材料与运动生物力学",label:"A020503 仿生、生物材料与运动生物力学"}, {value:"F0306 检测技术及装置",label:"F0306 检测技术及装置"}, {value:"F050903 功能光学材料",label:"F050903 功能光学材料"}, {value:"H1605 肿瘤预防",label:"H1605 肿瘤预防"}, {value:"C030601 农田生态学",label:"C030601 农田生态学"}, {value:"E010502 金属智能和仿生材料",label:"E010502 金属智能和仿生材料"}, {value:"E080702 地下工程与隧道工程",label:"E080702 地下工程与隧道工程"}, {value:"E090203 灌排与农业生态环境",label:"E090203 灌排与农业生态环境"}, {value:"F030102 分布参数系统分析与控制",label:"F030102 分布参数系统分析与控制"}, {value:"A020409 环境流体力学",label:"A020409 环境流体力学"}, {value:"F010303 协同通信",label:"F010303 协同通信"}, {value:"G0104 博弈理论与方法",label:"G0104 博弈理论与方法"}, {value:"H0512 肾移植",label:"H0512 肾移植"}, {value:"H0719 脂代谢异常",label:"H0719 脂代谢异常"}, {value:"B040205 生物电分析化学",label:"B040205 生物电分析化学"}, {value:"C02 植物学",label:"C02 植物学"}, {value:"C0910 痛觉神经生物学",label:"C0910 痛觉神经生物学"}, {value:"C140202 粮食作物害虫",label:"C140202 粮食作物害虫"}, {value:"G041401 图书情报档案管理",label:"G041401 图书情报档案管理"}, {value:"H0918 物质依赖和其他成瘾性障碍",label:"H0918 物质依赖和其他成瘾性障碍"}, {value:"A040214 生命现象中的凝聚态物理问题",label:"A040214 生命现象中的凝聚态物理问题"}, {value:"A040502 水声和海洋声学及空气动力声学",label:"A040502 水声和海洋声学及空气动力声学"}, {value:"A050404 中子技术及其应用",label:"A050404 中子技术及其应用"}, {value:"A050509 新原理、新方法、新技术、新应用",label:"A050509 新原理、新方法、新技术、新应用"}, {value:"C010302 微生物遗传育种",label:"C010302 微生物遗传育种"}, {value:"E0807 交通土建工程",label:"E0807 交通土建工程"}, {value:"F040103 薄膜半导体材料",label:"F040103 薄膜半导体材料"}, {value:"A050406 离子注入及离子束材料改性",label:"A050406 离子注入及离子束材料改性"}, {value:"C140105 植物其他病害",label:"C140105 植物其他病害"}, {value:"E010801 金属材料的形变与损伤",label:"E010801 金属材料的形变与损伤"}, {value:"F030507 人工生物系统的设计与控制",label:"F030507 人工生物系统的设计与控制"}, {value:"F030602 微弱量检测技术及装置",label:"F030602 微弱量检测技术及装置"}, {value:"G0113 系统可靠性与管理",label:"G0113 系统可靠性与管理"}, {value:"A010101 解析数论",label:"A010101 解析数论"}, {value:"E051201 微/纳机械驱动器与执行器件",label:"E051201 微/纳机械驱动器与执行器件"}, {value:"E060502 多相流流动",label:"E060502 多相流流动"}, {value:"E091003 海洋建筑物与水下工程",label:"E091003 海洋建筑物与水下工程"}, {value:"F010302 通信信号处理",label:"F010302 通信信号处理"}, {value:"G041302 城镇发展与管理",label:"G041302 城镇发展与管理"}, {value:"H3003 微生物药物",label:"H3003 微生物药物"}, {value:"A0506 等离子体物理",label:"A0506 等离子体物理"}, {value:"B070203 糖化学生物学",label:"B070203 糖化学生物学"}, {value:"B080404 萃取、吸附与离子交换",label:"B080404 萃取、吸附与离子交换"}, {value:"C030101 分子生态学",label:"C030101 分子生态学"}, {value:"C0803 免疫应答",label:"C0803 免疫应答"}, {value:"E070502 电气设备绝缘",label:"E070502 电气设备绝缘"}, {value:"F030603 在线检测技术及装置",label:"F030603 在线检测技术及装置"}, {value:"G0404 科技管理与政策",label:"G0404 科技管理与政策"}, {value:"A050605 等离子体与物质相互作用",label:"A050605 等离子体与物质相互作用"}, {value:"E021301 生态环境材料",label:"E021301 生态环境材料"}, {value:"F010407 传感网络理论与技术",label:"F010407 传感网络理论与技术"}, {value:"F030307 复杂动态系统建模与分析",label:"F030307 复杂动态系统建模与分析"}, {value:"F050701 新型光谱技术与系统",label:"F050701 新型光谱技术与系统"}, {value:"G0212 项目管理",label:"G0212 项目管理"}, {value:"G030601 银行体系管理",label:"G030601 银行体系管理"}, {value:"A010603 空间理论",label:"A010603 空间理论"}, {value:"A011702 流体力学中的数值计算",label:"A011702 流体力学中的数值计算"}, {value:"E011102 金属高温腐蚀与防护",label:"E011102 金属高温腐蚀与防护"}, {value:"E030902 分离与吸附材料",label:"E030902 分离与吸附材料"}, {value:"E050402 机械结构强度理论与可靠性设计",label:"E050402 机械结构强度理论与可靠性设计"}, {value:"F030604 软测量理论与技术",label:"F030604 软测量理论与技术"}, {value:"H2807 中药药性理论",label:"H2807 中药药性理论"}, {value:"D010102 应用气候学",label:"D010102 应用气候学"}, {value:"E080805 城市与生命线工程防灾",label:"E080805 城市与生命线工程防灾"}, {value:"E09 水利科学与海洋工程",label:"E09 水利科学与海洋工程"}, {value:"F010102 网络信息论",label:"F010102 网络信息论"}, {value:"H0709 甲状腺/甲状旁腺疾病及功能异常",label:"H0709 甲状腺/甲状旁腺疾病及功能异常"}, {value:"H1820 医用生物材料与植入科学",label:"H1820 医用生物材料与植入科学"}, {value:"B060104 土壤污染化学",label:"B060104 土壤污染化学"}, {value:"C040203 动物地理学",label:"C040203 动物地理学"}, {value:"C060601 组蛋白修饰及意义",label:"C060601 组蛋白修饰及意义"}, {value:"E010601 金属材料的合金相图",label:"E010601 金属材料的合金相图"}, {value:"E070101 电磁场分析与综合",label:"E070101 电磁场分析与综合"}, {value:"C06 遗传学与生物信息学",label:"C06 遗传学与生物信息学"}, {value:"D0511 云雾物理化学与人工影响天气",label:"D0511 云雾物理化学与人工影响天气"}, {value:"A040308 与原子、分子有关的其他物理问题",label:"A040308 与原子、分子有关的其他物理问题"}, {value:"A050201 场和粒子的一般理论及方法",label:"A050201 场和粒子的一般理论及方法"}, {value:"D04 地球物理学和空间物理学",label:"D04 地球物理学和空间物理学"}, {value:"E051203 微/纳制造过程检测与控制",label:"E051203 微/纳制造过程检测与控制"}, {value:"E090104 水资源分析与管理",label:"E090104 水资源分析与管理"}, {value:"H0911 周围神经、神经-肌肉接头、肌肉、自主神经疾病",label:"H0911 周围神经、神经-肌肉接头、肌肉、自主神经疾病"}, {value:"A020314 流固耦合力学",label:"A020314 流固耦合力学"}, {value:"C120104 组织器官发生与发育",label:"C120104 组织器官发生与发育"}, {value:"D010503 可持续性评估",label:"D010503 可持续性评估"}, {value:"F030410 网络化系统优化",label:"F030410 网络化系统优化"}, {value:"A050703 束线光学技术和实验方法",label:"A050703 束线光学技术和实验方法"}, {value:"G0106 预测理论与方法",label:"G0106 预测理论与方法"}, {value:"H2702 病因病机",label:"H2702 病因病机"}, {value:"A011001 马氏过程与遍历论",label:"A011001 马氏过程与遍历论"}, {value:"A011704 常微分方程数值计算",label:"A011704 常微分方程数值计算"}, {value:"C060502 比较基因组与进化",label:"C060502 比较基因组与进化"}, {value:"C130407 薯类作物种质资源与遗传育种",label:"C130407 薯类作物种质资源与遗传育种"}, {value:"E020803 界面物理与界面化学",label:"E020803 界面物理与界面化学"}, {value:"E0412 冶金物理化学与冶金原理",label:"E0412 冶金物理化学与冶金原理"}, {value:"E090101 洪涝和干旱与减灾",label:"E090101 洪涝和干旱与减灾"}, {value:"E091004 海上作业与海事保障",label:"E091004 海上作业与海事保障"}, {value:"F010605 机载通信",label:"F010605 机载通信"}, {value:"F020602 安全体系结构与协议",label:"F020602 安全体系结构与协议"}, {value:"F020706 网络环境下的协同技术",label:"F020706 网络环境下的协同技术"}, {value:"H3112 药物毒理",label:"H3112 药物毒理"}, {value:"C1504 设施园艺学",label:"C1504 设施园艺学"}, {value:"C180503 兽医传染病的预防",label:"C180503 兽医传染病的预防"}, {value:"F020201 软件理论与软件方法学",label:"F020201 软件理论与软件方法学"}, {value:"F050408 太赫兹波技术及应用",label:"F050408 太赫兹波技术及应用"}, {value:"H1206 视觉、视光学与近视、弱视及眼肌疾病",label:"H1206 视觉、视光学与近视、弱视及眼肌疾病"}, {value:"A0401 凝聚态物性Ⅰ:结构、力学和热学性质",label:"A0401 凝聚态物性Ⅰ:结构、力学和热学性质"}, {value:"A050508 实验数据获取与处理",label:"A050508 实验数据获取与处理"}, {value:"D0403 地磁学",label:"D0403 地磁学"}, {value:"D071401 区域环境质量综合评估",label:"D071401 区域环境质量综合评估"}, {value:"H2814 中药消化与呼吸药理",label:"H2814 中药消化与呼吸药理"}, {value:"B020104 均相催化",label:"B020104 均相催化"}, {value:"B080705 农林及海洋产物加工与转化",label:"B080705 农林及海洋产物加工与转化"}, {value:"C030502 物种间相互作用",label:"C030502 物种间相互作用"}, {value:"D0509 应用气象学",label:"D0509 应用气象学"}, {value:"E021102 磁性材料及巨磁阻材料",label:"E021102 磁性材料及巨磁阻材料"}, {value:"E031301 天然高分子材料",label:"E031301 天然高分子材料"}, {value:"F011304 遥感图像处理",label:"F011304 遥感图像处理"}, {value:"H0811 出血、凝血与血栓",label:"H0811 出血、凝血与血栓"}, {value:"H2819 中药学其他科学问题",label:"H2819 中药学其他科学问题"}, {value:"H3005 海洋药物",label:"H3005 海洋药物"}, {value:"A020313 结构振动、噪声与控制",label:"A020313 结构振动、噪声与控制"}, {value:"A030202 星系形成、结构和演化",label:"A030202 星系形成、结构和演化"}, {value:"A050602 等离子体产生、加热与约束",label:"A050602 等离子体产生、加热与约束"}, {value:"B040105 微纳流控",label:"B040105 微纳流控"}, {value:"C130302 耕作学",label:"C130302 耕作学"}, {value:"E0311 智能材料",label:"E0311 智能材料"}, {value:"E070104 电磁测量与传感",label:"E070104 电磁测量与传感"}, {value:"F010203 通信网络安全",label:"F010203 通信网络安全"}, {value:"F040302 半导体激光器",label:"F040302 半导体激光器"}, {value:"G0210 电子商务",label:"G0210 电子商务"}, {value:"H1803 磁共振成像技术与造影剂",label:"H1803 磁共振成像技术与造影剂"}, {value:"H2712 中医儿科",label:"H2712 中医儿科"}, {value:"A050203 电－弱相互作用及其唯象学",label:"A050203 电－弱相互作用及其唯象学"}, {value:"C1402 农业昆虫学",label:"C1402 农业昆虫学"}, {value:"C140205 经济及其他作物害虫",label:"C140205 经济及其他作物害虫"}, {value:"C1502 蔬菜学与瓜果学",label:"C1502 蔬菜学与瓜果学"}, {value:"E0512 微/纳机械系统",label:"E0512 微/纳机械系统"}, {value:"E0806 岩土与基础工程",label:"E0806 岩土与基础工程"}, {value:"F010501 MIMO通信",label:"F010501 MIMO通信"}, {value:"A040101 固体结构和人工微结构",label:"A040101 固体结构和人工微结构"}, {value:"C010502 水生环境微生物学",label:"C010502 水生环境微生物学"}, {value:"C0503 蛋白质组学",label:"C0503 蛋白质组学"}, {value:"C1305 作物杂种优势及其利用",label:"C1305 作物杂种优势及其利用"}, {value:"C1505 园艺作物采后生物学",label:"C1505 园艺作物采后生物学"}, {value:"D0411 地球物理实验与仪器",label:"D0411 地球物理实验与仪器"}, {value:"E0105 金属功能材料",label:"E0105 金属功能材料"}, {value:"F020107 计算系统的智能理论与方法",label:"F020107 计算系统的智能理论与方法"}, {value:"F030104 网络化系统分析与控制",label:"F030104 网络化系统分析与控制"}, {value:"C030202 动物行为生态学",label:"C030202 动物行为生态学"}, {value:"C160702 人工林培育",label:"C160702 人工林培育"}, {value:"C200102 粮油食品原料学",label:"C200102 粮油食品原料学"}, {value:"G021102 服务管理",label:"G021102 服务管理"}, {value:"H1907 传染病媒介生物",label:"H1907 传染病媒介生物"}, {value:"H2706 中医诊断",label:"H2706 中医诊断"}, {value:"B080704 食品与生物医药工程",label:"B080704 食品与生物医药工程"}, {value:"C0401 动物形态学及胚胎学",label:"C0401 动物形态学及胚胎学"}, {value:"C150703 肥料与施肥科学",label:"C150703 肥料与施肥科学"}, {value:"D0404 地球电磁学",label:"D0404 地球电磁学"}, {value:"F050501 非线性光学效应及应用",label:"F050501 非线性光学效应及应用"}, {value:"H2604 食品卫生",label:"H2604 食品卫生"}, {value:"A030203 星系相互作用和并合；活动星系核",label:"A030203 星系相互作用和并合；活动星系核"}, {value:"A040201 块体材料的电子态",label:"A040201 块体材料的电子态"}, {value:"A040305 极端条件下的原子分子物理",label:"A040305 极端条件下的原子分子物理"}, {value:"B0403 谱学方法与理论",label:"B0403 谱学方法与理论"}, {value:"E042203 交叉学科与新技术",label:"E042203 交叉学科与新技术"}, {value:"F020305 高性能计算与超级计算机",label:"F020305 高性能计算与超级计算机"}, {value:"F040303 半导体光探测器",label:"F040303 半导体光探测器"}, {value:"H0113 睡眠呼吸障碍",label:"H0113 睡眠呼吸障碍"}, {value:"C100302 骨和软骨组织工程",label:"C100302 骨和软骨组织工程"}, {value:"C1603 木材物理学",label:"C1603 木材物理学"}, {value:"F020101 理论计算机科学",label:"F020101 理论计算机科学"}, {value:"F040301 半导体发光材料与器件",label:"F040301 半导体发光材料与器件"}, {value:"A010204 同调与K理论",label:"A010204 同调与K理论"}, {value:"A010703 分支理论与混沌",label:"A010703 分支理论与混沌"}, {value:"C150204 瓜果学",label:"C150204 瓜果学"}, {value:"D0707 生物地质学",label:"D0707 生物地质学"}, {value:"H2721 中医学其他科学问题",label:"H2721 中医学其他科学问题"}, {value:"A011404 不确定性的数学理论",label:"A011404 不确定性的数学理论"}, {value:"B020405 光电化学",label:"B020405 光电化学"}, {value:"E051004 可持续设计与制造",label:"E051004 可持续设计与制造"}, {value:"E051005 制造系统调度、规划与管理",label:"E051005 制造系统调度、规划与管理"}, {value:"H0213 心脏/血管移植和辅助循环",label:"H0213 心脏/血管移植和辅助循环"}, {value:"H1303 耳及侧颅底疾病",label:"H1303 耳及侧颅底疾病"}, {value:"A0114 应用数学方法",label:"A0114 应用数学方法"}, {value:"A040510 与声学有关的其他物理问题和交叉学科",label:"A040510 与声学有关的其他物理问题和交叉学科"}, {value:"B030804 化学计量学",label:"B030804 化学计量学"}, {value:"B0605 放射化学与辐射化学",label:"B0605 放射化学与辐射化学"}, {value:"B0706 化学生物学理论与技术",label:"B0706 化学生物学理论与技术"}, {value:"C020603 植物种质及保存保育",label:"C020603 植物种质及保存保育"}, {value:"C040601 实验动物",label:"C040601 实验动物"}, {value:"C060703 生物信息的整合及信息挖掘",label:"C060703 生物信息的整合及信息挖掘"}, {value:"C1110 人体解剖学",label:"C1110 人体解剖学"}, {value:"C150701 植物营养遗传",label:"C150701 植物营养遗传"}, {value:"E010202 新型金属基复合材料",label:"E010202 新型金属基复合材料"}, {value:"E0404 化石能源储存与输送",label:"E0404 化石能源储存与输送"}, {value:"F010205 网络管理",label:"F010205 网络管理"}, {value:"F030116 决策与控制一体化",label:"F030116 决策与控制一体化"}, {value:"H1208 眼遗传性疾病",label:"H1208 眼遗传性疾病"}, {value:"B010402 离子聚合与配位聚合",label:"B010402 离子聚合与配位聚合"}, {value:"B0202 表面化学",label:"B0202 表面化学"}, {value:"B070601 理论与计算化学生物学",label:"B070601 理论与计算化学生物学"}, {value:"C0703 细胞周期与调控",label:"C0703 细胞周期与调控"}, {value:"C200205 食品其他成分",label:"C200205 食品其他成分"}, {value:"E020601 高性能碳素材料",label:"E020601 高性能碳素材料"}, {value:"E031001 组织工程材料",label:"E031001 组织工程材料"}, {value:"E031502 加工与成型新原理、新方法",label:"E031502 加工与成型新原理、新方法"}, {value:"E051202 微/纳机械传感与控制",label:"E051202 微/纳机械传感与控制"}, {value:"E080406 城市受污染水环境的工程修复",label:"E080406 城市受污染水环境的工程修复"}, {value:"F010701 水声通信",label:"F010701 水声通信"}, {value:"F050804 先进光学制造与检测",label:"F050804 先进光学制造与检测"}, {value:"F060106 神经网络理论与方法",label:"F060106 神经网络理论与方法"}, {value:"H0920 神经症和应激相关障碍",label:"H0920 神经症和应激相关障碍"}, {value:"H1102 皮肤遗传及相关疾病",label:"H1102 皮肤遗传及相关疾病"}, {value:"H1623 内分泌系统肿瘤",label:"H1623 内分泌系统肿瘤"}, {value:"H2002 临床微生物学检验",label:"H2002 临床微生物学检验"}, {value:"A040306 外场中的原子分子性质及其操控",label:"A040306 外场中的原子分子性质及其操控"}, {value:"C0904 系统神经生物学",label:"C0904 系统神经生物学"}, {value:"C140204 园艺作物害虫",label:"C140204 园艺作物害虫"}, {value:"C1704 养蜂学",label:"C1704 养蜂学"}, {value:"D0409 应用地球物理学",label:"D0409 应用地球物理学"}, {value:"E0501 机构学与机器人",label:"E0501 机构学与机器人"}, {value:"E0705 高电压与绝缘",label:"E0705 高电压与绝缘"}, {value:"E0708 脉冲功率技术",label:"E0708 脉冲功率技术"}, {value:"E090802 水工结构实验、观测与分析",label:"E090802 水工结构实验、观测与分析"}, {value:"F020206 并行与分布式软件",label:"F020206 并行与分布式软件"}, {value:"F050210 微纳光电子器件",label:"F050210 微纳光电子器件"}, {value:"H1407 味觉、口颌面疼痛、咬合及颞下颌关节疾病",label:"H1407 味觉、口颌面疼痛、咬合及颞下颌关节疾病"}, {value:"B030702 大分子理论、计算与模拟",label:"B030702 大分子理论、计算与模拟"}, {value:"C1407 农业有害生物检疫与入侵生物学",label:"C1407 农业有害生物检疫与入侵生物学"}, {value:"E050604 机械系统集成设计",label:"E050604 机械系统集成设计"}, {value:"E060408 火灾",label:"E060408 火灾"}, {value:"E0712 生物电磁技术",label:"E0712 生物电磁技术"}, {value:"H0923 儿童和青少年精神障碍",label:"H0923 儿童和青少年精神障碍"}, {value:"H2802 中药鉴定",label:"H2802 中药鉴定"}, {value:"A011004 极限理论",label:"A011004 极限理论"}, {value:"C010503 人体微生物学",label:"C010503 人体微生物学"}, {value:"C030302 动物生理生态学",label:"C030302 动物生理生态学"}, {value:"C150201 蔬菜生理与栽培学",label:"C150201 蔬菜生理与栽培学"}, {value:"C161303 植被与荒漠化",label:"C161303 植被与荒漠化"}, {value:"E060305 微观传递过程",label:"E060305 微观传递过程"}, {value:"E080403 城镇给排水系统",label:"E080403 城镇给排水系统"}, {value:"F012501 医学成像检测",label:"F012501 医学成像检测"}, {value:"F030601 无损检测技术及装置",label:"F030601 无损检测技术及装置"}, {value:"G0410 社会福利管理",label:"G0410 社会福利管理"}, {value:"A011301 分布参数系统的控制理论",label:"A011301 分布参数系统的控制理论"}, {value:"A011706 数值逼近与计算几何",label:"A011706 数值逼近与计算几何"}, {value:"A020207 弹道力学与飞行力学",label:"A020207 弹道力学与飞行力学"}, {value:"A0502 粒子物理学和场论",label:"A0502 粒子物理学和场论"}, {value:"A0802",label:"A0802"}, {value:"C100101 细胞与分子生物力学",label:"C100101 细胞与分子生物力学"}, {value:"C1506 食用真菌学",label:"C1506 食用真菌学"}, {value:"C200702 食品化学残留与控制",label:"C200702 食品化学残留与控制"}, {value:"D0306 实验地球化学和计算地球化学",label:"D0306 实验地球化学和计算地球化学"}, {value:"E0111 金属材料的腐蚀与防护",label:"E0111 金属材料的腐蚀与防护"}, {value:"E031302 环境友好高分子材料",label:"E031302 环境友好高分子材料"}, {value:"E091005 海洋资源开发利用",label:"E091005 海洋资源开发利用"}, {value:"F020702 计算机网络通信协议",label:"F020702 计算机网络通信协议"}, {value:"H1403 口腔颌面部遗传性疾病和发育畸形及软组织缺损修复",label:"H1403 口腔颌面部遗传性疾病和发育畸形及软组织缺损修复"}, {value:"H2701 脏腑气血津液体质",label:"H2701 脏腑气血津液体质"}, {value:"A040413 光学在生命科学中的应用",label:"A040413 光学在生命科学中的应用"}, {value:"A040501 线性与非线性声学",label:"A040501 线性与非线性声学"}, {value:"A050606 等离子体诊断",label:"A050606 等离子体诊断"}, {value:"B020307 胶体与界面理论方法及表征技术",label:"B020307 胶体与界面理论方法及表征技术"}, {value:"B070201 蛋白质和多肽化学生物学",label:"B070201 蛋白质和多肽化学生物学"}, {value:"C100602 纳米载体与递送",label:"C100602 纳米载体与递送"}, {value:"D0305 同位素和化学年代学",label:"D0305 同位素和化学年代学"}, {value:"F010106 认知信息论",label:"F010106 认知信息论"}, {value:"F020208 可信软件",label:"F020208 可信软件"}, {value:"H1406 唾液、涎腺疾病、口腔颌面脉管神经及颌骨良性疾病",label:"H1406 唾液、涎腺疾病、口腔颌面脉管神经及颌骨良性疾病"}, {value:"H1804 X射线与CT、电子与离子束、放射诊断与质量控制",label:"H1804 X射线与CT、电子与离子束、放射诊断与质量控制"}, {value:"A010102 代数数论",label:"A010102 代数数论"}, {value:"A010505 函数逼近论",label:"A010505 函数逼近论"}, {value:"A020310 表面、界面与薄膜力学",label:"A020310 表面、界面与薄膜力学"}, {value:"A0403 原子和分子物理",label:"A0403 原子和分子物理"}, {value:"A050407 核技术在环境科学、地学和考古中的应用",label:"A050407 核技术在环境科学、地学和考古中的应用"}, {value:"B0303 化学动态学",label:"B0303 化学动态学"}, {value:"B030608 化学电源",label:"B030608 化学电源"}, {value:"B0603 环境毒理与健康",label:"B0603 环境毒理与健康"}, {value:"C060702 生物信息算法及工具",label:"C060702 生物信息算法及工具"}, {value:"C140103 植物细菌病害",label:"C140103 植物细菌病害"}, {value:"E0107 金属材料的微观结构",label:"E0107 金属材料的微观结构"}, {value:"E010702 金属材料的界面问题",label:"E010702 金属材料的界面问题"}, {value:"E010902 金属的凝固行为与结晶理论",label:"E010902 金属的凝固行为与结晶理论"}, {value:"E041105 矿物材料与应用",label:"E041105 矿物材料与应用"}, {value:"E090201 农业水循环与利用",label:"E090201 农业水循环与利用"}, {value:"A040210 凝聚态物质的光学和波谱学、物质与粒子的相互作用和辐射",label:"A040210 凝聚态物质的光学和波谱学、物质与粒子的相互作用和辐射"}, {value:"C0913 学习与记忆",label:"C0913 学习与记忆"}, {value:"C1403 农田草害",label:"C1403 农田草害"}, {value:"C1408 植物保护生物技术",label:"C1408 植物保护生物技术"}, {value:"A020304 本构关系",label:"A020304 本构关系"}, {value:"A040301 原子和分子结构理论",label:"A040301 原子和分子结构理论"}, {value:"C03 生态学",label:"C03 生态学"}, {value:"D041004 太阳大气和行星际物理学",label:"D041004 太阳大气和行星际物理学"}, {value:"H0928 神经系统和精神疾病诊疗新技术",label:"H0928 神经系统和精神疾病诊疗新技术"}, {value:"A050609 惯性约束等离子体",label:"A050609 惯性约束等离子体"}, {value:"C031002 毒理生态学",label:"C031002 毒理生态学"}, {value:"D0501 对流层大气物理学",label:"D0501 对流层大气物理学"}, {value:"E041004 安全检测与监控",label:"E041004 安全检测与监控"}, {value:"E0422 资源利用科学及其他",label:"E0422 资源利用科学及其他"}, {value:"F012002 天线理论与技术",label:"F012002 天线理论与技术"}, {value:"F020509 人机交互",label:"F020509 人机交互"}, {value:"F050604 固体激光器件",label:"F050604 固体激光器件"}, {value:"H16 肿瘤学",label:"H16 肿瘤学"}, {value:"B0306 化学反应机制",label:"B0306 化学反应机制"}, {value:"B080603 化工过程模拟、优化与控制",label:"B080603 化工过程模拟、优化与控制"}, {value:"B081102 低值与废弃资源的有效利用",label:"B081102 低值与废弃资源的有效利用"}, {value:"F051206 医学光学诊断与治疗",label:"F051206 医学光学诊断与治疗"}, {value:"H1807 医学光子学、光谱与光学成像",label:"H1807 医学光子学、光谱与光学成像"}, {value:"B050804 太阳能电池",label:"B050804 太阳能电池"}, {value:"C020203 植物区系地理学",label:"C020203 植物区系地理学"}, {value:"E060503 多相流传热传质",label:"E060503 多相流传热传质"}, {value:"E080603 环境岩土工程",label:"E080603 环境岩土工程"}, {value:"F010607 空天地网络",label:"F010607 空天地网络"}, {value:"F050208 有源/无源光纤器件",label:"F050208 有源/无源光纤器件"}, {value:"C060406 遗传与变异",label:"C060406 遗传与变异"}, {value:"C0707 细胞运动与微环境",label:"C0707 细胞运动与微环境"}, {value:"D0405 重力学",label:"D0405 重力学"}, {value:"H1912 病原生物与感染其他科学问题",label:"H1912 病原生物与感染其他科学问题"}, {value:"H2817 中药毒理",label:"H2817 中药毒理"}, {value:"A020203 运动稳定性及其控制",label:"A020203 运动稳定性及其控制"}, {value:"C0104 微生物学研究的新技术与新方法",label:"C0104 微生物学研究的新技术与新方法"}, {value:"C050604 电离辐射生物物理与放射生物学",label:"C050604 电离辐射生物物理与放射生物学"}, {value:"C200302 食品发酵",label:"C200302 食品发酵"}, {value:"F040201 多核/系统芯片设计方法",label:"F040201 多核/系统芯片设计方法"}, {value:"H19 医学病原生物与感染",label:"H19 医学病原生物与感染"}, {value:"H2716 中医老年病",label:"H2716 中医老年病"}, {value:"B060204 固体废物污染控制化学",label:"B060204 固体废物污染控制化学"}, {value:"B0811 资源与环境化工",label:"B0811 资源与环境化工"}, {value:"C01 微生物学",label:"C01 微生物学"}, {value:"C170203 草地环境与灾害",label:"C170203 草地环境与灾害"}, {value:"D0202 地层学",label:"D0202 地层学"}, {value:"E0419 资源循环科学",label:"E0419 资源循环科学"}, {value:"E050703 人－机－环境工程学",label:"E050703 人－机－环境工程学"}, {value:"E090803 水工和海工材料",label:"E090803 水工和海工材料"}, {value:"F020102 新型计算模型",label:"F020102 新型计算模型"}, {value:"A020102 物理力学",label:"A020102 物理力学"}, {value:"B010103 稀土与锕系元素化学",label:"B010103 稀土与锕系元素化学"}, {value:"B050305 生物质材料化学",label:"B050305 生物质材料化学"}, {value:"C031202 保护生物学",label:"C031202 保护生物学"}, {value:"C160501 树木生长发育",label:"C160501 树木生长发育"}, {value:"E050701 机械仿生原理",label:"E050701 机械仿生原理"}, {value:"E0710 电磁环境与电磁兼容",label:"E0710 电磁环境与电磁兼容"}, {value:"F010602 深空通信",label:"F010602 深空通信"}, {value:"F010802 视频编码",label:"F010802 视频编码"}, {value:"F011206 雷达信号处理",label:"F011206 雷达信号处理"}, {value:"F011305 稀疏数据获取与处理",label:"F011305 稀疏数据获取与处理"}, {value:"F020302 计算机系统设计与性能评测",label:"F020302 计算机系统设计与性能评测"}, {value:"F030118 系统建模、分析与综合",label:"F030118 系统建模、分析与综合"}, {value:"H0430 生殖系统/围生医学/新生儿疾病其他科学问题",label:"H0430 生殖系统/围生医学/新生儿疾病其他科学问题"}, {value:"H0717 代谢综合征",label:"H0717 代谢综合征"}, {value:"B050203 药物传输与缓释",label:"B050203 药物传输与缓释"}, {value:"C020102 植物形态发生",label:"C020102 植物形态发生"}, {value:"D021102 活动构造",label:"D021102 活动构造"}, {value:"E020404 功能类陶瓷复合材料",label:"E020404 功能类陶瓷复合材料"}, {value:"E041202 湿法冶金",label:"E041202 湿法冶金"}, {value:"F010604 卫星测控",label:"F010604 卫星测控"}, {value:"H1305 耳鼻咽喉遗传与发育相关疾病",label:"H1305 耳鼻咽喉遗传与发育相关疾病"}, {value:"A011601 组合设计",label:"A011601 组合设计"}, {value:"B0307 高分子物理与高分子物理化学",label:"B0307 高分子物理与高分子物理化学"}, {value:"B040403 单分子单细胞单颗粒分析",label:"B040403 单分子单细胞单颗粒分析"}, {value:"C040202 动物系统学",label:"C040202 动物系统学"}, {value:"C050101 生物大分子结构计算与理论预测",label:"C050101 生物大分子结构计算与理论预测"}, {value:"C161101 经济林重要性状形成及调控",label:"C161101 经济林重要性状形成及调控"}, {value:"E010802 金属材料的疲劳与断裂",label:"E010802 金属材料的疲劳与断裂"}, {value:"E0401 金属与非金属地下开采",label:"E0401 金属与非金属地下开采"}, {value:"E041501 轻金属",label:"E041501 轻金属"}, {value:"E060106 热力系统动态特性、诊断与控制",label:"E060106 热力系统动态特性、诊断与控制"}, {value:"E090702 岩土体试验、现场观测与分析",label:"E090702 岩土体试验、现场观测与分析"}, {value:"F040410 新型半导体电子器件",label:"F040410 新型半导体电子器件"}, {value:"A011003 随机微分方程",label:"A011003 随机微分方程"}, {value:"A011101 抽样调查与试验设计",label:"A011101 抽样调查与试验设计"}, {value:"A0507 同步辐射技术及其应用",label:"A0507 同步辐射技术及其应用"}, {value:"B0107 绿色合成",label:"B0107 绿色合成"}, {value:"B010703 光化学合成",label:"B010703 光化学合成"}, {value:"B060106 纳米环境化学",label:"B060106 纳米环境化学"}, {value:"B0801 化工热力学",label:"B0801 化工热力学"}, {value:"B080104 分子模拟与计算",label:"B080104 分子模拟与计算"}, {value:"E020201 特种玻璃材料",label:"E020201 特种玻璃材料"}, {value:"F0202 计算机软件",label:"F0202 计算机软件"}, {value:"H0904 运动调节与运动障碍",label:"H0904 运动调节与运动障碍"}, {value:"A0304 太阳和太阳系",label:"A0304 太阳和太阳系"}, {value:"A030402 太阳日冕物质抛射、耀斑、日珥和其他活动",label:"A030402 太阳日冕物质抛射、耀斑、日珥和其他活动"}, {value:"A030803 高能天体物理技术方法和空间天文技术与方法",label:"A030803 高能天体物理技术方法和空间天文技术与方法"}, {value:"B0810 能源化工",label:"B0810 能源化工"}, {value:"C110501 糖、脂代谢",label:"C110501 糖、脂代谢"}, {value:"C170201 草地与放牧学",label:"C170201 草地与放牧学"}, {value:"E030301 设计与制备",label:"E030301 设计与制备"}, {value:"E030904 自组装有机材料与图形化",label:"E030904 自组装有机材料与图形化"}, {value:"E060104 节能与储能中的工程热物理问题",label:"E060104 节能与储能中的工程热物理问题"}, {value:"E070202 绝缘与功能电介质材料的应用基础",label:"E070202 绝缘与功能电介质材料的应用基础"}, {value:"F012005 微波电路与器件",label:"F012005 微波电路与器件"}, {value:"F030210 过程控制系统",label:"F030210 过程控制系统"}, {value:"F050608 激光技术及应用",label:"F050608 激光技术及应用"}, {value:"G04 宏观管理与政策",label:"G04 宏观管理与政策"}, {value:"H1903 病原真菌、真菌感染与宿主免疫",label:"H1903 病原真菌、真菌感染与宿主免疫"}, {value:"H2707 经络与腧穴",label:"H2707 经络与腧穴"}, {value:"A040304 大分子、团簇与特殊原子分子性质",label:"A040304 大分子、团簇与特殊原子分子性质"}, {value:"B0804 分离工程",label:"B0804 分离工程"}, {value:"C031302 外来物种的入侵与生态安全性评价",label:"C031302 外来物种的入侵与生态安全性评价"}, {value:"C0705 细胞衰老",label:"C0705 细胞衰老"}, {value:"C200403 食品组分相互作用",label:"C200403 食品组分相互作用"}, {value:"E051204 微/纳机械系统组成原理与集成",label:"E051204 微/纳机械系统组成原理与集成"}, {value:"F010707 新型电磁材料与器件基础研究",label:"F010707 新型电磁材料与器件基础研究"}, {value:"F050805 微小光学器件与系统",label:"F050805 微小光学器件与系统"}, {value:"H1104 皮肤感染",label:"H1104 皮肤感染"}, {value:"H3108 消化与呼吸系统药物药理",label:"H3108 消化与呼吸系统药物药理"}, {value:"A0112 运筹学",label:"A0112 运筹学"}, {value:"C0305 群落生态学",label:"C0305 群落生态学"}, {value:"C080105 免疫调节",label:"C080105 免疫调节"}, {value:"C100308 口腔组织工程",label:"C100308 口腔组织工程"}, {value:"C130102 作物信息学",label:"C130102 作物信息学"}, {value:"C2103 医学心理学",label:"C2103 医学心理学"}, {value:"F010505 移动通信系统",label:"F010505 移动通信系统"}, {value:"F0203 计算机体系结构",label:"F0203 计算机体系结构"}, {value:"F0304 系统工程理论与技术",label:"F0304 系统工程理论与技术"}, {value:"F050211 光波导器件",label:"F050211 光波导器件"}, {value:"F060308 生物特征识别",label:"F060308 生物特征识别"}, {value:"G0301 博弈论与信息经济",label:"G0301 博弈论与信息经济"}, {value:"H0711 糖尿病发生的遗传和环境因素",label:"H0711 糖尿病发生的遗传和环境因素"}, {value:"H0720 脂肪细胞分化及功能异常",label:"H0720 脂肪细胞分化及功能异常"}, {value:"H2719 按摩推拿",label:"H2719 按摩推拿"}, {value:"A040212 量子计算中的凝聚态物理问题",label:"A040212 量子计算中的凝聚态物理问题"}, {value:"E050504 工程摩擦学与摩擦学设计",label:"E050504 工程摩擦学与摩擦学设计"}, {value:"E0607 可再生与替代能源利用中的工程热物理问题",label:"E0607 可再生与替代能源利用中的工程热物理问题"}, {value:"E080804 结构抗火",label:"E080804 结构抗火"}, {value:"F020507 科学工程计算与高性能计算应用",label:"F020507 科学工程计算与高性能计算应用"}, {value:"F050613 新型激光",label:"F050613 新型激光"}, {value:"H0929 神经系统和精神疾病其他科学问题",label:"H0929 神经系统和精神疾病其他科学问题"}, {value:"B040104 电泳分析",label:"B040104 电泳分析"}, {value:"B080202 化工流体力学",label:"B080202 化工流体力学"}, {value:"C1507 植物营养学",label:"C1507 植物营养学"}, {value:"D010403 自然资源利用与规划",label:"D010403 自然资源利用与规划"}, {value:"E070701 电机分析与设计",label:"E070701 电机分析与设计"}, {value:"F0103 通信理论与系统",label:"F0103 通信理论与系统"}, {value:"F010805 生物信息处理与分析",label:"F010805 生物信息处理与分析"}, {value:"F040703 新型微纳机电器件",label:"F040703 新型微纳机电器件"}, {value:"F060306 语音识别、合成与理解",label:"F060306 语音识别、合成与理解"}, {value:"G0413 区域发展管理",label:"G0413 区域发展管理"}, {value:"A050207 粒子天体物理和宇宙学",label:"A050207 粒子天体物理和宇宙学"}, {value:"A050305 放射性核束物理、超重元素合成及反应机制",label:"A050305 放射性核束物理、超重元素合成及反应机制"}, {value:"B060203 土壤污染控制与修复",label:"B060203 土壤污染控制与修复"}, {value:"C0915 神经系统结构与功能异常",label:"C0915 神经系统结构与功能异常"}, {value:"C120108 模式生物与模型建立",label:"C120108 模式生物与模型建立"}, {value:"C170101 畜禽资源",label:"C170101 畜禽资源"}, {value:"E060102 热力过程与热力循环",label:"E060102 热力过程与热力循环"}, {value:"E0604 燃烧学",label:"E0604 燃烧学"}, {value:"F030402 优化理论与方法",label:"F030402 优化理论与方法"}, {value:"F040403 半导体功率器件与集成",label:"F040403 半导体功率器件与集成"}, {value:"F050603 超快光子学与超快过程",label:"F050603 超快光子学与超快过程"}, {value:"H2717 中医养生与康复",label:"H2717 中医养生与康复"}, {value:"A0110 概率论与随机分析",label:"A0110 概率论与随机分析"}, {value:"A020303 疲劳与可靠性",label:"A020303 疲劳与可靠性"}, {value:"B030203 量热学",label:"B030203 量热学"}, {value:"B060105 污染物迁移转化与区域环境过程",label:"B060105 污染物迁移转化与区域环境过程"}, {value:"D041001 高层大气物理学",label:"D041001 高层大气物理学"}, {value:"H0505 泌尿系统免疫相关疾病",label:"H0505 泌尿系统免疫相关疾病"}, {value:"A050403 核效应分析技术",label:"A050403 核效应分析技术"}, {value:"C130408 糖料作物种质资源与遗传育种",label:"C130408 糖料作物种质资源与遗传育种"}, {value:"C1605 森林生物学",label:"C1605 森林生物学"}, {value:"C161001 林木种质资源",label:"C161001 林木种质资源"}, {value:"E0101 金属结构材料",label:"E0101 金属结构材料"}, {value:"E010602 金属材料的合金相变",label:"E010602 金属材料的合金相变"}, {value:"E0711 超导电工学",label:"E0711 超导电工学"}, {value:"F012504 医学影像处理",label:"F012504 医学影像处理"}, {value:"F020308 嵌入式系统",label:"F020308 嵌入式系统"}, {value:"H1101 皮肤形态、结构和功能异常",label:"H1101 皮肤形态、结构和功能异常"}, {value:"C020501 无性繁殖",label:"C020501 无性繁殖"}, {value:"C0207 植物学研究的新技术、新方法",label:"C0207 植物学研究的新技术、新方法"}, {value:"C04 动物学",label:"C04 动物学"}, {value:"C1608 森林经理学",label:"C1608 森林经理学"}, {value:"E0415 有色金属冶金",label:"E0415 有色金属冶金"}, {value:"E050801 铸造工艺与装备",label:"E050801 铸造工艺与装备"}, {value:"F040401 半导体传感器",label:"F040401 半导体传感器"}, {value:"H1106 皮肤附属器及相关疾病",label:"H1106 皮肤附属器及相关疾病"}, {value:"H2713 中医眼科",label:"H2713 中医眼科"}, {value:"A010402 低维流形上的拓扑",label:"A010402 低维流形上的拓扑"}, {value:"A0106 泛函分析",label:"A0106 泛函分析"}, {value:"A0308 天文技术和方法",label:"A0308 天文技术和方法"}, {value:"B030202 溶液化学",label:"B030202 溶液化学"}, {value:"B0803 反应工程",label:"B0803 反应工程"}, {value:"C170110 畜禽环境学",label:"C170110 畜禽环境学"}, {value:"E030906 纳米效应与纳米技术",label:"E030906 纳米效应与纳米技术"}, {value:"E0418 特殊冶金、外场冶金与冶金新理论、新方法",label:"E0418 特殊冶金、外场冶金与冶金新理论、新方法"}, {value:"E050203 复合传动",label:"E050203 复合传动"}, {value:"E060504 气固两相流",label:"E060504 气固两相流"}, {value:"E090105 水资源开发与利用",label:"E090105 水资源开发与利用"}, {value:"F030302 数据建模方法与技术",label:"F030302 数据建模方法与技术"}, {value:"A0102 代数学",label:"A0102 代数学"}, {value:"A010403 一般拓扑学",label:"A010403 一般拓扑学"}, {value:"B010701 生物催化与生物转化",label:"B010701 生物催化与生物转化"}, {value:"C0906 视觉神经生物学",label:"C0906 视觉神经生物学"}, {value:"D0307 宇宙化学与比较行星学",label:"D0307 宇宙化学与比较行星学"}, {value:"E060302 辐射换热",label:"E060302 辐射换热"}, {value:"F011202 合成孔径雷达成像",label:"F011202 合成孔径雷达成像"}, {value:"H0602 运动系统遗传性疾病",label:"H0602 运动系统遗传性疾病"}, {value:"C010801 植物病毒学",label:"C010801 植物病毒学"}, {value:"C150704 养分资源与养分循环",label:"C150704 养分资源与养分循环"}, {value:"F050104 光全息技术与衍射光学",label:"F050104 光全息技术与衍射光学"}, {value:"H2004 临床免疫学检验",label:"H2004 临床免疫学检验"}, {value:"A040504 噪声、噪声效应及其控制",label:"A040504 噪声、噪声效应及其控制"}, {value:"A050607 强粒子束与辐射源",label:"A050607 强粒子束与辐射源"}, {value:"C010701 植物病原真菌学",label:"C010701 植物病原真菌学"}, {value:"C031203 受损生态系统恢复",label:"C031203 受损生态系统恢复"}, {value:"C060404 人类表型性状",label:"C060404 人类表型性状"}, {value:"C120105 组织器官稳态维持与再生",label:"C120105 组织器官稳态维持与再生"}, {value:"C160701 森林植被恢复与保持",label:"C160701 森林植被恢复与保持"}, {value:"C1610 林木遗传育种学",label:"C1610 林木遗传育种学"}, {value:"D040101 物理大地测量学",label:"D040101 物理大地测量学"}, {value:"E011001 金属材料表面的组织、结构与性能",label:"E011001 金属材料表面的组织、结构与性能"}, {value:"E0416 材料冶金过程工程",label:"E0416 材料冶金过程工程"}, {value:"E050403 机械结构安全评定",label:"E050403 机械结构安全评定"}, {value:"E060406 特殊环境与条件下燃烧",label:"E060406 特殊环境与条件下燃烧"}, {value:"E0904 河流海岸动力学与泥沙研究",label:"E0904 河流海岸动力学与泥沙研究"}, {value:"E090403 河流泥沙及演变",label:"E090403 河流泥沙及演变"}, {value:"E090601 水力机械的流动理论",label:"E090601 水力机械的流动理论"}, {value:"F030909 多机器人协作控制",label:"F030909 多机器人协作控制"}, {value:"G030701 劳动经济",label:"G030701 劳动经济"}, {value:"H0415 男性性功能障碍",label:"H0415 男性性功能障碍"}, {value:"B040613 高分子理论计算与模拟",label:"B040613 高分子理论计算与模拟"}, {value:"B070202 核酸化学生物学",label:"B070202 核酸化学生物学"}, {value:"C060701 生物数据分析",label:"C060701 生物数据分析"}, {value:"C1007 组织工程研究的新技术与新方法",label:"C1007 组织工程研究的新技术与新方法"}, {value:"D070108 土壤质量与食物安全",label:"D070108 土壤质量与食物安全"}, {value:"F010705 海上通信网",label:"F010705 海上通信网"}, {value:"F030106 信息物理系统分析与控制",label:"F030106 信息物理系统分析与控制"}, {value:"F030107 复杂系统分析与控制",label:"F030107 复杂系统分析与控制"}, {value:"F040406 薄膜电子器件与集成",label:"F040406 薄膜电子器件与集成"}, {value:"H0516 血液净化和替代治疗",label:"H0516 血液净化和替代治疗"}, {value:"H2302 法医物证学、法医人类学",label:"H2302 法医物证学、法医人类学"}, {value:"C050208 核糖核酸生物化学",label:"C050208 核糖核酸生物化学"}, {value:"C0710 细胞物质运输",label:"C0710 细胞物质运输"}, {value:"C0711 细胞呼吸与代谢",label:"C0711 细胞呼吸与代谢"}, {value:"C150302 观赏作物种质资源与遗传育种学",label:"C150302 观赏作物种质资源与遗传育种学"}, {value:"C200503 水产食品",label:"C200503 水产食品"}, {value:"E0314 高分子材料结构与性能",label:"E0314 高分子材料结构与性能"}, {value:"E0405 露天开采与边坡工程",label:"E0405 露天开采与边坡工程"}, {value:"F010807 生物系统功能建模与仿真",label:"F010807 生物系统功能建模与仿真"}, {value:"F011906 人工电磁媒质",label:"F011906 人工电磁媒质"}, {value:"H0805 血小板异常及相关疾病",label:"H0805 血小板异常及相关疾病"}, {value:"A020206 转子动力学",label:"A020206 转子动力学"}, {value:"A040507 声学换能器、声学测量方法和声学材料",label:"A040507 声学换能器、声学测量方法和声学材料"}, {value:"A050303 核裂变、核聚变、核衰变",label:"A050303 核裂变、核聚变、核衰变"}, {value:"B030604 理论与计算有机化学",label:"B030604 理论与计算有机化学"}, {value:"B060304 环境污染与食品安全",label:"B060304 环境污染与食品安全"}, {value:"B080405 机械与其他分离过程",label:"B080405 机械与其他分离过程"}, {value:"C160302 木材加工学",label:"C160302 木材加工学"}, {value:"C200404 食品分子营养学",label:"C200404 食品分子营养学"}, {value:"C200704 食品加工过程中有害产物分析",label:"C200704 食品加工过程中有害产物分析"}, {value:"D0504 中层与行星大气物理学",label:"D0504 中层与行星大气物理学"}, {value:"D06 海洋科学",label:"D06 海洋科学"}, {value:"D071403 重大工程活动的影响",label:"D071403 重大工程活动的影响"}, {value:"E020602 金刚石及其他超硬材料",label:"E020602 金刚石及其他超硬材料"}, {value:"E021401 生态环境材料",label:"E021401 生态环境材料"}, {value:"F050216 新型光电子器件",label:"F050216 新型光电子器件"}, {value:"H0202 循环系统遗传性疾病",label:"H0202 循环系统遗传性疾病"}, {value:"H0313 肝胆胰免疫及相关疾病",label:"H0313 肝胆胰免疫及相关疾病"}, {value:"H0819 骨髓瘤及其他浆细胞疾病",label:"H0819 骨髓瘤及其他浆细胞疾病"}, {value:"H0909 神经系统炎症及感染性疾病",label:"H0909 神经系统炎症及感染性疾病"}, {value:"A040307 量子信息中的原子分子物理问题",label:"A040307 量子信息中的原子分子物理问题"}, {value:"B040206 光/电分析化学",label:"B040206 光/电分析化学"}, {value:"C020605 水生植物与资源",label:"C020605 水生植物与资源"}, {value:"C030701 景观生态学",label:"C030701 景观生态学"}, {value:"C130105 农业系统工程",label:"C130105 农业系统工程"}, {value:"D020104 地球环境与生命演化",label:"D020104 地球环境与生命演化"}, {value:"E010603 金属材料的合金设计",label:"E010603 金属材料的合金设计"}, {value:"F011101 多维信号处理",label:"F011101 多维信号处理"}, {value:"F011902 计算电磁学",label:"F011902 计算电磁学"}, {value:"F040801 纳米信息器件与纳电子技术",label:"F040801 纳米信息器件与纳电子技术"}, {value:"F0502 光子与光电子器件",label:"F0502 光子与光电子器件"}, {value:"H1001 免疫器官/组织/细胞的发育分化异常",label:"H1001 免疫器官/组织/细胞的发育分化异常"}, {value:"H1826 影像医学与生物医学工程其他科学问题",label:"H1826 影像医学与生物医学工程其他科学问题"}, {value:"A011401 信息论",label:"A011401 信息论"}, {value:"A040411 激光光谱学及高分辨高灵敏光谱方法",label:"A040411 激光光谱学及高分辨高灵敏光谱方法"}, {value:"B010605 超分子复合物与聚合物",label:"B010605 超分子复合物与聚合物"}, {value:"B040304 磁共振波谱",label:"B040304 磁共振波谱"}, {value:"B050301 高分子改性与反应加工成型",label:"B050301 高分子改性与反应加工成型"}, {value:"C0608 遗传学研究新技术与新方法",label:"C0608 遗传学研究新技术与新方法"}, {value:"E051104 机械制造过程监测与控制",label:"E051104 机械制造过程监测与控制"}, {value:"F010206 无线资源管理",label:"F010206 无线资源管理"}, {value:"F010305 专用通信",label:"F010305 专用通信"}, {value:"F050305 光纤材料及特种光纤",label:"F050305 光纤材料及特种光纤"}, {value:"F060502 知识表示与自动推理",label:"F060502 知识表示与自动推理"}, {value:"A010207 代数几何",label:"A010207 代数几何"}, {value:"A010401 代数拓扑与微分拓扑",label:"A010401 代数拓扑与微分拓扑"}, {value:"A050307 核天体物理",label:"A050307 核天体物理"}, {value:"C1307 作物种子学",label:"C1307 作物种子学"}, {value:"C180702 兽医毒理学",label:"C180702 兽医毒理学"}, {value:"E020502 新型耐火材料",label:"E020502 新型耐火材料"}, {value:"E031403 高分子材料的表面与界面",label:"E031403 高分子材料的表面与界面"}, {value:"H0222 循环系统疾病诊疗新技术",label:"H0222 循环系统疾病诊疗新技术"}, {value:"A040104 凝聚态物质的（非电子）输运性质",label:"A040104 凝聚态物质的（非电子）输运性质"}, {value:"C110207 生殖生理",label:"C110207 生殖生理"}, {value:"C1111 人体组织与胚胎学",label:"C1111 人体组织与胚胎学"}, {value:"C120202 卵巢功能与卵子成熟",label:"C120202 卵巢功能与卵子成熟"}, {value:"C1405 植物化学保护",label:"C1405 植物化学保护"}, {value:"C170204 牧草生产与加工",label:"C170204 牧草生产与加工"}, {value:"C180102 畜禽组织胚胎学",label:"C180102 畜禽组织胚胎学"}, {value:"E010504 金属能源和环境材料",label:"E010504 金属能源和环境材料"}, {value:"E0110 金属材料表面科学与工程",label:"E0110 金属材料表面科学与工程"}, {value:"E021101 高温超导材料",label:"E021101 高温超导材料"}, {value:"E0706 电力电子学",label:"E0706 电力电子学"}, {value:"E0801 建筑学",label:"E0801 建筑学"}, {value:"F011105 信号检测与估计",label:"F011105 信号检测与估计"}, {value:"F0201 计算机科学的基础理论",label:"F0201 计算机科学的基础理论"}, {value:"F050106 光电子显示材料、器件及技术",label:"F050106 光电子显示材料、器件及技术"}, {value:"G0302 行为经济与实验经济",label:"G0302 行为经济与实验经济"}, {value:"G0402 政策科学理论与方法",label:"G0402 政策科学理论与方法"}, {value:"H0418 胎盘结构与功能异常",label:"H0418 胎盘结构与功能异常"}, {value:"H0607 骨、关节、软组织感染",label:"H0607 骨、关节、软组织感染"}, {value:"H1501 心肺复苏",label:"H1501 心肺复苏"}, {value:"A0203 固体力学",label:"A0203 固体力学"}, {value:"C0911 行为神经生物学",label:"C0911 行为神经生物学"}, {value:"E060103 能源利用系统与评价",label:"E060103 能源利用系统与评价"}, {value:"E060404 气体、液体燃料燃烧",label:"E060404 气体、液体燃料燃烧"}, {value:"E070301 电弧与电接触",label:"E070301 电弧与电接触"}, {value:"F010603 卫星通信",label:"F010603 卫星通信"}, {value:"F020403 大容量存储设备与系统",label:"F020403 大容量存储设备与系统"}, {value:"F030119 系统辨识与状态估计",label:"F030119 系统辨识与状态估计"}, {value:"F0302 控制系统",label:"F0302 控制系统"}, {value:"F030912 仿生机器人理论与技术",label:"F030912 仿生机器人理论与技术"}, {value:"F05 光学和光电子学",label:"F05 光学和光电子学"}, {value:"F060709 脑机接口与神经工程",label:"F060709 脑机接口与神经工程"}, {value:"H1203 巩膜、葡萄膜、眼免疫",label:"H1203 巩膜、葡萄膜、眼免疫"}, {value:"H1911 病原生物与感染研究与诊疗新技术",label:"H1911 病原生物与感染研究与诊疗新技术"}, {value:"A0109 数学物理",label:"A0109 数学物理"}, {value:"B020302 溶胶与凝胶",label:"B020302 溶胶与凝胶"}, {value:"C161003 林木育种理论与方法",label:"C161003 林木育种理论与方法"}, {value:"D0302 微量元素地球化学",label:"D0302 微量元素地球化学"}, {value:"F010204 网络服务",label:"F010204 网络服务"}, {value:"F012405 生物信息处理与分析",label:"F012405 生物信息处理与分析"}, {value:"F030111 鲁棒控制",label:"F030111 鲁棒控制"}, {value:"F040502 半导体器件物理",label:"F040502 半导体器件物理"}, {value:"F050503 光量子计算与信息处理",label:"F050503 光量子计算与信息处理"}, {value:"F0516 交叉学科中的光学问题",label:"F0516 交叉学科中的光学问题"}, {value:"G010901 管理系统分析",label:"G010901 管理系统分析"}, {value:"H0210 心脏瓣膜疾病",label:"H0210 心脏瓣膜疾病"}, {value:"H0807 骨髓增生异常综合征",label:"H0807 骨髓增生异常综合征"}, {value:"A040107 表面、界面、介观系统、纳米系统的非电子性质",label:"A040107 表面、界面、介观系统、纳米系统的非电子性质"}, {value:"A050603 等离子体中的波与不稳定性",label:"A050603 等离子体中的波与不稳定性"}, {value:"C200101 果蔬原料学",label:"C200101 果蔬原料学"}, {value:"E0411 矿物工程与物质分离科学",label:"E0411 矿物工程与物质分离科学"}, {value:"F050702 光谱诊断技术",label:"F050702 光谱诊断技术"}, {value:"H1108 皮肤及其附属器疾病其他科学问题",label:"H1108 皮肤及其附属器疾病其他科学问题"}, {value:"H1812 生物医学传感",label:"H1812 生物医学传感"}, {value:"A030102 宇宙结构的形成和演化及观测宇宙学",label:"A030102 宇宙结构的形成和演化及观测宇宙学"}, {value:"C020404 矿质元素代谢与运输",label:"C020404 矿质元素代谢与运输"}, {value:"C020503 植物配子体发生与受精",label:"C020503 植物配子体发生与受精"}, {value:"C161202 城市园林与功能",label:"C161202 城市园林与功能"}, {value:"E0103 金属非晶态、准晶和纳米晶材料",label:"E0103 金属非晶态、准晶和纳米晶材料"}, {value:"E070601 电力电子器件及其应用",label:"E070601 电力电子器件及其应用"}, {value:"E0902 农业水利",label:"E0902 农业水利"}, {value:"F0102 信息系统",label:"F0102 信息系统"}, {value:"F020707 网络行为学与网络生态学",label:"F020707 网络行为学与网络生态学"}, {value:"G030801 林业经济管理",label:"G030801 林业经济管理"}, {value:"H0513 前列腺疾病",label:"H0513 前列腺疾病"}, {value:"A030603 天文地球动力学及天体测量学的应用",label:"A030603 天文地球动力学及天体测量学的应用"}, {value:"A0404 光学",label:"A0404 光学"}, {value:"B020301 表面活性剂与分散体系",label:"B020301 表面活性剂与分散体系"}, {value:"B050201 吸附与分离功能分子",label:"B050201 吸附与分离功能分子"}, {value:"B070205 金属蛋白（酶）化学生物学",label:"B070205 金属蛋白（酶）化学生物学"}, {value:"C160303 人工复合木材",label:"C160303 人工复合木材"}, {value:"C160401 树木化学成分分析",label:"C160401 树木化学成分分析"}, {value:"C2107 社会心理学",label:"C2107 社会心理学"}, {value:"E090704 岩土体渗流及环境效应",label:"E090704 岩土体渗流及环境效应"}, {value:"E090901 海岸工程的基础理论",label:"E090901 海岸工程的基础理论"}, {value:"F020511 信息系统技术",label:"F020511 信息系统技术"}, {value:"G020702 消费者行为",label:"G020702 消费者行为"}, {value:"H1007 超敏反应性疾病",label:"H1007 超敏反应性疾病"}, {value:"H2608 卫生分析化学",label:"H2608 卫生分析化学"}, {value:"C10 生物力学与组织工程学",label:"C10 生物力学与组织工程学"}, {value:"C120114 干细胞与微环境",label:"C120114 干细胞与微环境"}, {value:"C1614 林业研究的新技术与新方法",label:"C1614 林业研究的新技术与新方法"}, {value:"C200401 食品营养组分",label:"C200401 食品营养组分"}, {value:"D0602 海洋物理学",label:"D0602 海洋物理学"}, {value:"E0206 碳素材料与超硬材料",label:"E0206 碳素材料与超硬材料"}, {value:"E090401 泥沙动力学",label:"E090401 泥沙动力学"}, {value:"F010104 网络编码",label:"F010104 网络编码"}, {value:"G020802 质量管理",label:"G020802 质量管理"}, {value:"H0603 运动系统免疫相关疾病",label:"H0603 运动系统免疫相关疾病"}, {value:"H0612 运动系统疾病诊疗新技术",label:"H0612 运动系统疾病诊疗新技术"}, {value:"H0916 睡眠与睡眠障碍",label:"H0916 睡眠与睡眠障碍"}, {value:"H1821 细胞移植、组织再生与生物反应器",label:"H1821 细胞移植、组织再生与生物反应器"}, {value:"A010206 编码与密码",label:"A010206 编码与密码"}, {value:"A0301 宇宙学",label:"A0301 宇宙学"}, {value:"B060401 环境计算化学",label:"B060401 环境计算化学"}, {value:"B080801 原料及中间体的绿色制造",label:"B080801 原料及中间体的绿色制造"}, {value:"C120111 干细胞定向分化",label:"C120111 干细胞定向分化"}, {value:"C200303 食品酿造",label:"C200303 食品酿造"}, {value:"E041607 焊接冶金",label:"E041607 焊接冶金"}, {value:"E0908 水工结构和材料及施工",label:"E0908 水工结构和材料及施工"}, {value:"F010207 认知无线电",label:"F010207 认知无线电"}, {value:"F030612 多传感器与多源信息融合",label:"F030612 多传感器与多源信息融合"}, {value:"G0303 计量经济与经济计算",label:"G0303 计量经济与经济计算"}, {value:"H1509 体表组织器官移植与再造",label:"H1509 体表组织器官移植与再造"}, {value:"A020412 交通流与颗粒流",label:"A020412 交通流与颗粒流"}, {value:"A020413 电磁与多场耦合流体力学",label:"A020413 电磁与多场耦合流体力学"}, {value:"A0503 核物理",label:"A0503 核物理"}, {value:"A0805",label:"A0805"}, {value:"B060501 环境放射化学",label:"B060501 环境放射化学"}, {value:"C010303 微生物合成生物学",label:"C010303 微生物合成生物学"}, {value:"E0102 金属基复合材料",label:"E0102 金属基复合材料"}, {value:"E020403 功能类陶瓷复合材料",label:"E020403 功能类陶瓷复合材料"}, {value:"E041001 通风与防尘",label:"E041001 通风与防尘"}, {value:"E0802 城乡规划",label:"E0802 城乡规划"}, {value:"H0312 胃肠道及腹腔感染性疾病",label:"H0312 胃肠道及腹腔感染性疾病"}, {value:"H0506 泌尿系统结石",label:"H0506 泌尿系统结石"}, {value:"A030201 银河系",label:"A030201 银河系"}, {value:"B030303 超快与激发态动力学",label:"B030303 超快与激发态动力学"}, {value:"B050503 结构与功能仿生材料化学",label:"B050503 结构与功能仿生材料化学"}, {value:"C0604 人类遗传学",label:"C0604 人类遗传学"}, {value:"F020704 网络服务质量",label:"F020704 网络服务质量"}, {value:"F030113 量子控制",label:"F030113 量子控制"}, {value:"F040101 半导体晶体材料",label:"F040101 半导体晶体材料"}, {value:"A030303 恒星形成与早期演化、星际介质和星际分子",label:"A030303 恒星形成与早期演化、星际介质和星际分子"}, {value:"A040404 纤维光学和集成光学中的物理问题",label:"A040404 纤维光学和集成光学中的物理问题"}, {value:"A0803",label:"A0803"}, {value:"B0302 化学热力学",label:"B0302 化学热力学"}, {value:"C050401 生物膜结构与功能",label:"C050401 生物膜结构与功能"}, {value:"E0803 建筑物理",label:"E0803 建筑物理"}, {value:"F010703 水下通信网",label:"F010703 水下通信网"}, {value:"F010902 光网络与控制管理",label:"F010902 光网络与控制管理"}, {value:"F060309 智能人机交互",label:"F060309 智能人机交互"}, {value:"H1016 免疫相关疾病其他科学问题",label:"H1016 免疫相关疾病其他科学问题"}, {value:"A0307 天体力学和人造卫星动力学",label:"A0307 天体力学和人造卫星动力学"}, {value:"B030606 分子磁学",label:"B030606 分子磁学"}, {value:"C050402 跨膜信号转导",label:"C050402 跨膜信号转导"}, {value:"C060602 DNA修饰及意义",label:"C060602 DNA修饰及意义"}, {value:"C140206 植物抗虫性",label:"C140206 植物抗虫性"}, {value:"C140503 植物害虫化学防治",label:"C140503 植物害虫化学防治"}, {value:"C1601 森林资源学",label:"C1601 森林资源学"}, {value:"D0412 空间环境和空间天气",label:"D0412 空间环境和空间天气"}, {value:"E0108 金属材料的力学行为",label:"E0108 金属材料的力学行为"}, {value:"F010612 新型介质电磁特性与应用",label:"F010612 新型介质电磁特性与应用"}, {value:"F011504 图像复原与修复",label:"F011504 图像复原与修复"}, {value:"F030112 预测控制",label:"F030112 预测控制"}, {value:"F050205 光探测材料与器件",label:"F050205 光探测材料与器件"}, {value:"G0101 管理理论与研究方法论",label:"G0101 管理理论与研究方法论"}, {value:"H0106 气道重塑与气道疾病",label:"H0106 气道重塑与气道疾病"}, {value:"H0223 循环系统疾病其他科学问题",label:"H0223 循环系统疾病其他科学问题"}, {value:"H0610 骨、关节、软组织运动损伤",label:"H0610 骨、关节、软组织运动损伤"}, {value:"H1015 免疫相关疾病诊疗新技术",label:"H1015 免疫相关疾病诊疗新技术"}, {value:"H1813 生物医学系统建模及仿真",label:"H1813 生物医学系统建模及仿真"}, {value:"H1825 用于检测、分析、成像及治疗的医学器件和仪器",label:"H1825 用于检测、分析、成像及治疗的医学器件和仪器"}, {value:"A020406 非牛顿流与流变学",label:"A020406 非牛顿流与流变学"}, {value:"A020408 流动控制和优化",label:"A020408 流动控制和优化"}, {value:"A030302 变星和激变变星、双星和多星系统",label:"A030302 变星和激变变星、双星和多星系统"}, {value:"A050302 原子核高激发态、高自旋态和超形变",label:"A050302 原子核高激发态、高自旋态和超形变"}, {value:"B060505 放射性废物处理与处置",label:"B060505 放射性废物处理与处置"}, {value:"C100102 骨、关节与运动系统生物力学",label:"C100102 骨、关节与运动系统生物力学"}, {value:"C1004 生物图像与生物电子学",label:"C1004 生物图像与生物电子学"}, {value:"C110204 消化生理",label:"C110204 消化生理"}, {value:"E041104 化学方法分离",label:"E041104 化学方法分离"}, {value:"E0503 机械动力学",label:"E0503 机械动力学"}, {value:"F010803 视频传输",label:"F010803 视频传输"}, {value:"F050207 光子晶体、超构材料及器件",label:"F050207 光子晶体、超构材料及器件"}, {value:"H0315 药物、毒物及酒精性消化系统疾病",label:"H0315 药物、毒物及酒精性消化系统疾病"}, {value:"H2001 临床生物化学检验",label:"H2001 临床生物化学检验"}, {value:"H3103 老年病药物药理",label:"H3103 老年病药物药理"}, {value:"B0701 分子探针",label:"B0701 分子探针"}, {value:"C010703 人类病原真菌学",label:"C010703 人类病原真菌学"}, {value:"C200204 食品脂质",label:"C200204 食品脂质"}, {value:"E0203 结构陶瓷",label:"E0203 结构陶瓷"}, {value:"F011102 声信号分析与处理",label:"F011102 声信号分析与处理"}, {value:"F011704 视频信息处理",label:"F011704 视频信息处理"}, {value:"F012201 真空电子学",label:"F012201 真空电子学"}, {value:"F030411 自动化系统安全与可靠性分析",label:"F030411 自动化系统安全与可靠性分析"}, {value:"F040108 有机/聚合物半导体材料",label:"F040108 有机/聚合物半导体材料"}, {value:"F040204 集成电路设计自动化",label:"F040204 集成电路设计自动化"}, {value:"F060701 基于认知机理的计算模型及应用",label:"F060701 基于认知机理的计算模型及应用"}, {value:"H0427 生殖免疫相关疾病",label:"H0427 生殖免疫相关疾病"}, {value:"H1207 全身疾病眼部表现、眼眶疾病",label:"H1207 全身疾病眼部表现、眼眶疾病"}, {value:"A011707 谱方法及高精度数值方法",label:"A011707 谱方法及高精度数值方法"}, {value:"A020208 载运工具动力学及其控制",label:"A020208 载运工具动力学及其控制"}, {value:"B030706 大分子链行为与相互作用",label:"B030706 大分子链行为与相互作用"}, {value:"B080403 结晶、干燥与吸收",label:"B080403 结晶、干燥与吸收"}, {value:"C110206 内分泌生理",label:"C110206 内分泌生理"}, {value:"C200103 畜产食品原料学",label:"C200103 畜产食品原料学"}, {value:"E0312 仿生材料",label:"E0312 仿生材料"}, {value:"F0104 通信网络",label:"F0104 通信网络"}, {value:"F030202 嵌入式控制系统",label:"F030202 嵌入式控制系统"}, {value:"F040206 集成电路验证与测试方法",label:"F040206 集成电路验证与测试方法"}, {value:"G0414 信息资源管理",label:"G0414 信息资源管理"}, {value:"A040309 冷原子分子物理",label:"A040309 冷原子分子物理"}, {value:"A0801",label:"A0801"}, {value:"B040102 分离介质",label:"B040102 分离介质"}, {value:"B080203 传质与传热",label:"B080203 传质与传热"}, {value:"B0808 精细化工与绿色制造",label:"B0808 精细化工与绿色制造"}, {value:"C1107 特殊环境生理学",label:"C1107 特殊环境生理学"}, {value:"E0106 金属材料的合金相、相变及合金设计",label:"E0106 金属材料的合金相、相变及合金设计"}, {value:"E031501 加工与成型中的化学与物理问题",label:"E031501 加工与成型中的化学与物理问题"}, {value:"E0703 电器及其系统",label:"E0703 电器及其系统"}, {value:"F010410 体域网",label:"F010410 体域网"}, {value:"F010601 空间通信",label:"F010601 空间通信"}, {value:"F010905 无线光通信",label:"F010905 无线光通信"}, {value:"F010908 新型传感器理论与技术",label:"F010908 新型传感器理论与技术"}, {value:"F0303 系统建模理论与仿真技术",label:"F0303 系统建模理论与仿真技术"}, {value:"F040501 半导体材料物理",label:"F040501 半导体材料物理"}, {value:"F050209 发光器件与光源",label:"F050209 发光器件与光源"}, {value:"F050901 激光材料",label:"F050901 激光材料"}, {value:"G040401 科学计量学与科技评价",label:"G040401 科学计量学与科技评价"}, {value:"H0502 泌尿系统遗传性疾病",label:"H0502 泌尿系统遗传性疾病"}, {value:"H1302 咽喉及颈部疾病",label:"H1302 咽喉及颈部疾病"}, {value:"H1811 人体医学信号检测、识别、处理与分析",label:"H1811 人体医学信号检测、识别、处理与分析"}, {value:"H2003 临床细胞学和血液学检验",label:"H2003 临床细胞学和血液学检验"}, {value:"A0103 几何学",label:"A0103 几何学"}, {value:"C060401 人类遗传的多样性",label:"C060401 人类遗传的多样性"}, {value:"C160801 森林可持续发展",label:"C160801 森林可持续发展"}, {value:"E090103 流域水循环与流域综合管理",label:"E090103 流域水循环与流域综合管理"}, {value:"F011602 图像分析",label:"F011602 图像分析"}, {value:"F050203 功能集成器件",label:"F050203 功能集成器件"}, {value:"H0322 消化系统疾病诊疗新技术",label:"H0322 消化系统疾病诊疗新技术"}, {value:"H09 神经系统和精神疾病",label:"H09 神经系统和精神疾病"}, {value:"H2813 中药抗病毒与感染药理",label:"H2813 中药抗病毒与感染药理"}, {value:"A010502 复动力系统",label:"A010502 复动力系统"}, {value:"B080105 平衡与非平衡热力学",label:"B080105 平衡与非平衡热力学"}, {value:"C010102 放线菌资源、分类及系统发育",label:"C010102 放线菌资源、分类及系统发育"}, {value:"C050601 电磁辐射生物物理学",label:"C050601 电磁辐射生物物理学"}, {value:"C060301 原核微生物遗传",label:"C060301 原核微生物遗传"}, {value:"C100309 干细胞移植与组织再生",label:"C100309 干细胞移植与组织再生"}, {value:"E0601 工程热力学",label:"E0601 工程热力学"}, {value:"E090703 软基与岩土体加固和处理",label:"E090703 软基与岩土体加固和处理"}, {value:"E0910 海洋工程",label:"E0910 海洋工程"}, {value:"H10 医学免疫学",label:"H10 医学免疫学"}, {value:"A0202 动力学与控制",label:"A0202 动力学与控制"}, {value:"B040701 基于新概念新原理的仪器与装置",label:"B040701 基于新概念新原理的仪器与装置"}, {value:"C0204 植物生理学",label:"C0204 植物生理学"}, {value:"C0501 生物大分子结构与功能",label:"C0501 生物大分子结构与功能"}, {value:"E0420 矿冶生态与环境工程",label:"E0420 矿冶生态与环境工程"}, {value:"E051101 机械计量标准、理论与方法",label:"E051101 机械计量标准、理论与方法"}, {value:"F010909 传感信息融合与处理",label:"F010909 传感信息融合与处理"}, {value:"F011201 雷达原理与技术",label:"F011201 雷达原理与技术"}, {value:"F030306 复杂网络系统建模与分析",label:"F030306 复杂网络系统建模与分析"}, {value:"H3109 血液、泌尿与生殖系统药物药理",label:"H3109 血液、泌尿与生殖系统药物药理"}, {value:"A011302 随机系统的控制理论",label:"A011302 随机系统的控制理论"}, {value:"A011503 计算复杂性与符号计算",label:"A011503 计算复杂性与符号计算"}, {value:"C0312 保护生物学与恢复生态学",label:"C0312 保护生物学与恢复生态学"}, {value:"C060503 基因组与复杂性状",label:"C060503 基因组与复杂性状"}, {value:"C110203 呼吸生理",label:"C110203 呼吸生理"}, {value:"C1503 观赏园艺学",label:"C1503 观赏园艺学"}, {value:"C16 林学",label:"C16 林学"}, {value:"E060401 层流火焰和燃烧反应动力学",label:"E060401 层流火焰和燃烧反应动力学"}, {value:"E070302 高压电器",label:"E070302 高压电器"}, {value:"F030303 智能建模方法与技术",label:"F030303 智能建模方法与技术"}, {value:"F050202 无源器件",label:"F050202 无源器件"}, {value:"F050404 红外探测材料与器件",label:"F050404 红外探测材料与器件"}, {value:"G011402 决策支持系统",label:"G011402 决策支持系统"}, {value:"G020801 生产管理",label:"G020801 生产管理"}, {value:"H1105 非感染性皮肤病",label:"H1105 非感染性皮肤病"}, {value:"A040506 语言声学、乐声及声学信号处理",label:"A040506 语言声学、乐声及声学信号处理"}, {value:"B040201 电分析化学基础",label:"B040201 电分析化学基础"}, {value:"C040602 模式动物",label:"C040602 模式动物"}, {value:"C050605 自由基生物学",label:"C050605 自由基生物学"}, {value:"C1104 生物节律",label:"C1104 生物节律"}, {value:"C1607 森林培育学",label:"C1607 森林培育学"}, {value:"C180803 兽医产科学",label:"C180803 兽医产科学"}, {value:"E0109 金属材料的凝固与结晶学",label:"E0109 金属材料的凝固与结晶学"}, {value:"E0303 纤维",label:"E0303 纤维"}, {value:"E041601 材料冶金物理化学",label:"E041601 材料冶金物理化学"}, {value:"E060703 风能利用中的工程热物理问题",label:"E060703 风能利用中的工程热物理问题"}, {value:"F010101 经典信息论",label:"F010101 经典信息论"}, {value:"F010907 光载无线通信",label:"F010907 光载无线通信"}, {value:"F030206 航天与航空飞行器控制系统",label:"F030206 航天与航空飞行器控制系统"}, {value:"F050201 有源器件",label:"F050201 有源器件"}, {value:"F051205 生物组织光谱技术及成像",label:"F051205 生物组织光谱技术及成像"}, {value:"A0101 数论",label:"A0101 数论"}, {value:"A010901 规范场论与超弦理论",label:"A010901 规范场论与超弦理论"}, {value:"A030301 恒星结构和演化与恒星大气",label:"A030301 恒星结构和演化与恒星大气"}, {value:"A030604 时间与频率",label:"A030604 时间与频率"}, {value:"B020303 浸润性与吸附",label:"B020303 浸润性与吸附"}, {value:"B080305 聚合反应方法与工程",label:"B080305 聚合反应方法与工程"}, {value:"C010504 其他环境微生物学",label:"C010504 其他环境微生物学"}, {value:"C030702 区域生态学",label:"C030702 区域生态学"}, {value:"C040503 昆虫行为学",label:"C040503 昆虫行为学"}, {value:"C1201 发育生物学",label:"C1201 发育生物学"}, {value:"C120115 发育与进化",label:"C120115 发育与进化"}, {value:"C180101 畜禽解剖学",label:"C180101 畜禽解剖学"}, {value:"F010606 空间通信网",label:"F010606 空间通信网"}, {value:"F040601 集成电路制造先进工艺技术",label:"F040601 集成电路制造先进工艺技术"}, {value:"G040102 政府组织管理",label:"G040102 政府组织管理"}, {value:"H02 循环系统",label:"H02 循环系统"}, {value:"H0301 消化系统发育异常",label:"H0301 消化系统发育异常"}, {value:"C020502 性别及花器官分化",label:"C020502 性别及花器官分化"}, {value:"C060302 真核微生物遗传",label:"C060302 真核微生物遗传"}, {value:"C150301 观赏作物生理与栽培学",label:"C150301 观赏作物生理与栽培学"}, {value:"C160703 种苗学",label:"C160703 种苗学"}, {value:"E060706 氢能利用中的工程热物理问题",label:"E060706 氢能利用中的工程热物理问题"}, {value:"E090903 港口航道及海岸建筑物",label:"E090903 港口航道及海岸建筑物"}, {value:"F0307 导航、制导与控制",label:"F0307 导航、制导与控制"}, {value:"F040308 新型半导体光电子器件",label:"F040308 新型半导体光电子器件"}, {value:"G010902 管理系统计算与仿真",label:"G010902 管理系统计算与仿真"}, {value:"H0514 膀胱疾病",label:"H0514 膀胱疾病"}, {value:"H1910 性传播疾病",label:"H1910 性传播疾病"}, {value:"A0501 基础物理学",label:"A0501 基础物理学"}, {value:"B030402 表面结构",label:"B030402 表面结构"}, {value:"B07 化学生物学",label:"B07 化学生物学"}, {value:"D0209 勘探技术与地质钻探学",label:"D0209 勘探技术与地质钻探学"}, {value:"E0506 机械设计学",label:"E0506 机械设计学"}, {value:"E0510 制造系统与自动化",label:"E0510 制造系统与自动化"}, {value:"F011301 视觉信息获取与处理",label:"F011301 视觉信息获取与处理"}, {value:"F020303 计算机系统安全与评估",label:"F020303 计算机系统安全与评估"}, {value:"F040508 半导体中量子态及调控",label:"F040508 半导体中量子态及调控"}, {value:"F050303 空间光传播与通信关键技术",label:"F050303 空间光传播与通信关键技术"}, {value:"F051201 光学探针、标记与光学成像",label:"F051201 光学探针、标记与光学成像"}, {value:"H3009 药物材料",label:"H3009 药物材料"}, {value:"H3113 药理学其他科学问题",label:"H3113 药理学其他科学问题"}, {value:"A020209 多场耦合与智能结构动力学",label:"A020209 多场耦合与智能结构动力学"}, {value:"A050502 荷电粒子源、靶站和预加速装置",label:"A050502 荷电粒子源、靶站和预加速装置"}, {value:"B040602 有机与天然产物分析",label:"B040602 有机与天然产物分析"}, {value:"B080802 染料、颜料与涂料",label:"B080802 染料、颜料与涂料"}, {value:"C020405 有机物质合成与运输",label:"C020405 有机物质合成与运输"}, {value:"C120102 早期生殖细胞发育",label:"C120102 早期生殖细胞发育"}, {value:"C140101 植物病害测报学",label:"C140101 植物病害测报学"}, {value:"C140502 植物病害化学防治",label:"C140502 植物病害化学防治"}, {value:"C161302 森林植被与水土保持",label:"C161302 森林植被与水土保持"}, {value:"C180801 兽医外科学",label:"C180801 兽医外科学"}, {value:"C2102 生理心理学",label:"C2102 生理心理学"}, {value:"E0212 古陶瓷与传统陶瓷",label:"E0212 古陶瓷与传统陶瓷"}, {value:"E0508 零件成形制造",label:"E0508 零件成形制造"}, {value:"E0605 多相流热物理学",label:"E0605 多相流热物理学"}, {value:"E060603 单相与多相流动测试技术",label:"E060603 单相与多相流动测试技术"}, {value:"F060504 知识发现与数据挖掘",label:"F060504 知识发现与数据挖掘"}, {value:"G030401 经济增长与发展",label:"G030401 经济增长与发展"}, {value:"H0319 胆石成因、胆石症及胆道系统炎症",label:"H0319 胆石成因、胆石症及胆道系统炎症"}, {value:"H0416 卵子发生与受精异常",label:"H0416 卵子发生与受精异常"}, {value:"H2815 中药泌尿与生殖药理",label:"H2815 中药泌尿与生殖药理"}, {value:"A0306 天体测量和天文地球动力学",label:"A0306 天体测量和天文地球动力学"}, {value:"B030103 化学动力学理论",label:"B030103 化学动力学理论"}, {value:"C200706 食品安全风险评估理论与方法",label:"C200706 食品安全风险评估理论与方法"}, {value:"D0713 污染物行为过程及其环境效应",label:"D0713 污染物行为过程及其环境效应"}, {value:"E0413 冶金化工与冶金反应工程学",label:"E0413 冶金化工与冶金反应工程学"}, {value:"E060204 流体噪声与流固耦合",label:"E060204 流体噪声与流固耦合"}, {value:"E0906 水力机械及其系统",label:"E0906 水力机械及其系统"}, {value:"F030704 视觉导航",label:"F030704 视觉导航"}, {value:"F031001 智能控制理论与方法",label:"F031001 智能控制理论与方法"}, {value:"F040506 半导体低维结构物理",label:"F040506 半导体低维结构物理"}, {value:"G0112 服务科学与工程",label:"G0112 服务科学与工程"}, {value:"G040605 健康服务管理",label:"G040605 健康服务管理"}, {value:"H0410 男性生殖系统结构、功能与发育异常",label:"H0410 男性生殖系统结构、功能与发育异常"}, {value:"H0613 运动系统疾病其他科学问题",label:"H0613 运动系统疾病其他科学问题"}, {value:"A020404 非平衡流与稀薄气体流动",label:"A020404 非平衡流与稀薄气体流动"}, {value:"A020407 流动噪声与气动声学",label:"A020407 流动噪声与气动声学"}, {value:"B030705 高分子流变学",label:"B030705 高分子流变学"}, {value:"B080306 光/电化学反应工程",label:"B080306 光/电化学反应工程"}, {value:"C030403 动物种群生态学",label:"C030403 动物种群生态学"}, {value:"C100304 血管与心肌组织工程",label:"C100304 血管与心肌组织工程"}, {value:"C110208 生殖生理",label:"C110208 生殖生理"}, {value:"C120201 睾丸功能与精子发生",label:"C120201 睾丸功能与精子发生"}, {value:"C130103 作物系统工程",label:"C130103 作物系统工程"}, {value:"C200603 水产食品贮藏与保鲜",label:"C200603 水产食品贮藏与保鲜"}, {value:"E080512 土木工程施工与管理",label:"E080512 土木工程施工与管理"}, {value:"F011303 遥感信息处理",label:"F011303 遥感信息处理"}, {value:"F012009 太赫兹理论与技术",label:"F012009 太赫兹理论与技术"}, {value:"F030508 生物信息学",label:"F030508 生物信息学"}, {value:"F050601 激光物理",label:"F050601 激光物理"}, {value:"A011504 机器证明",label:"A011504 机器证明"}, {value:"B020102 催化剂设计和制备",label:"B020102 催化剂设计和制备"}, {value:"B0401 分离分析",label:"B0401 分离分析"}, {value:"C030201 昆虫行为生态学",label:"C030201 昆虫行为生态学"}, {value:"C0308 全球变化生态学",label:"C0308 全球变化生态学"}, {value:"C0602 动物遗传学",label:"C0602 动物遗传学"}, {value:"C0712 细胞变异与转化",label:"C0712 细胞变异与转化"}, {value:"C100603 纳米生物效应",label:"C100603 纳米生物效应"}, {value:"C120101 性器官与性腺发育",label:"C120101 性器官与性腺发育"}, {value:"C180502 流行病学",label:"C180502 流行病学"}, {value:"E010303 新型亚稳金属材料",label:"E010303 新型亚稳金属材料"}, {value:"F010608 太赫兹理论与技术",label:"F010608 太赫兹理论与技术"}, {value:"F011501 图像分割与配准",label:"F011501 图像分割与配准"}, {value:"F012207 新型电磁材料与器件",label:"F012207 新型电磁材料与器件"}, {value:"F020205 系统软件",label:"F020205 系统软件"}, {value:"F030213 农业监测与控制系统",label:"F030213 农业监测与控制系统"}, {value:"H2402 职业病学",label:"H2402 职业病学"}, {value:"A0204 流体力学",label:"A0204 流体力学"}, {value:"A0505 粒子物理与核物理实验方法与技术",label:"A0505 粒子物理与核物理实验方法与技术"}, {value:"B030703 高分子结晶与相变机制",label:"B030703 高分子结晶与相变机制"}, {value:"B080101 化工基础数据与模型",label:"B080101 化工基础数据与模型"}, {value:"B0806 系统过程与化工安全",label:"B0806 系统过程与化工安全"}, {value:"C0907 听觉神经生物学",label:"C0907 听觉神经生物学"}, {value:"C0916 神经科学研究的新技术和新方法",label:"C0916 神经科学研究的新技术和新方法"}, {value:"E0408 地下空间工程",label:"E0408 地下空间工程"}, {value:"E041503 稀有金属",label:"E041503 稀有金属"}, {value:"E0511 机械测试理论与技术",label:"E0511 机械测试理论与技术"}, {value:"E060601 流体热物性",label:"E060601 流体热物性"}, {value:"E0702 电工材料特性及其应用",label:"E0702 电工材料特性及其应用"}, {value:"F010306 智能通信",label:"F010306 智能通信"}, {value:"F010904 宽带光纤接入",label:"F010904 宽带光纤接入"}, {value:"F020105 容错计算",label:"F020105 容错计算"}, {value:"F020207 实时与嵌入式软件",label:"F020207 实时与嵌入式软件"}, {value:"F040606 先进封装/系统封装",label:"F040606 先进封装/系统封装"}, {value:"F050102 光学信号处理与人工视觉",label:"F050102 光学信号处理与人工视觉"}, {value:"F050802 薄膜光学",label:"F050802 薄膜光学"}, {value:"G0208 生产与质量管理",label:"G0208 生产与质量管理"}, {value:"G040601 卫生政策",label:"G040601 卫生政策"}, {value:"H0402 女性生殖系统损伤与修复",label:"H0402 女性生殖系统损伤与修复"}, {value:"H0806 再生障碍性贫血和骨髓衰竭",label:"H0806 再生障碍性贫血和骨髓衰竭"}, {value:"A020201 分析力学",label:"A020201 分析力学"}, {value:"A0310 天文学同其他学科的交叉",label:"A0310 天文学同其他学科的交叉"}, {value:"B010406 高分子精密合成",label:"B010406 高分子精密合成"}, {value:"B060306 环境污染与人体健康",label:"B060306 环境污染与人体健康"}, {value:"B080505 外场强化及新型装备",label:"B080505 外场强化及新型装备"}, {value:"C020402 生物固氮",label:"C020402 生物固氮"}, {value:"C100103 心、血管组织生物力学与流变学",label:"C100103 心、血管组织生物力学与流变学"}, {value:"C200602 畜产食品贮藏与保鲜",label:"C200602 畜产食品贮藏与保鲜"}, {value:"C2108 应用心理学",label:"C2108 应用心理学"}, {value:"E080303 建筑声环境",label:"E080303 建筑声环境"}, {value:"E090804 水工施工及管理",label:"E090804 水工施工及管理"}, {value:"F011208 雷达目标识别与跟踪",label:"F011208 雷达目标识别与跟踪"}, {value:"F011601 图像表征与特征提取",label:"F011601 图像表征与特征提取"}, {value:"F030204 复杂装备控制系统",label:"F030204 复杂装备控制系统"}, {value:"H0221 循环系统免疫相关疾病",label:"H0221 循环系统免疫相关疾病"}, {value:"H0407 女性盆底功能障碍",label:"H0407 女性盆底功能障碍"}, {value:"H1410 口腔颌面疾病诊疗新技术",label:"H1410 口腔颌面疾病诊疗新技术"}, {value:"H18 影像医学与生物医学工程",label:"H18 影像医学与生物医学工程"}, {value:"A0305 天体中基本物理过程的理论和实验",label:"A0305 天体中基本物理过程的理论和实验"}, {value:"B070101 分子探针设计与构建",label:"B070101 分子探针设计与构建"}, {value:"C100401 生物信号检测与分析",label:"C100401 生物信号检测与分析"}, {value:"C2106 教育心理学",label:"C2106 教育心理学"}, {value:"F012204 超导电子学",label:"F012204 超导电子学"}, {value:"F020306 新型计算系统",label:"F020306 新型计算系统"}, {value:"F0501 光学信息获取、显示与处理",label:"F0501 光学信息获取、显示与处理"}, {value:"F0512 生物、医学光学与光子学",label:"F0512 生物、医学光学与光子学"}, {value:"H0611 运动系统畸形与矫正",label:"H0611 运动系统畸形与矫正"}, {value:"A010803 混合型、退化型偏微分方程",label:"A010803 混合型、退化型偏微分方程"}, {value:"A020309 接触、摩擦与磨损力学",label:"A020309 接触、摩擦与磨损力学"}, {value:"A030804 海量数据处理及数值模拟天文技术与方法",label:"A030804 海量数据处理及数值模拟天文技术与方法"}, {value:"C010804 噬菌体",label:"C010804 噬菌体"}, {value:"C0505 系统生物学",label:"C0505 系统生物学"}, {value:"C0607 生物信息学",label:"C0607 生物信息学"}, {value:"C09 神经科学",label:"C09 神经科学"}, {value:"C161203 园林规划和景观设计",label:"C161203 园林规划和景观设计"}, {value:"C1807 兽医药理学与毒理学",label:"C1807 兽医药理学与毒理学"}, {value:"E0301 塑料",label:"E0301 塑料"}, {value:"E030202 高性能橡胶",label:"E030202 高性能橡胶"}, {value:"F012302 化学信息传感机理与传感器",label:"F012302 化学信息传感机理与传感器"}, {value:"F050206 紫外及更短波长光电材料与器件",label:"F050206 紫外及更短波长光电材料与器件"}, {value:"F050902 非线性光学材料",label:"F050902 非线性光学材料"}, {value:"G020401 组织行为",label:"G020401 组织行为"}, {value:"A010203 代数群与量子群",label:"A010203 代数群与量子群"}, {value:"A050205 弦论、膜论及隐藏的空间维度",label:"A050205 弦论、膜论及隐藏的空间维度"}, {value:"A050503 束流传输和测量技术",label:"A050503 束流传输和测量技术"}, {value:"B030701 高分子表征方法",label:"B030701 高分子表征方法"}, {value:"C050205 脂质生物化学",label:"C050205 脂质生物化学"}, {value:"C0603 微生物遗传学",label:"C0603 微生物遗传学"}, {value:"C060501 基因组结构与分析",label:"C060501 基因组结构与分析"}, {value:"C100403 生物传感",label:"C100403 生物传感"}, {value:"C160903 森林防火",label:"C160903 森林防火"}, {value:"D0105 区域可持续发展",label:"D0105 区域可持续发展"}, {value:"D03 地球化学",label:"D03 地球化学"}, {value:"E0507 机械仿生学",label:"E0507 机械仿生学"}, {value:"E090503 地表与河道水力学",label:"E090503 地表与河道水力学"}, {value:"F010702 水下光通信",label:"F010702 水下光通信"}, {value:"F011207 雷达目标检测与定位",label:"F011207 雷达目标检测与定位"}, {value:"F0125 医学信息检测与处理",label:"F0125 医学信息检测与处理"}, {value:"F020301 计算机系统建模与模拟",label:"F020301 计算机系统建模与模拟"}, {value:"F0503 传输与交换光子学",label:"F0503 传输与交换光子学"}, {value:"A010302 复几何与代数几何",label:"A010302 复几何与代数几何"}, {value:"B050403 聚合物基复合材料化学",label:"B050403 聚合物基复合材料化学"}, {value:"C040506 昆虫资源与保护",label:"C040506 昆虫资源与保护"}, {value:"C050403 物质跨膜转运",label:"C050403 物质跨膜转运"}, {value:"C060103 植物数量遗传",label:"C060103 植物数量遗传"}, {value:"E080302 建筑光环境",label:"E080302 建筑光环境"}, {value:"F010610 电磁兼容",label:"F010610 电磁兼容"}, {value:"F030109 自适应与学习控制",label:"F030109 自适应与学习控制"}, {value:"F030120 系统仿真与评估",label:"F030120 系统仿真与评估"}, {value:"F040503 半导体表面与界面物理",label:"F040503 半导体表面与界面物理"}, {value:"F060107 计算智能新理论与新方法",label:"F060107 计算智能新理论与新方法"}, {value:"F060605 群体智能与多智能体系统",label:"F060605 群体智能与多智能体系统"}, {value:"G0209 企业信息管理",label:"G0209 企业信息管理"}, {value:"H0515 尿动力学",label:"H0515 尿动力学"}, {value:"H0803 红细胞异常及相关疾病",label:"H0803 红细胞异常及相关疾病"}, {value:"H2714 中医耳鼻喉科",label:"H2714 中医耳鼻喉科"}, {value:"B050204 液晶分子",label:"B050204 液晶分子"}, {value:"C020602 植物引种驯化",label:"C020602 植物引种驯化"}, {value:"C060603 染色体重塑及意义",label:"C060603 染色体重塑及意义"}, {value:"C060704 生物系统网络模型",label:"C060704 生物系统网络模型"}, {value:"C08 免疫学",label:"C08 免疫学"}, {value:"C110205 泌尿生理",label:"C110205 泌尿生理"}, {value:"D0513 气象观测原理、方法及数据分析",label:"D0513 气象观测原理、方法及数据分析"}, {value:"E021303 无机非金属智能材料",label:"E021303 无机非金属智能材料"}, {value:"E0602 内流流体力学",label:"E0602 内流流体力学"}, {value:"F010801 视频通信",label:"F010801 视频通信"}, {value:"F011801 电路设计与测试",label:"F011801 电路设计与测试"}, {value:"F011903 散射与逆散射",label:"F011903 散射与逆散射"}, {value:"F030304 系统状态滤波、估计与预测",label:"F030304 系统状态滤波、估计与预测"}, {value:"F050301 导波光学与光信息传输",label:"F050301 导波光学与光信息传输"}, {value:"H0815 遗传性血液病",label:"H0815 遗传性血液病"}, {value:"H0908 神经系统屏障和脑脊液异常及相关疾病",label:"H0908 神经系统屏障和脑脊液异常及相关疾病"}, {value:"H1503 中毒",label:"H1503 中毒"}, {value:"H1613 肿瘤康复（包括社会心理康复）",label:"H1613 肿瘤康复（包括社会心理康复）"}, {value:"A0105 函数论",label:"A0105 函数论"}, {value:"A040412 X射线、红外、THz物理",label:"A040412 X射线、红外、THz物理"}, {value:"A0804",label:"A0804"}, {value:"B030601 理论无机化学",label:"B030601 理论无机化学"}, {value:"B050304 高性能聚合物",label:"B050304 高性能聚合物"}, {value:"C0402 动物系统及分类学",label:"C0402 动物系统及分类学"}, {value:"C080501 疫苗设计",label:"C080501 疫苗设计"}, {value:"C0807 生殖免疫",label:"C0807 生殖免疫"}, {value:"D020102 古人类学",label:"D020102 古人类学"}, {value:"D0214 火山学",label:"D0214 火山学"}, {value:"E0304 涂料",label:"E0304 涂料"}, {value:"E040305 非常规油气开发及其他",label:"E040305 非常规油气开发及其他"}, {value:"E0606 热物性与热物理测试技术",label:"E0606 热物性与热物理测试技术"}, {value:"G020202",label:"G020202"}, {value:"G030402 贸易经济",label:"G030402 贸易经济"}, {value:"H0116 肺移植和肺保护",label:"H0116 肺移植和肺保护"}, {value:"H0426 生殖医学工程",label:"H0426 生殖医学工程"}, {value:"H1010 固有免疫异常",label:"H1010 固有免疫异常"}, {value:"A011204 可靠性理论",label:"A011204 可靠性理论"}, {value:"A020101 理性力学与力学中的数学方法",label:"A020101 理性力学与力学中的数学方法"}, {value:"A0205 生物力学",label:"A0205 生物力学"}, {value:"B030504 光化学与光物理过程",label:"B030504 光化学与光物理过程"}, {value:"B040601 食品分析",label:"B040601 食品分析"}, {value:"B050104 低维纳米材料化学",label:"B050104 低维纳米材料化学"}, {value:"B080302 反应机理与反应动力学",label:"B080302 反应机理与反应动力学"}, {value:"C030402 昆虫种群生态学",label:"C030402 昆虫种群生态学"}, {value:"C1003 组织工程学",label:"C1003 组织工程学"}, {value:"C1112 衰老生物学",label:"C1112 衰老生物学"}, {value:"C120112 细胞转分化",label:"C120112 细胞转分化"}, {value:"C180104 畜禽生物化学",label:"C180104 畜禽生物化学"}, {value:"C2115 认知语言学",label:"C2115 认知语言学"}, {value:"D0606 工程海洋学",label:"D0606 工程海洋学"}, {value:"E0302 橡胶及弹性体",label:"E0302 橡胶及弹性体"}, {value:"E0308 特殊与极端环境下的高分子材料",label:"E0308 特殊与极端环境下的高分子材料"}, {value:"E042002 矿冶环境污染评测与控制",label:"E042002 矿冶环境污染评测与控制"}, {value:"E080508 结构实验方法与技术",label:"E080508 结构实验方法与技术"}, {value:"F010508 射频技术与系统",label:"F010508 射频技术与系统"}, {value:"F011403 工业无损电磁检测与成像",label:"F011403 工业无损电磁检测与成像"}, {value:"F012305 微纳米传感器原理与集成",label:"F012305 微纳米传感器原理与集成"}, {value:"F020203 程序设计语言及支撑环境",label:"F020203 程序设计语言及支撑环境"}, {value:"F040607 微纳电子器件与集成",label:"F040607 微纳电子器件与集成"}, {value:"F050806 光度学与色度学",label:"F050806 光度学与色度学"}, {value:"F060102 逻辑推理与搜索",label:"F060102 逻辑推理与搜索"}, {value:"G020902 商务智能",label:"G020902 商务智能"}, {value:"G0307 人口资源环境经济与劳动经济",label:"G0307 人口资源环境经济与劳动经济"}, {value:"H0501 泌尿系统结构、功能与发育异常",label:"H0501 泌尿系统结构、功能与发育异常"}, {value:"H0518 泌尿系统疾病其他科学问题",label:"H0518 泌尿系统疾病其他科学问题"}, {value:"H0808 骨髓增殖性疾病",label:"H0808 骨髓增殖性疾病"}, {value:"A020103 力学中的反问题",label:"A020103 力学中的反问题"}, {value:"A030701 人造天体、太阳系小天体、行星系统和恒星系统动力学",label:"A030701 人造天体、太阳系小天体、行星系统和恒星系统动力学"}, {value:"B0101 元素化学",label:"B0101 元素化学"}, {value:"B030403 体相结构",label:"B030403 体相结构"}, {value:"C010602 动物病原细菌与放线菌生物学",label:"C010602 动物病原细菌与放线菌生物学"}, {value:"C130409 其他作物种质资源与遗传育种",label:"C130409 其他作物种质资源与遗传育种"}, {value:"D041006 行星物理学",label:"D041006 行星物理学"}, {value:"E030302 高性能纤维与特种合成纤维",label:"E030302 高性能纤维与特种合成纤维"}, {value:"E030702 高性能基体树脂",label:"E030702 高性能基体树脂"}, {value:"E070201 工程电介质特性与测量",label:"E070201 工程电介质特性与测量"}, {value:"E090302 农业非点源污染与劣质水利用",label:"E090302 农业非点源污染与劣质水利用"}, {value:"F010901 高速光纤传输",label:"F010901 高速光纤传输"}, {value:"F0111 信号理论与信号处理",label:"F0111 信号理论与信号处理"}, {value:"F012404 生物分子信息检测",label:"F012404 生物分子信息检测"}, {value:"F020710 物联网",label:"F020710 物联网"}, {value:"F030512 智能系统及应用",label:"F030512 智能系统及应用"}, {value:"F040304 半导体光电子集成",label:"F040304 半导体光电子集成"}, {value:"F040504 半导体中杂质与缺陷物理",label:"F040504 半导体中杂质与缺陷物理"}, {value:"F050913 新光学材料",label:"F050913 新光学材料"}, {value:"F051102 激光遥感与探测",label:"F051102 激光遥感与探测"}, {value:"G020901 企业信息资源管理",label:"G020901 企业信息资源管理"}, {value:"H1211 眼科疾病其他科学问题",label:"H1211 眼科疾病其他科学问题"}, {value:"A011711 并行算法",label:"A011711 并行算法"}, {value:"B050402 杂化材料化学",label:"B050402 杂化材料化学"}, {value:"B050802 燃料电池",label:"B050802 燃料电池"}, {value:"B080205 非常规条件下的传递过程",label:"B080205 非常规条件下的传递过程"}, {value:"B081106 生态化工",label:"B081106 生态化工"}, {value:"C080103 免疫应答",label:"C080103 免疫应答"}, {value:"C100601 纳米生物检测",label:"C100601 纳米生物检测"}, {value:"C161102 经济林栽培生理",label:"C161102 经济林栽培生理"}, {value:"D010402 自然资源评价",label:"D010402 自然资源评价"}, {value:"E031003 植入材料",label:"E031003 植入材料"}, {value:"F0106 空天通信",label:"F0106 空天通信"}, {value:"F012001 电波传播",label:"F012001 电波传播"}, {value:"F012301 物理信息传感机理与传感器",label:"F012301 物理信息传感机理与传感器"}, {value:"F030509 自然语言理解与生成",label:"F030509 自然语言理解与生成"}, {value:"F0509 光学和光电子材料",label:"F0509 光学和光电子材料"}, {value:"F051202 单分子探测、操控及其应用",label:"F051202 单分子探测、操控及其应用"}, {value:"H0718 糖代谢异常",label:"H0718 糖代谢异常"}, {value:"H1009 继发及原发性免疫缺陷性疾病",label:"H1009 继发及原发性免疫缺陷性疾病"}, {value:"H31 药理学",label:"H31 药理学"}, {value:"A0405 声学",label:"A0405 声学"}, {value:"B020107 催化表征方法与技术",label:"B020107 催化表征方法与技术"}, {value:"C031102 土壤生物与土壤生态系统",label:"C031102 土壤生物与土壤生态系统"}, {value:"C050207 脱氧核糖核酸生物化学",label:"C050207 脱氧核糖核酸生物化学"}, {value:"C120103 合子激活与胚胎早期发育",label:"C120103 合子激活与胚胎早期发育"}, {value:"C120113 核移植与细胞融合",label:"C120113 核移植与细胞融合"}, {value:"C1611 经济林学",label:"C1611 经济林学"}, {value:"D0101 自然地理学",label:"D0101 自然地理学"}, {value:"D010401 可再生资源演化",label:"D010401 可再生资源演化"}, {value:"D0107 地理信息系统",label:"D0107 地理信息系统"}, {value:"E0701 电磁场与电路",label:"E0701 电磁场与电路"}, {value:"E070503 过电压及其防护",label:"E070503 过电压及其防护"}, {value:"E070703 电机系统集成优化与整合调控",label:"E070703 电机系统集成优化与整合调控"}, {value:"F040107 有机-无机复合半导体材料",label:"F040107 有机-无机复合半导体材料"}, {value:"F040705 微纳光机电器件与系统",label:"F040705 微纳光机电器件与系统"}, {value:"F040812 新原理信息材料与器件",label:"F040812 新原理信息材料与器件"}, {value:"F050306 传输与交换测试技术",label:"F050306 传输与交换测试技术"}, {value:"F050504 光学孤子与非线性传播",label:"F050504 光学孤子与非线性传播"}, {value:"H0303 消化道结构与功能异常",label:"H0303 消化道结构与功能异常"}, {value:"H1209 眼组织移植",label:"H1209 眼组织移植"}, {value:"A020315 制造工艺力学",label:"A020315 制造工艺力学"}, {value:"A030401 太阳磁场和太阳发电机",label:"A030401 太阳磁场和太阳发电机"}, {value:"B020408 腐蚀电化学与电化学加工基础",label:"B020408 腐蚀电化学与电化学加工基础"}, {value:"C020302 古植物学与孢粉学",label:"C020302 古植物学与孢粉学"}, {value:"C031101 土壤生态系统水分、养分循环",label:"C031101 土壤生态系统水分、养分循环"}, {value:"C100402 生物成像与图像处理",label:"C100402 生物成像与图像处理"}, {value:"C140201 植物害虫测报学",label:"C140201 植物害虫测报学"}, {value:"C190601 水产免疫生物学",label:"C190601 水产免疫生物学"}, {value:"E0315 高分子材料的加工与成型",label:"E0315 高分子材料的加工与成型"}, {value:"F010502 多址通信",label:"F010502 多址通信"}, {value:"F011103 自适应信号处理",label:"F011103 自适应信号处理"}, {value:"F040203 低功耗、高能效集成电路设计",label:"F040203 低功耗、高能效集成电路设计"}, {value:"F040604 集成电路的可靠性与可制造性",label:"F040604 集成电路的可靠性与可制造性"}, {value:"F0505 非线性光学与量子光学",label:"F0505 非线性光学与量子光学"}, {value:"F050803 光学/光学系统设计、先进光学仪器",label:"F050803 光学/光学系统设计、先进光学仪器"}, {value:"F060305 文字、文本与图形识别",label:"F060305 文字、文本与图形识别"}, {value:"G040403 知识产权管理",label:"G040403 知识产权管理"}, {value:"H0401 女性生殖系统结构、功能与发育异常",label:"H0401 女性生殖系统结构、功能与发育异常"}, {value:"H0507 肾脏物质转运异常",label:"H0507 肾脏物质转运异常"}, {value:"H0730 内分泌系统疾病/代谢异常与营养支持其他科学问题",label:"H0730 内分泌系统疾病/代谢异常与营养支持其他科学问题"}, {value:"H1815 治疗计划、导航与机器人辅助",label:"H1815 治疗计划、导航与机器人辅助"}, {value:"B020305 胶体颗粒与纳米晶",label:"B020305 胶体颗粒与纳米晶"}, {value:"B020401 基础与理论电化学",label:"B020401 基础与理论电化学"}, {value:"B040406 生物芯片",label:"B040406 生物芯片"}, {value:"B0604 理论环境化学",label:"B0604 理论环境化学"}, {value:"B080701 合成生物技术与生物系统工程",label:"B080701 合成生物技术与生物系统工程"}, {value:"C0507 空间生物学",label:"C0507 空间生物学"}, {value:"C060402 人类起源与进化",label:"C060402 人类起源与进化"}, {value:"C0808 黏膜和局部免疫",label:"C0808 黏膜和局部免疫"}, {value:"C0908 化学感受神经生物学",label:"C0908 化学感受神经生物学"}, {value:"C140505 农药分子特性及应用原理",label:"C140505 农药分子特性及应用原理"}, {value:"E011201 金属材料的摩擦磨损",label:"E011201 金属材料的摩擦磨损"}, {value:"E0205 水泥与耐火材料",label:"E0205 水泥与耐火材料"}, {value:"E021302 无机非金属材料设计及相图",label:"E021302 无机非金属材料设计及相图"}, {value:"E031402 高分子材料的表征与评价",label:"E031402 高分子材料的表征与评价"}, {value:"E060301 热传导",label:"E060301 热传导"}, {value:"E060605 燃烧测试技术",label:"E060605 燃烧测试技术"}, {value:"E090602 空蚀和磨损及多相流",label:"E090602 空蚀和磨损及多相流"}, {value:"E090604 监测和诊断及控制",label:"E090604 监测和诊断及控制"}, {value:"F010409 专用网络理论与技术",label:"F010409 专用网络理论与技术"}, {value:"F020604 信息对抗",label:"F020604 信息对抗"}, {value:"F030205 交通运输控制系统",label:"F030205 交通运输控制系统"}, {value:"F0305 生物系统分析与调控",label:"F0305 生物系统分析与调控"}, {value:"F030609 微纳传感器与检测技术及装置",label:"F030609 微纳传感器与检测技术及装置"}, {value:"F040102 非晶、多晶和纳米晶半导体材料",label:"F040102 非晶、多晶和纳米晶半导体材料"}, {value:"F0403 半导体光电子器件与集成",label:"F0403 半导体光电子器件与集成"}, {value:"F040603 抗辐射集成电路",label:"F040603 抗辐射集成电路"}, {value:"H0219 微循环与休克",label:"H0219 微循环与休克"}, {value:"H2612 预防医学其他科学问题",label:"H2612 预防医学其他科学问题"}, {value:"B050505 生物矿化与过程仿生化学",label:"B050505 生物矿化与过程仿生化学"}, {value:"C060102 植物细胞遗传",label:"C060102 植物细胞遗传"}, {value:"C060706 生物信息学研究新技术与新方法",label:"C060706 生物信息学研究新技术与新方法"}, {value:"C120109 诱导多能干细胞",label:"C120109 诱导多能干细胞"}, {value:"C160201 森林资源管理与信息技术",label:"C160201 森林资源管理与信息技术"}, {value:"C160503 树木繁殖生物学",label:"C160503 树木繁殖生物学"}, {value:"E030102 高性能塑料与工程塑料",label:"E030102 高性能塑料与工程塑料"}, {value:"E08 建筑环境与结构工程",label:"E08 建筑环境与结构工程"}, {value:"E0909 海岸工程",label:"E0909 海岸工程"}, {value:"F0101 信息论",label:"F0101 信息论"}, {value:"F0116 图像表征与显示",label:"F0116 图像表征与显示"}, {value:"F011706 语音信息处理",label:"F011706 语音信息处理"}, {value:"F012003 天线阵列理论与设计",label:"F012003 天线阵列理论与设计"}, {value:"F012401 生物电子学",label:"F012401 生物电子学"}, {value:"F030211 运动体控制系统",label:"F030211 运动体控制系统"}, {value:"F0309 机器人学与机器人技术",label:"F0309 机器人学与机器人技术"}, {value:"F040402 半导体微波/太赫兹器件与集成",label:"F040402 半导体微波/太赫兹器件与集成"}, {value:"F051204 光与生物组织相互作用",label:"F051204 光与生物组织相互作用"}, {value:"G040101 公共管理基础理论",label:"G040101 公共管理基础理论"}, {value:"H0118 呼吸系统疾病其他科学问题",label:"H0118 呼吸系统疾病其他科学问题"}, {value:"H0304 肝胆胰结构与功能异常",label:"H0304 肝胆胰结构与功能异常"}, {value:"H0707 内分泌系统免疫相关疾病",label:"H0707 内分泌系统免疫相关疾病"}, {value:"H30 药物学",label:"H30 药物学"}, {value:"H3011 药物资源",label:"H3011 药物资源"}, {value:"A050604 等离子体中的非线性现象",label:"A050604 等离子体中的非线性现象"}, {value:"B060402 环境风险甄别与解析",label:"B060402 环境风险甄别与解析"}, {value:"B070104 分子探针与生物分子示踪",label:"B070104 分子探针与生物分子示踪"}, {value:"B080301 介尺度时空动态结构",label:"B080301 介尺度时空动态结构"}, {value:"C010902 立克次氏体、衣原体等",label:"C010902 立克次氏体、衣原体等"}, {value:"C0307 景观与区域生态学",label:"C0307 景观与区域生态学"}, {value:"C0804 免疫耐受",label:"C0804 免疫耐受"}, {value:"E060101 热力学基础",label:"E060101 热力学基础"}, {value:"E070702 电机系统变流与控制",label:"E070702 电机系统变流与控制"}, {value:"F012502 医学电生理检测",label:"F012502 医学电生理检测"}, {value:"F030305 系统辨识与参数估计",label:"F030305 系统辨识与参数估计"}, {value:"F0401 半导体材料",label:"F0401 半导体材料"}, {value:"G0215 创业与中小企业管理",label:"G0215 创业与中小企业管理"}, {value:"G030604 社会管理与服务",label:"G030604 社会管理与服务"}, {value:"H0814 血型与输血",label:"H0814 血型与输血"}, {value:"H1411 口腔颌面疾病其他科学问题",label:"H1411 口腔颌面疾病其他科学问题"}, {value:"A011203 随机最优化",label:"A011203 随机最优化"}, {value:"A030103 宇宙暗物质和暗能量",label:"A030103 宇宙暗物质和暗能量"}, {value:"A050206 非加速器粒子物理",label:"A050206 非加速器粒子物理"}, {value:"A050702 自由电子激光原理和技术",label:"A050702 自由电子激光原理和技术"}, {value:"B030603 有机化学反应机制",label:"B030603 有机化学反应机制"}, {value:"B040301 原子光谱",label:"B040301 原子光谱"}, {value:"B040404 核酸与蛋白分析",label:"B040404 核酸与蛋白分析"}, {value:"C031301 转基因生物的生态安全性评价",label:"C031301 转基因生物的生态安全性评价"}, {value:"C1001 生物力学与生物流变学",label:"C1001 生物力学与生物流变学"}, {value:"C120205 胚胎着床",label:"C120205 胚胎着床"}, {value:"C120206 母胎关系与妊娠生理",label:"C120206 母胎关系与妊娠生理"}, {value:"C1304 作物种质资源与遗传育种学",label:"C1304 作物种质资源与遗传育种学"}, {value:"E060402 湍流火焰",label:"E060402 湍流火焰"}, {value:"F012503 医学生理信息检测",label:"F012503 医学生理信息检测"}, {value:"H0728 遗传性代谢缺陷",label:"H0728 遗传性代谢缺陷"}, {value:"A0903",label:"A0903"}, {value:"C100303 神经组织工程",label:"C100303 神经组织工程"}, {value:"C110307 离子通道及受体",label:"C110307 离子通道及受体"}, {value:"E0114 金属材料跨学科应用基础",label:"E0114 金属材料跨学科应用基础"}, {value:"E030201 设计与制备",label:"E030201 设计与制备"}, {value:"E030303 仿生与差别化纤维",label:"E030303 仿生与差别化纤维"}, {value:"E031303 高分子材料的循环利用与资源化",label:"E031303 高分子材料的循环利用与资源化"}, {value:"E0905 水力学与水信息学",label:"E0905 水力学与水信息学"}, {value:"F011005 量子信息处理",label:"F011005 量子信息处理"}, {value:"F0112 雷达原理与雷达信号",label:"F0112 雷达原理与雷达信号"}, {value:"F011405 水下探测与成像",label:"F011405 水下探测与成像"}, {value:"F030110 数据驱动控制",label:"F030110 数据驱动控制"}, {value:"F030208 新能源控制系统",label:"F030208 新能源控制系统"}, {value:"F040205 器件、电路、系统协同设计",label:"F040205 器件、电路、系统协同设计"}, {value:"G0312 资源环境政策与管理",label:"G0312 资源环境政策与管理"}, {value:"G040402 科研管理",label:"G040402 科研管理"}, {value:"H15 急重症医学/创伤/烧伤/整形",label:"H15 急重症医学/创伤/烧伤/整形"}, {value:"H1814 医学信息系统与远程医疗",label:"H1814 医学信息系统与远程医疗"}, {value:"H27 中医学",label:"H27 中医学"}, {value:"A0113 控制论中的数学方法",label:"A0113 控制论中的数学方法"}, {value:"A020410 工业流体力学",label:"A020410 工业流体力学"}, {value:"A030501 天文中基本物理过程和天体辐射过程的理论和实验",label:"A030501 天文中基本物理过程和天体辐射过程的理论和实验"}, {value:"A050102 经典物理及其唯象学研究",label:"A050102 经典物理及其唯象学研究"}, {value:"C020304 传粉生物学",label:"C020304 传粉生物学"}, {value:"C0708 细胞极性建立与维持",label:"C0708 细胞极性建立与维持"}, {value:"C080904 疫苗效应及机制",label:"C080904 疫苗效应及机制"}, {value:"C170109 畜禽行为学",label:"C170109 畜禽行为学"}, {value:"C1702 草地科学",label:"C1702 草地科学"}, {value:"D040102 动力大地测量学",label:"D040102 动力大地测量学"}, {value:"D0706 环境大气科学",label:"D0706 环境大气科学"}, {value:"E0202 玻璃材料",label:"E0202 玻璃材料"}, {value:"E030101 设计与制备",label:"E030101 设计与制备"}, {value:"E0306 高分子助剂",label:"E0306 高分子助剂"}, {value:"E030704 增强与增韧",label:"E030704 增强与增韧"}, {value:"F010609 微波光子学",label:"F010609 微波光子学"}, {value:"F011806 射频技术与系统",label:"F011806 射频技术与系统"}, {value:"F0402 集成电路设计",label:"F0402 集成电路设计"}, {value:"F051001 空间光学遥感方法与成像仿真",label:"F051001 空间光学遥感方法与成像仿真"}, {value:"F0601 人工智能基础",label:"F0601 人工智能基础"}, {value:"G0211 运营管理",label:"G0211 运营管理"}, {value:"H0302 消化系统遗传性疾病",label:"H0302 消化系统遗传性疾病"}, {value:"H0403 女性生殖系统炎症与感染",label:"H0403 女性生殖系统炎症与感染"}, {value:"H07 内分泌系统/代谢和营养支持",label:"H07 内分泌系统/代谢和营养支持"}, {value:"H2303 法医精神病学及法医临床学",label:"H2303 法医精神病学及法医临床学"}, {value:"A0115 数理逻辑和与计算机相关的数学",label:"A0115 数理逻辑和与计算机相关的数学"}, {value:"A011709 多重网格技术及区域分解",label:"A011709 多重网格技术及区域分解"}, {value:"B010302 活性中间体化学",label:"B010302 活性中间体化学"}, {value:"B040504 细胞成像",label:"B040504 细胞成像"}, {value:"C010601 植物病原细菌与放线菌生物学",label:"C010601 植物病原细菌与放线菌生物学"}, {value:"C040505 昆虫毒理学",label:"C040505 昆虫毒理学"}, {value:"C110304 内分泌与代谢调节",label:"C110304 内分泌与代谢调节"}, {value:"C160704 复合农林业",label:"C160704 复合农林业"}, {value:"C1808 临床兽医学",label:"C1808 临床兽医学"}, {value:"C200104 水产食品原料学",label:"C200104 水产食品原料学"}, {value:"C2104 工程心理学",label:"C2104 工程心理学"}, {value:"E0214 其他无机非金属材料",label:"E0214 其他无机非金属材料"}, {value:"E0509 零件加工制造",label:"E0509 零件加工制造"}, {value:"F010105 广义信息论",label:"F010105 广义信息论"}, {value:"F011402 工业无损光学检测与成像",label:"F011402 工业无损光学检测与成像"}, {value:"F0115 图像处理",label:"F0115 图像处理"}, {value:"F040706 微全分析系统/片上实验室",label:"F040706 微全分析系统/片上实验室"}, {value:"F050502 光学频率变换与调控",label:"F050502 光学频率变换与调控"}, {value:"F050807 自适应光学及二元光学",label:"F050807 自适应光学及二元光学"}, {value:"H0517 泌尿系统疾病诊疗新技术",label:"H0517 泌尿系统疾病诊疗新技术"}, {value:"H1002 免疫应答异常",label:"H1002 免疫应答异常"}, {value:"H1510 颅颌面畸形与矫正",label:"H1510 颅颌面畸形与矫正"}, {value:"H2007 检验医学其他科学问题",label:"H2007 检验医学其他科学问题"}, {value:"H26 预防医学",label:"H26 预防医学"}, {value:"A0309 中、西方天文学史",label:"A0309 中、西方天文学史"}, {value:"B010403 自由基聚合",label:"B010403 自由基聚合"}, {value:"B060303 毒性效应与机制",label:"B060303 毒性效应与机制"}, {value:"B070502 靶向分子设计与作用机制",label:"B070502 靶向分子设计与作用机制"}, {value:"B0802 传递过程",label:"B0802 传递过程"}, {value:"C050404 其他膜生物化学与膜生物物理学",label:"C050404 其他膜生物化学与膜生物物理学"}, {value:"C081001 抗体与功能",label:"C081001 抗体与功能"}, {value:"C0914 认知神经生物学",label:"C0914 认知神经生物学"}, {value:"E011301 铸、锻、焊、热处理与塑性成形的材料基础",label:"E011301 铸、锻、焊、热处理与塑性成形的材料基础"}, {value:"E090603 电站和泵站系统",label:"E090603 电站和泵站系统"}, {value:"F011503 图像去噪与增强",label:"F011503 图像去噪与增强"}, {value:"F011703 视频监控",label:"F011703 视频监控"}, {value:"F030918 可穿戴、医疗及服务机器人系统",label:"F030918 可穿戴、医疗及服务机器人系统"}, {value:"F050103 光存储材料、器件及技术",label:"F050103 光存储材料、器件及技术"}, {value:"F0508 应用光学",label:"F0508 应用光学"}, {value:"G0214 国际商务与跨文化管理",label:"G0214 国际商务与跨文化管理"}, {value:"G030901 区域经济管理",label:"G030901 区域经济管理"}, {value:"H04 生殖系统/围生医学/新生儿",label:"H04 生殖系统/围生医学/新生儿"}, {value:"H0413 男性生殖内分泌异常及相关疾病",label:"H0413 男性生殖内分泌异常及相关疾病"}, {value:"H28 中药学",label:"H28 中药学"}, {value:"A020411 微重力流体力学",label:"A020411 微重力流体力学"}, {value:"B010702 模拟酶与仿生合成",label:"B010702 模拟酶与仿生合成"}, {value:"B050404 纳米复合材料化学",label:"B050404 纳米复合材料化学"}, {value:"C0301 分子与进化生态学",label:"C0301 分子与进化生态学"}, {value:"C0306 生态系统生态学",label:"C0306 生态系统生态学"}, {value:"C110101 细胞膜生理功能",label:"C110101 细胞膜生理功能"}, {value:"C110303 神经、内分泌与免疫调节",label:"C110303 神经、内分泌与免疫调节"}, {value:"C190401 水产生物营养学",label:"C190401 水产生物营养学"}, {value:"E031304 高分子材料的稳定与老化",label:"E031304 高分子材料的稳定与老化"}, {value:"E040304 油田化学",label:"E040304 油田化学"}, {value:"E0406 海洋、空间及其他矿物资源开采与利用",label:"E0406 海洋、空间及其他矿物资源开采与利用"}, {value:"E041103 物理方法分离",label:"E041103 物理方法分离"}, {value:"E090405 工程泥沙",label:"E090405 工程泥沙"}, {value:"F010708 分子电子学",label:"F010708 分子电子学"}, {value:"F011505 图像重建",label:"F011505 图像重建"}, {value:"F012307 新型敏感材料",label:"F012307 新型敏感材料"}, {value:"H0101 肺及气道结构、功能及发育异常",label:"H0101 肺及气道结构、功能及发育异常"}, {value:"H0323 消化系统疾病其他科学问题",label:"H0323 消化系统疾病其他科学问题"}, {value:"H1810 脑电图、脑磁图与脑机交互",label:"H1810 脑电图、脑磁图与脑机交互"}, {value:"H1905 其他病原微生物及感染与宿主免疫",label:"H1905 其他病原微生物及感染与宿主免疫"}, {value:"A040402 信息光学中的物理问题",label:"A040402 信息光学中的物理问题"}, {value:"A050505 散裂中子源相关技术",label:"A050505 散裂中子源相关技术"}, {value:"B020204 表面化学研究方法",label:"B020204 表面化学研究方法"}, {value:"B030605 单分子电子学",label:"B030605 单分子电子学"}, {value:"B050103 无机膜材料化学",label:"B050103 无机膜材料化学"}, {value:"B050405 多孔材料化学",label:"B050405 多孔材料化学"}, {value:"B050801 超级电容器",label:"B050801 超级电容器"}, {value:"C0102 微生物生理与生物化学",label:"C0102 微生物生理与生物化学"}, {value:"C040502 昆虫形态学",label:"C040502 昆虫形态学"}, {value:"C050603 光生物物理学",label:"C050603 光生物物理学"}, {value:"C0713 细胞生物学研究中的新方法",label:"C0713 细胞生物学研究中的新方法"}, {value:"C1101 细胞生理学",label:"C1101 细胞生理学"}, {value:"C190101 水产生物生理学",label:"C190101 水产生物生理学"}, {value:"E042205 矿冶系统工程与信息工程",label:"E042205 矿冶系统工程与信息工程"}, {value:"F010208 认知无线网络",label:"F010208 认知无线网络"}, {value:"F0105 移动通信",label:"F0105 移动通信"}, {value:"F010509 电路与系统可靠性",label:"F010509 电路与系统可靠性"}, {value:"F011603 图像质量评价",label:"F011603 图像质量评价"}, {value:"F011904 电磁兼容",label:"F011904 电磁兼容"}, {value:"F012102 微波光子信号产生与处理",label:"F012102 微波光子信号产生与处理"}, {value:"F030201 协同优化控制系统",label:"F030201 协同优化控制系统"}, {value:"F031014 模式识别与智能系统",label:"F031014 模式识别与智能系统"}, {value:"F040307 有机/柔性光电子器件与集成",label:"F040307 有机/柔性光电子器件与集成"}, {value:"H0411 男性生殖系统损伤与修复",label:"H0411 男性生殖系统损伤与修复"}, {value:"H1824 电磁与物理治疗",label:"H1824 电磁与物理治疗"}, {value:"H3006 特种药物",label:"H3006 特种药物"}, {value:"B010405 高分子光化学与辐射化学",label:"B010405 高分子光化学与辐射化学"}, {value:"C0502 生物化学",label:"C0502 生物化学"}, {value:"C0905 计算神经生物学",label:"C0905 计算神经生物学"}, {value:"C1008 生物系统工程研究的新技术与新方法",label:"C1008 生物系统工程研究的新技术与新方法"}, {value:"C1102 系统生理学",label:"C1102 系统生理学"}, {value:"C161103 林木果实采后生物学",label:"C161103 林木果实采后生物学"}, {value:"D021103 构造物理与流变学",label:"D021103 构造物理与流变学"}, {value:"E010505 金属催化材料",label:"E010505 金属催化材料"}, {value:"E041602 金属净化与提纯",label:"E041602 金属净化与提纯"}, {value:"E0502 传动机械学",label:"E0502 传动机械学"}, {value:"E060201 黏性流动与湍流",label:"E060201 黏性流动与湍流"}, {value:"F010506 高能效通信",label:"F010506 高能效通信"}, {value:"F0108 多媒体通信",label:"F0108 多媒体通信"}, {value:"F0113 信息获取与处理",label:"F0113 信息获取与处理"}, {value:"F012004 毫米波与亚毫米波技术",label:"F012004 毫米波与亚毫米波技术"}, {value:"F030108 线性与非线性系统分析与控制",label:"F030108 线性与非线性系统分析与控制"}, {value:"G010301 优化理论与方法",label:"G010301 优化理论与方法"}, {value:"H0105 呼吸系统免疫性疾病及变应性肺疾病",label:"H0105 呼吸系统免疫性疾病及变应性肺疾病"}, {value:"H0429 生殖系统/围生医学/新生儿疾病相关诊疗新技术",label:"H0429 生殖系统/围生医学/新生儿疾病相关诊疗新技术"}, {value:"H1011 神经内分泌免疫异常",label:"H1011 神经内分泌免疫异常"}, {value:"H1107 皮肤及其附属器疾病诊疗新技术",label:"H1107 皮肤及其附属器疾病诊疗新技术"}, {value:"A011501 数理逻辑",label:"A011501 数理逻辑"}, {value:"A040213 软物质、有机和生物材料的电子结构和物理",label:"A040213 软物质、有机和生物材料的电子结构和物理"}, {value:"A050701 同步辐射光源原理和技术",label:"A050701 同步辐射光源原理和技术"}, {value:"A0901",label:"A0901"}, {value:"B030201 化学平衡与热力学参数",label:"B030201 化学平衡与热力学参数"}, {value:"B030503 激发态化学",label:"B030503 激发态化学"}, {value:"B0503 有机高分子结构材料化学",label:"B0503 有机高分子结构材料化学"}, {value:"B050901 氢能源化学",label:"B050901 氢能源化学"}, {value:"B060302 环境污染生物标志物",label:"B060302 环境污染生物标志物"}, {value:"B060403 环境污染模拟与预测",label:"B060403 环境污染模拟与预测"}, {value:"B081103 生物质资源高效转化",label:"B081103 生物质资源高效转化"}, {value:"C010901 支原体",label:"C010901 支原体"}, {value:"C080901 疫苗设计",label:"C080901 疫苗设计"}, {value:"C1103 整合生理学",label:"C1103 整合生理学"}, {value:"C110302 应激、适应与代偿",label:"C110302 应激、适应与代偿"}, {value:"C1612 园林学",label:"C1612 园林学"}, {value:"C200505 制糖",label:"C200505 制糖"}, {value:"D0406 地热学",label:"D0406 地热学"}, {value:"D0701 土壤学",label:"D0701 土壤学"}, {value:"D071001 环境生态学",label:"D071001 环境生态学"}, {value:"E030903 感光材料",label:"E030903 感光材料"}, {value:"E041502 重金属",label:"E041502 重金属"}, {value:"E0504 机械结构强度学",label:"E0504 机械结构强度学"}, {value:"E07 电气科学与工程",label:"E07 电气科学与工程"}, {value:"E070103 静电理论与技术",label:"E070103 静电理论与技术"}, {value:"F010704 水下定位与传感网",label:"F010704 水下定位与传感网"}, {value:"F011701 计算摄像",label:"F011701 计算摄像"}, {value:"F030407 物流管理系统与优化",label:"F030407 物流管理系统与优化"}, {value:"F050505 光量子通信",label:"F050505 光量子通信"}, {value:"F060303 视频分析与理解",label:"F060303 视频分析与理解"}, {value:"G011203 管理信息与数据挖掘",label:"G011203 管理信息与数据挖掘"}, {value:"G0207 市场营销",label:"G0207 市场营销"}, {value:"H0423 避孕、节育与妊娠终止",label:"H0423 避孕、节育与妊娠终止"}, {value:"H0708 松果体/下丘脑/垂体疾病及功能异常",label:"H0708 松果体/下丘脑/垂体疾病及功能异常"}, {value:"A030101 宇宙学模型和参数、早期宇宙",label:"A030101 宇宙学模型和参数、早期宇宙"}, {value:"A050405 加速器质谱技术",label:"A050405 加速器质谱技术"}, {value:"B040505 活体成像",label:"B040505 活体成像"}, {value:"C050502 生物网络的结构与功能",label:"C050502 生物网络的结构与功能"}, {value:"C100104 口腔及颌面组织生物力学",label:"C100104 口腔及颌面组织生物力学"}, {value:"C1401 植物病理学",label:"C1401 植物病理学"}, {value:"C161301 防护林学",label:"C161301 防护林学"}, {value:"C1701 畜牧学",label:"C1701 畜牧学"}, {value:"D040902 城市地球物理",label:"D040902 城市地球物理"}, {value:"E0211 无机非金属类高温超导与磁性材料",label:"E0211 无机非金属类高温超导与磁性材料"}, {value:"E021403 无机非金属智能材料",label:"E021403 无机非金属智能材料"}, {value:"E060602 固体材料热物性",label:"E060602 固体材料热物性"}, {value:"E070102 电网络理论",label:"E070102 电网络理论"}, {value:"E090902 河口和海岸污染与治理",label:"E090902 河口和海岸污染与治理"}, {value:"H0421 分娩与产褥",label:"H0421 分娩与产褥"}, {value:"H0710 肾上腺疾病及功能异常",label:"H0710 肾上腺疾病及功能异常"}, {value:"H0817 血液系统疾病其他科学问题",label:"H0817 血液系统疾病其他科学问题"}, {value:"H1307 耳鼻咽喉疾病其他科学问题",label:"H1307 耳鼻咽喉疾病其他科学问题"}, {value:"A040505 生理、心理声学和生物声学",label:"A040505 生理、心理声学和生物声学"}, {value:"B010201 无机固相合成",label:"B010201 无机固相合成"}, {value:"B010304 有机小分子催化",label:"B010304 有机小分子催化"}, {value:"B050303 化学纤维与聚合物弹性体",label:"B050303 化学纤维与聚合物弹性体"}, {value:"B0704 生物合成化学",label:"B0704 生物合成化学"}, {value:"B0805 化工装备与过程强化",label:"B0805 化工装备与过程强化"}, {value:"C0203 植物进化生物学",label:"C0203 植物进化生物学"}, {value:"C110102 细胞代谢与自由基",label:"C110102 细胞代谢与自由基"}, {value:"C110202 血液生理",label:"C110202 血液生理"}, {value:"C120107 核质互作与重编程",label:"C120107 核质互作与重编程"}, {value:"E021402 无机非金属材料设计及相图",label:"E021402 无机非金属材料设计及相图"}, {value:"E090904 海岸防灾与河口治理",label:"E090904 海岸防灾与河口治理"}, {value:"F010504 移动定位",label:"F010504 移动定位"}, {value:"F011205 雷达对抗",label:"F011205 雷达对抗"}, {value:"F012205 纳电子学",label:"F012205 纳电子学"}, {value:"F012303 生化信息传感机理与传感器",label:"F012303 生化信息传感机理与传感器"}, {value:"F012306 多功能传感器与综合技术",label:"F012306 多功能传感器与综合技术"}, {value:"F020307 计算系统可靠性",label:"F020307 计算系统可靠性"}, {value:"F020606 隐私保护",label:"F020606 隐私保护"}, {value:"F040507 半导体光电子学",label:"F040507 半导体光电子学"}, {value:"F040704 射频/微波微纳机电器件与系统",label:"F040704 射频/微波微纳机电器件与系统"}, {value:"F050405 红外成像光谱和信息识别",label:"F050405 红外成像光谱和信息识别"}, {value:"H03 消化系统",label:"H03 消化系统"}, {value:"H0809 血液系统免疫相关疾病",label:"H0809 血液系统免疫相关疾病"}, {value:"H0816 血液系统疾病诊疗新技术",label:"H0816 血液系统疾病诊疗新技术"}, {value:"H12 眼科学",label:"H12 眼科学"}, {value:"H25 老年医学",label:"H25 老年医学"}, {value:"B030301 宏观动力学",label:"B030301 宏观动力学"}, {value:"B030501 激光光谱学",label:"B030501 激光光谱学"}, {value:"C080104 免疫耐受",label:"C080104 免疫耐受"}, {value:"C120204 性激素与靶器官",label:"C120204 性激素与靶器官"}, {value:"D0714 区域环境质量与安全",label:"D0714 区域环境质量与安全"}, {value:"E041204 冶金熔体(溶液)",label:"E041204 冶金熔体(溶液)"}, {value:"E042001 矿山复垦与生态恢复",label:"E042001 矿山复垦与生态恢复"}, {value:"E042004 绿色冶金与增值冶金",label:"E042004 绿色冶金与增值冶金"}, {value:"F010706 表面和薄膜电子学",label:"F010706 表面和薄膜电子学"}, {value:"F012408 生物信息系统建模与仿真",label:"F012408 生物信息系统建模与仿真"}, {value:"F020505 社交网络与社会计算",label:"F020505 社交网络与社会计算"}, {value:"F0506 激光",label:"F0506 激光"}, {value:"F050605 气体、准分子、化学激光",label:"F050605 气体、准分子、化学激光"}, {value:"F050904 有机/无机复合、杂化光电材料",label:"F050904 有机/无机复合、杂化光电材料"}, {value:"F051002 空间目标光学探测与识别",label:"F051002 空间目标光学探测与识别"}, {value:"G041402 社会与政府信息资源管理",label:"G041402 社会与政府信息资源管理"}, {value:"H1012 黏膜免疫疾病",label:"H1012 黏膜免疫疾病"}, {value:"B010505 配位聚合物",label:"B010505 配位聚合物"}, {value:"B050805 其他新型电池",label:"B050805 其他新型电池"}, {value:"B070503 靶标发现与确证",label:"B070503 靶标发现与确证"}, {value:"C020506 种子贮藏与传播",label:"C020506 种子贮藏与传播"}, {value:"C0405 昆虫学",label:"C0405 昆虫学"}, {value:"C0806 免疫遗传",label:"C0806 免疫遗传"}, {value:"C080902 疫苗佐剂",label:"C080902 疫苗佐剂"}, {value:"C130101 作物气象学",label:"C130101 作物气象学"}, {value:"C180703 兽医毒理学",label:"C180703 兽医毒理学"}, {value:"E041205 冶金物理化学研究方法与测试技术",label:"E041205 冶金物理化学研究方法与测试技术"}, {value:"E042202 冶金耐火与保温材料",label:"E042202 冶金耐火与保温材料"}, {value:"E090502 地下与渗流水力学",label:"E090502 地下与渗流水力学"}, {value:"F0107 水域通信",label:"F0107 水域通信"}, {value:"F010903 光交换网络与协议",label:"F010903 光交换网络与协议"}, {value:"F0114 探测与成像",label:"F0114 探测与成像"}, {value:"F0405 半导体物理",label:"F0405 半导体物理"}, {value:"F050406 红外技术和应用",label:"F050406 红外技术和应用"}, {value:"F050703 超快光谱技术",label:"F050703 超快光谱技术"}, {value:"F060201 机器学习基础理论与方法",label:"F060201 机器学习基础理论与方法"}, {value:"G031201 可持续发展管理",label:"G031201 可持续发展管理"}, {value:"H05 泌尿系统",label:"H05 泌尿系统"}, {value:"H0706 内分泌系统遗传性疾病",label:"H0706 内分泌系统遗传性疾病"}, {value:"H0901 意识障碍",label:"H0901 意识障碍"}, {value:"A011710 自适应方法",label:"A011710 自适应方法"}, {value:"A030305 太阳系外行星系统",label:"A030305 太阳系外行星系统"}, {value:"A030404 太阳系的起源和演化及太阳系中行星、卫星和其他小天体",label:"A030404 太阳系的起源和演化及太阳系中行星、卫星和其他小天体"}, {value:"B050302 高分子的降解、稳定与阻燃",label:"B050302 高分子的降解、稳定与阻燃"}, {value:"B070402 生物合成策略与机制",label:"B070402 生物合成策略与机制"}, {value:"C010203 微生物结构与功能",label:"C010203 微生物结构与功能"}, {value:"C020504 植物胚胎发生",label:"C020504 植物胚胎发生"}, {value:"C0304 种群生态学",label:"C0304 种群生态学"}, {value:"C030802 海洋生态系统与全球变化",label:"C030802 海洋生态系统与全球变化"}, {value:"C060203 动物数量遗传",label:"C060203 动物数量遗传"}, {value:"C0605 基因组学",label:"C0605 基因组学"}, {value:"C080504 疫苗效应及机制",label:"C080504 疫苗效应及机制"}, {value:"C110504 微量元素代谢",label:"C110504 微量元素代谢"}, {value:"C14 植物保护学",label:"C14 植物保护学"}, {value:"E011304 制备加工新方法与新原理",label:"E011304 制备加工新方法与新原理"}, {value:"E090504 水信息学与数字流域",label:"E090504 水信息学与数字流域"}, {value:"F010906 空间光通信",label:"F010906 空间光通信"}, {value:"F011702 视频信息采集与重建",label:"F011702 视频信息采集与重建"}, {value:"F011804 功能集成电路与系统",label:"F011804 功能集成电路与系统"}, {value:"F0121 微波光子学",label:"F0121 微波光子学"}, {value:"F020401 测试与诊断技术",label:"F020401 测试与诊断技术"}, {value:"F040806 自旋、谷电子器件",label:"F040806 自旋、谷电子器件"}, {value:"F060404 机器翻译",label:"F060404 机器翻译"}, {value:"G0310 公共安全与危机管理",label:"G0310 公共安全与危机管理"}, {value:"G0408 文化与休闲产业管理",label:"G0408 文化与休闲产业管理"}, {value:"H0309 胃酸分泌异常及酸相关性疾病",label:"H0309 胃酸分泌异常及酸相关性疾病"}, {value:"H1210 眼科疾病诊疗新技术",label:"H1210 眼科疾病诊疗新技术"}, {value:"H1909 医院获得性感染",label:"H1909 医院获得性感染"}, {value:"H3012 药物学其他科学问题",label:"H3012 药物学其他科学问题"}, {value:"A010103 数论应用",label:"A010103 数论应用"}, {value:"A011502 公理集合论",label:"A011502 公理集合论"}, {value:"B010601 组装基元",label:"B010601 组装基元"}, {value:"B030102 化学统计力学",label:"B030102 化学统计力学"}, {value:"B030406 结构表征方法与技术",label:"B030406 结构表征方法与技术"}, {value:"B060603 辐射安全与防护",label:"B060603 辐射安全与防护"}, {value:"B081004 核与其他能源化工",label:"B081004 核与其他能源化工"}, {value:"C0101 微生物资源、分类与系统发育",label:"C0101 微生物资源、分类与系统发育"}, {value:"C0108 病毒学",label:"C0108 病毒学"}, {value:"C020403 呼吸作用",label:"C020403 呼吸作用"}, {value:"C0302 行为生态学",label:"C0302 行为生态学"}, {value:"C100604 纳米生物学安全性评价与伦理学",label:"C100604 纳米生物学安全性评价与伦理学"}, {value:"C110308 稳态调节及失衡",label:"C110308 稳态调节及失衡"}, {value:"C18 兽医学",label:"C18 兽医学"}, {value:"C1801 基础兽医学",label:"C1801 基础兽医学"}, {value:"C180805 兽医治疗学",label:"C180805 兽医治疗学"}, {value:"C190102 水产生物繁殖与发育学",label:"C190102 水产生物繁殖与发育学"}, {value:"C190602 水产生物病原学",label:"C190602 水产生物病原学"}, {value:"D0102 人文地理学",label:"D0102 人文地理学"}, {value:"E011202 金属材料的磨蚀",label:"E011202 金属材料的磨蚀"}, {value:"E040303 采油工程",label:"E040303 采油工程"}, {value:"E090402 流域泥沙运动过程",label:"E090402 流域泥沙运动过程"}, {value:"F0109 光通信",label:"F0109 光通信"}, {value:"F020103 计算机编码理论",label:"F020103 计算机编码理论"}, {value:"F030408 交通管理系统与优化",label:"F030408 交通管理系统与优化"}, {value:"F030707 仿生导航",label:"F030707 仿生导航"}, {value:"F040702 微纳机电器件工艺、集成及可靠性",label:"F040702 微纳机电器件工艺、集成及可靠性"}, {value:"F050607 光纤激光器",label:"F050607 光纤激光器"}, {value:"H0207 肺源性心脏病",label:"H0207 肺源性心脏病"}, {value:"H1817 康复工程与智能控制",label:"H1817 康复工程与智能控制"}, {value:"B030401 溶液结构",label:"B030401 溶液结构"}, {value:"B070504 药物载体与传输",label:"B070504 药物载体与传输"}, {value:"B080706 皮革与造纸化工",label:"B080706 皮革与造纸化工"}, {value:"C080502 疫苗佐剂",label:"C080502 疫苗佐剂"}, {value:"C1409 植物免疫学",label:"C1409 植物免疫学"}, {value:"C160202 森林灾害监测的理论与方法",label:"C160202 森林灾害监测的理论与方法"}, {value:"C1609 森林健康",label:"C1609 森林健康"}, {value:"E0305 黏合剂",label:"E0305 黏合剂"}, {value:"E041201 火法冶金",label:"E041201 火法冶金"}, {value:"E042207 冶金史及古代矿物科学",label:"E042207 冶金史及古代矿物科学"}, {value:"E090404 河口泥沙与演变",label:"E090404 河口泥沙与演变"}, {value:"F010507 功率电子技术与系统",label:"F010507 功率电子技术与系统"}, {value:"F010804 语音通信",label:"F010804 语音通信"}, {value:"F010806 生物系统信息网络与分析",label:"F010806 生物系统信息网络与分析"}, {value:"F011001 量子通信协议及系统安全",label:"F011001 量子通信协议及系统安全"}, {value:"F011104 稀疏信号表征与处理",label:"F011104 稀疏信号表征与处理"}, {value:"F011302 网络信息获取与处理",label:"F011302 网络信息获取与处理"}, {value:"F011803 非线性电路系统理论与技术",label:"F011803 非线性电路系统理论与技术"}, {value:"F0120 电磁波",label:"F0120 电磁波"}, {value:"F012308 传感器信息融合与处理",label:"F012308 传感器信息融合与处理"}, {value:"F012402 电磁场生物效应",label:"F012402 电磁场生物效应"}, {value:"F012407 生物信息网络与模型",label:"F012407 生物信息网络与模型"}, {value:"F030701 惯性导航",label:"F030701 惯性导航"}, {value:"F030902 机器人导航、定位与自主控制",label:"F030902 机器人导航、定位与自主控制"}, {value:"F030917 生物与微纳机器人系统",label:"F030917 生物与微纳机器人系统"}, {value:"F040305 半导体成像与显示相关材料及器件",label:"F040305 半导体成像与显示相关材料及器件"}, {value:"F040602 同质/异质三维集成技术",label:"F040602 同质/异质三维集成技术"}, {value:"F040605 集成电路制造专用设备",label:"F040605 集成电路制造专用设备"}, {value:"F050905 分子基及聚合物光电子材料",label:"F050905 分子基及聚合物光电子材料"}, {value:"F051101 大气光学",label:"F051101 大气光学"}, {value:"F060611 交叉科学中的人工智能问题",label:"F060611 交叉科学中的人工智能问题"}, {value:"F070203 自动化与数学交叉",label:"F070203 自动化与数学交叉"}, {value:"H0727 营养不良与营养支持",label:"H0727 营养不良与营养支持"}, {value:"A030601 天文参考系及星表",label:"A030601 天文参考系及星表"}, {value:"A050611 空间和天体等离子体及特殊等离子体",label:"A050611 空间和天体等离子体及特殊等离子体"}, {value:"B020105 团簇仿生催化",label:"B020105 团簇仿生催化"}, {value:"B040405 活体分析",label:"B040405 活体分析"}, {value:"B050905 生物质能源化学",label:"B050905 生物质能源化学"}, {value:"B070401 酶化学机制",label:"B070401 酶化学机制"}, {value:"C0310 污染生态学",label:"C0310 污染生态学"}, {value:"C0403 动物生理及行为学",label:"C0403 动物生理及行为学"}, {value:"C050505 生物系统功能与预测",label:"C050505 生物系统功能与预测"}, {value:"C120117 体内外环境与发育",label:"C120117 体内外环境与发育"}, {value:"C190201 鱼类遗传育种学",label:"C190201 鱼类遗传育种学"}, {value:"E041101 工艺矿物学与粉碎工程学",label:"E041101 工艺矿物学与粉碎工程学"}, {value:"E042206 冶金燃烧与节能工程",label:"E042206 冶金燃烧与节能工程"}, {value:"F011401 工业无损声学检测与成像",label:"F011401 工业无损声学检测与成像"}, {value:"F0119 电磁场",label:"F0119 电磁场"}, {value:"F0123 敏感电子学与传感器",label:"F0123 敏感电子学与传感器"}, {value:"F030308 动态模拟与模型验证",label:"F030308 动态模拟与模型验证"}, {value:"F040405 半导体电子器件工艺及封装",label:"F040405 半导体电子器件工艺及封装"}, {value:"F051403 微纳光子学器件",label:"F051403 微纳光子学器件"}, {value:"G0216 非营利组织管理",label:"G0216 非营利组织管理"}, {value:"G0309 区域经济与产业经济",label:"G0309 区域经济与产业经济"}, {value:"G040603 医院管理",label:"G040603 医院管理"}, {value:"H0114 纵隔与胸膜疾病",label:"H0114 纵隔与胸膜疾病"}, {value:"H0504 泌尿系统感染",label:"H0504 泌尿系统感染"}, {value:"H0722 核酸代谢异常",label:"H0722 核酸代谢异常"}, {value:"H0729 内分泌系统疾病/代谢异常与营养支持领域相关新技术",label:"H0729 内分泌系统疾病/代谢异常与营养支持领域相关新技术"}, {value:"H0917 器质性精神疾病",label:"H0917 器质性精神疾病"}, {value:"H2304 法医学其他科学问题",label:"H2304 法医学其他科学问题"}, {value:"H2715 中医口腔科",label:"H2715 中医口腔科"}, {value:"A030403 日震学和太阳内部结构；太阳黑子和太阳活动周期变化",label:"A030403 日震学和太阳内部结构；太阳黑子和太阳活动周期变化"}, {value:"B040203 谱学电分析化学",label:"B040203 谱学电分析化学"}, {value:"B0405 化学成像",label:"B0405 化学成像"}, {value:"B040506 多模态多尺度成像",label:"B040506 多模态多尺度成像"}, {value:"B050601 含能分子设计与合成",label:"B050601 含能分子设计与合成"}, {value:"B050602 含能材料性能调控与评价",label:"B050602 含能材料性能调控与评价"}, {value:"B070207 生物分子偶联与标记",label:"B070207 生物分子偶联与标记"}, {value:"C0105 环境微生物学",label:"C0105 环境微生物学"}, {value:"C010702 动物病原真菌学",label:"C010702 动物病原真菌学"}, {value:"C0406 实验动物学",label:"C0406 实验动物学"}, {value:"C0811 免疫学研究新技术与新方法",label:"C0811 免疫学研究新技术与新方法"}, {value:"C100105 其他组织器官生物力学",label:"C100105 其他组织器官生物力学"}, {value:"C100306 肝、胆、胰组织工程",label:"C100306 肝、胆、胰组织工程"}, {value:"C1005 仿生学",label:"C1005 仿生学"}, {value:"C1006 纳米生物学",label:"C1006 纳米生物学"}, {value:"C110103 细胞间相互作用",label:"C110103 细胞间相互作用"}, {value:"C13 作物学",label:"C13 作物学"}, {value:"C140603 其他有害生物的生物防治",label:"C140603 其他有害生物的生物防治"}, {value:"C2111 运动心理学",label:"C2111 运动心理学"}, {value:"C2113 应激心理学",label:"C2113 应激心理学"}, {value:"D071002 环境生物地球化学",label:"D071002 环境生物地球化学"}, {value:"E041504 贵金属等分离提取",label:"E041504 贵金属等分离提取"}, {value:"F010808 仿生信息处理方法与技术",label:"F010808 仿生信息处理方法与技术"}, {value:"F020210 服务计算",label:"F020210 服务计算"}, {value:"F030207 海洋装备与运载器控制系统",label:"F030207 海洋装备与运载器控制系统"}, {value:"F040105 半导体异质结构与复合结构材料",label:"F040105 半导体异质结构与复合结构材料"}, {value:"F0404 半导体电子器件与集成",label:"F0404 半导体电子器件与集成"}, {value:"F040505 半导体中的输运与半导体能谱",label:"F040505 半导体中的输运与半导体能谱"}, {value:"F050401 红外物理",label:"F050401 红外物理"}, {value:"F050801 光学CAD与虚拟光学",label:"F050801 光学CAD与虚拟光学"}, {value:"F060203 弱监督学习",label:"F060203 弱监督学习"}, {value:"F060405 文本检索、挖掘与信息抽取",label:"F060405 文本检索、挖掘与信息抽取"}, {value:"F060702 脑认知的注意、学习与记忆机制的建模与计算",label:"F060702 脑认知的注意、学习与记忆机制的建模与计算"}, {value:"F070108 教育大数据分析与应用",label:"F070108 教育大数据分析与应用"}, {value:"H0308 消化系统内分泌及神经体液调节异常",label:"H0308 消化系统内分泌及神经体液调节异常"}, {value:"H0414 男性生殖系统遗传性疾病",label:"H0414 男性生殖系统遗传性疾病"}, {value:"H1823 人工器官与特殊感受器仿生医学",label:"H1823 人工器官与特殊感受器仿生医学"}, {value:"A0206 爆炸与冲击动力学",label:"A0206 爆炸与冲击动力学"}, {value:"B010502 溶液配位化学",label:"B010502 溶液配位化学"}, {value:"B030204 复杂流体",label:"B030204 复杂流体"}, {value:"B050106 分子基材料化学",label:"B050106 分子基材料化学"}, {value:"B050502 外场响应的材料化学",label:"B050502 外场响应的材料化学"}, {value:"B051002 光电转换材料化学",label:"B051002 光电转换材料化学"}, {value:"B080805 化工制药",label:"B080805 化工制药"}, {value:"C0205 植物生殖生物学",label:"C0205 植物生殖生物学"}, {value:"C080601 抗体与功能",label:"C080601 抗体与功能"}, {value:"C100301 皮肤组织工程",label:"C100301 皮肤组织工程"}, {value:"C110305 造血调控与微环境",label:"C110305 造血调控与微环境"}, {value:"C12 发育生物学与生殖生物学",label:"C12 发育生物学与生殖生物学"}, {value:"C1404 农田鼠害及其他有害生物",label:"C1404 农田鼠害及其他有害生物"}, {value:"C1613 荒漠化与水土保持",label:"C1613 荒漠化与水土保持"}, {value:"E0313 高分子材料与环境",label:"E0313 高分子材料与环境"}, {value:"F010503 扩频通信",label:"F010503 扩频通信"}, {value:"F012403 生物电磁信号检测",label:"F012403 生物电磁信号检测"}, {value:"F030403 智能优化方法与技术",label:"F030403 智能优化方法与技术"}, {value:"F030606 工业参量检测技术与装置",label:"F030606 工业参量检测技术与装置"}, {value:"F0504 红外与太赫兹物理及技术",label:"F0504 红外与太赫兹物理及技术"}, {value:"F050808 光学测量与计算",label:"F050808 光学测量与计算"}, {value:"F051203 生命系统的光学效应及机理",label:"F051203 生命系统的光学效应及机理"}, {value:"F060505 知识获取与知识图谱",label:"F060505 知识获取与知识图谱"}, {value:"G021001 企业研发与技术创新",label:"G021001 企业研发与技术创新"}, {value:"G040103 社会与区域治理",label:"G040103 社会与区域治理"}, {value:"G040604 社区卫生管理",label:"G040604 社区卫生管理"}, {value:"H0508 肾脏内分泌功能异常",label:"H0508 肾脏内分泌功能异常"}, {value:"H0705 内分泌系统炎症与感染",label:"H0705 内分泌系统炎症与感染"}, {value:"H0714 其他组织的内分泌功能异常",label:"H0714 其他组织的内分泌功能异常"}, {value:"H0804 白细胞异常及相关疾病",label:"H0804 白细胞异常及相关疾病"}, {value:"H0915 节律调控与节律紊乱",label:"H0915 节律调控与节律紊乱"}, {value:"A030405 太阳爆发活动对日地空间天气的影响",label:"A030405 太阳爆发活动对日地空间天气的影响"}, {value:"A0904",label:"A0904"}, {value:"B010602 非共价相互作用与组装方法",label:"B010602 非共价相互作用与组装方法"}, {value:"B040202 微电极与超微电极",label:"B040202 微电极与超微电极"}, {value:"B040610 聚电解质与高分子凝胶",label:"B040610 聚电解质与高分子凝胶"}, {value:"B0407 仪器创制",label:"B0407 仪器创制"}, {value:"B070605 生物体系的纳米技术",label:"B070605 生物体系的纳米技术"}, {value:"B080501 新型化工装备",label:"B080501 新型化工装备"}, {value:"C020410 种子生理",label:"C020410 种子生理"}, {value:"C050602 声生物物理学",label:"C050602 声生物物理学"}, {value:"C100305 肌组织与肌腱组织工程",label:"C100305 肌组织与肌腱组织工程"}, {value:"C110301 生物的调节与适应",label:"C110301 生物的调节与适应"}, {value:"C120116 发育异常",label:"C120116 发育异常"}, {value:"C1202 生殖生物学",label:"C1202 生殖生物学"}, {value:"C140504 其他有害生物化学防治",label:"C140504 其他有害生物化学防治"}, {value:"C2112 实验心理学",label:"C2112 实验心理学"}, {value:"E0112 金属材料的磨损与磨蚀",label:"E0112 金属材料的磨损与磨蚀"}, {value:"E041608 电磁冶金",label:"E041608 电磁冶金"}, {value:"E051003 可重构制造系统",label:"E051003 可重构制造系统"}, {value:"E060604 传热传质测试技术",label:"E060604 传热传质测试技术"}, {value:"F011203 微波雷达成像",label:"F011203 微波雷达成像"}, {value:"F011807 电路与系统可靠性",label:"F011807 电路与系统可靠性"}, {value:"F012006 微波射频技术",label:"F012006 微波射频技术"}, {value:"F012304 生物信息传感机理与传感器",label:"F012304 生物信息传感机理与传感器"}, {value:"F012505 中医信息获取与处理",label:"F012505 中医信息获取与处理"}, {value:"F020508 可视化与可视分析",label:"F020508 可视化与可视分析"}, {value:"F030715 飞行器制导与控制技术",label:"F030715 飞行器制导与控制技术"}, {value:"F040106 半导体材料工艺、测试表征与设备",label:"F040106 半导体材料工艺、测试表征与设备"}, {value:"F050101 光学计算和光学逻辑",label:"F050101 光学计算和光学逻辑"}, {value:"F050307 光开关、光互连与光交换",label:"F050307 光开关、光互连与光交换"}, {value:"G011201 管理信息系统",label:"G011201 管理信息系统"}, {value:"G031202 环境政策与生态管理",label:"G031202 环境政策与生态管理"}, {value:"H01 呼吸系统",label:"H01 呼吸系统"}, {value:"H0724 微量元素、维生素代谢异常",label:"H0724 微量元素、维生素代谢异常"}, {value:"H08 血液系统",label:"H08 血液系统"}, {value:"H1013 疾病的系统免疫学",label:"H1013 疾病的系统免疫学"}, {value:"H13 耳鼻咽喉头颈科学",label:"H13 耳鼻咽喉头颈科学"}, {value:"A0104 拓扑学",label:"A0104 拓扑学"}, {value:"A030502 实验室天体物理",label:"A030502 实验室天体物理"}, {value:"A040509 建筑声学与电声学",label:"A040509 建筑声学与电声学"}, {value:"B0308 化学信息学",label:"B0308 化学信息学"}, {value:"B040609 高分子流变学",label:"B040609 高分子流变学"}, {value:"B070206 微量元素化学生物学",label:"B070206 微量元素化学生物学"}, {value:"B070603 生物分子反应动力学",label:"B070603 生物分子反应动力学"}, {value:"B080502 装备腐蚀与防腐",label:"B080502 装备腐蚀与防腐"}, {value:"B080902 材料应用化工基础",label:"B080902 材料应用化工基础"}, {value:"C050206 无机生物化学",label:"C050206 无机生物化学"}, {value:"C0509 生命科学基础研究相关的新仪器研制",label:"C0509 生命科学基础研究相关的新仪器研制"}, {value:"C100310 人工器官与模拟组织三维构建",label:"C100310 人工器官与模拟组织三维构建"}, {value:"C100502 生物信号与图像",label:"C100502 生物信号与图像"}, {value:"C110311 微循环与血管新生",label:"C110311 微循环与血管新生"}, {value:"C110503 骨与钙、磷代谢",label:"C110503 骨与钙、磷代谢"}, {value:"C190203 贝类遗传育种学",label:"C190203 贝类遗传育种学"}, {value:"E011302 制备加工一体化与近净成形的材料基础",label:"E011302 制备加工一体化与近净成形的材料基础"}, {value:"E042201 短流程新技术",label:"E042201 短流程新技术"}, {value:"E070501 高电压与大电流",label:"E070501 高电压与大电流"}, {value:"F010809 系统生物学理论与技术",label:"F010809 系统生物学理论与技术"}, {value:"F011006 量子与关联成像",label:"F011006 量子与关联成像"}, {value:"F011007 量子时频传输",label:"F011007 量子时频传输"}, {value:"F011805 功率电子技术与系统",label:"F011805 功率电子技术与系统"}, {value:"F012008 微波与天线测量",label:"F012008 微波与天线测量"}, {value:"F0124 生物电子学与生物信息处理",label:"F0124 生物电子学与生物信息处理"}, {value:"F030117 控制系统的动态性能分析与评估",label:"F030117 控制系统的动态性能分析与评估"}, {value:"F030309 工业系统建模与仿真",label:"F030309 工业系统建模与仿真"}, {value:"F030503 生物及健康大数据分析技术与应用",label:"F030503 生物及健康大数据分析技术与应用"}, {value:"F030504 生物特征与生物分子识别",label:"F030504 生物特征与生物分子识别"}, {value:"F030713 导航制导控制一体化技术",label:"F030713 导航制导控制一体化技术"}, {value:"F040309 光电子器件工艺、封装与测试",label:"F040309 光电子器件工艺、封装与测试"}, {value:"F051104 水下目标、海底光学探测与信息处理",label:"F051104 水下目标、海底光学探测与信息处理"}, {value:"F060108 不确定性人工智能",label:"F060108 不确定性人工智能"}, {value:"F060204 无监督学习",label:"F060204 无监督学习"}, {value:"F070202 计算机与数学交叉",label:"F070202 计算机与数学交叉"}, {value:"G010303 供应链基础理论",label:"G010303 供应链基础理论"}, {value:"G020701 营销模型",label:"G020701 营销模型"}, {value:"H0218 淋巴管与淋巴循环疾病",label:"H0218 淋巴管与淋巴循环疾病"}, {value:"H0608 骨、关节、软组织疲劳与恢复",label:"H0608 骨、关节、软组织疲劳与恢复"}, {value:"A030702 N体问题、非线性和相对论天体力学",label:"A030702 N体问题、非线性和相对论天体力学"}, {value:"A050402 离子束核分析技术",label:"A050402 离子束核分析技术"}, {value:"B010202 无机溶液合成",label:"B010202 无机溶液合成"}, {value:"B020201 表面结构与性质",label:"B020201 表面结构与性质"}, {value:"B040603 生物与药物分析",label:"B040603 生物与药物分析"}, {value:"B040604 资源与环境分析",label:"B040604 资源与环境分析"}, {value:"B040708 智能化与微型化仪器装置",label:"B040708 智能化与微型化仪器装置"}, {value:"C0103 微生物遗传与育种",label:"C0103 微生物遗传与育种"}, {value:"C050506 系统生物学研究新技术及新方法",label:"C050506 系统生物学研究新技术及新方法"}, {value:"C060202 动物细胞遗传",label:"C060202 动物细胞遗传"}, {value:"C060405 人类细胞遗传",label:"C060405 人类细胞遗传"}, {value:"C080503 疫苗递送系统",label:"C080503 疫苗递送系统"}, {value:"C0809 疫苗研究",label:"C0809 疫苗研究"}, {value:"C1109 整合生物学",label:"C1109 整合生物学"}, {value:"C1301 作物学基础",label:"C1301 作物学基础"}, {value:"D020103 古生态学",label:"D020103 古生态学"}, {value:"E020802 强化与增韧理论",label:"E020802 强化与增韧理论"}, {value:"E040301",label:"E040301"}, {value:"E042003 有害辐射等污染的防治",label:"E042003 有害辐射等污染的防治"}, {value:"E060705 地热能利用中的工程热物理问题",label:"E060705 地热能利用中的工程热物理问题"}, {value:"F011003 量子网络与量子中继",label:"F011003 量子网络与量子中继"}, {value:"F011109 阵列信号处理",label:"F011109 阵列信号处理"}, {value:"F011502 图像压缩",label:"F011502 图像压缩"}, {value:"F012206 表面和薄膜电子学",label:"F012206 表面和薄膜电子学"}, {value:"F012208 分子电子学",label:"F012208 分子电子学"}, {value:"F030203 电力电子与电机控制系统",label:"F030203 电力电子与电机控制系统"}, {value:"F030501 生理系统建模、分析与调控",label:"F030501 生理系统建模、分析与调控"}, {value:"F030710 导航技术与系统",label:"F030710 导航技术与系统"}, {value:"F030913 机器人自主学习理论与技术",label:"F030913 机器人自主学习理论与技术"}, {value:"F040407 信息存储材料与器件",label:"F040407 信息存储材料与器件"}, {value:"F0407 微纳机电器件与控制系统",label:"F0407 微纳机电器件与控制系统"}, {value:"F040701 微纳机电器件与系统模型及设计",label:"F040701 微纳机电器件与系统模型及设计"}, {value:"F040802 分子信息器件",label:"F040802 分子信息器件"}, {value:"F050109 光学关联成像、计算成像及相关技术与器件",label:"F050109 光学关联成像、计算成像及相关技术与器件"}, {value:"F050509 光量子器件与集成",label:"F050509 光量子器件与集成"}, {value:"F060208 深度学习理论与方法",label:"F060208 深度学习理论与方法"}, {value:"G030202 资本市场管理",label:"G030202 资本市场管理"}, {value:"G030603 金融创新管理",label:"G030603 金融创新管理"}, {value:"G031203 资源管理与政策",label:"G031203 资源管理与政策"}, {value:"H0117 呼吸系统疾病诊疗新技术",label:"H0117 呼吸系统疾病诊疗新技术"}, {value:"H0922 人格障碍、冲动控制障碍和性心理异常",label:"H0922 人格障碍、冲动控制障碍和性心理异常"}, {value:"H11 皮肤及其附属器",label:"H11 皮肤及其附属器"}, {value:"H1306 耳鼻咽喉疾病诊疗新技术",label:"H1306 耳鼻咽喉疾病诊疗新技术"}, {value:"H17 康复医学",label:"H17 康复医学"}, {value:"A030602 相对论天体测量",label:"A030602 相对论天体测量"}, {value:"B010206 功能无机分子的设计与合成",label:"B010206 功能无机分子的设计与合成"}, {value:"B030405 动态结构",label:"B030405 动态结构"}, {value:"B050406 柔性与可穿戴材料化学",label:"B050406 柔性与可穿戴材料化学"}, {value:"B050702 煤转化化学基础",label:"B050702 煤转化化学基础"}, {value:"C020505 胚乳发育",label:"C020505 胚乳发育"}, {value:"C11 生理学与整合生物学",label:"C11 生理学与整合生物学"}, {value:"C150706 农田水土资源利用学",label:"C150706 农田水土资源利用学"}, {value:"D041005 宇宙线物理学",label:"D041005 宇宙线物理学"}, {value:"E030203 热塑弹性体",label:"E030203 热塑弹性体"}, {value:"F011204 光学雷达成像",label:"F011204 光学雷达成像"}, {value:"F011901 电磁场理论",label:"F011901 电磁场理论"}, {value:"F0122 物理电子学",label:"F0122 物理电子学"}, {value:"F020516 计算医疗与健康技术",label:"F020516 计算医疗与健康技术"}, {value:"F020808 移动网络计算",label:"F020808 移动网络计算"}, {value:"F030406 资源、能源管理系统与优化",label:"F030406 资源、能源管理系统与优化"}, {value:"F030614 新型检测技术及装置",label:"F030614 新型检测技术及装置"}, {value:"F030903 机器人运动与路径规划",label:"F030903 机器人运动与路径规划"}, {value:"F040404 半导体辐射探测器",label:"F040404 半导体辐射探测器"}, {value:"F040611 集成电路制造与封装材料",label:"F040611 集成电路制造与封装材料"}, {value:"F0408 新型信息器件",label:"F0408 新型信息器件"}, {value:"F060703 视听觉感知模型",label:"F060703 视听觉感知模型"}, {value:"F070102 在线与移动交互学习环境构建",label:"F070102 在线与移动交互学习环境构建"}, {value:"G031301 区域发展战略管理",label:"G031301 区域发展战略管理"}, {value:"G040602 药事管理",label:"G040602 药事管理"}, {value:"H0305 腹壁/腹膜结构及功能异常",label:"H0305 腹壁/腹膜结构及功能异常"}, {value:"H0311 消化系统血管及循环障碍性疾病",label:"H0311 消化系统血管及循环障碍性疾病"}, {value:"B010704 原子与步骤经济性反应",label:"B010704 原子与步骤经济性反应"}, {value:"B050704 二氧化碳化学转化",label:"B050704 二氧化碳化学转化"}, {value:"B060502 放射核素分析",label:"B060502 放射核素分析"}, {value:"B070105 分子探针与组学技术",label:"B070105 分子探针与组学技术"}, {value:"B070602 生物光电化学与热力学",label:"B070602 生物光电化学与热力学"}, {value:"C010104 病毒资源、分类及变异",label:"C010104 病毒资源、分类及变异"}, {value:"C0202 植物分类学",label:"C0202 植物分类学"}, {value:"C0504 膜生物化学与膜生物物理学",label:"C0504 膜生物化学与膜生物物理学"}, {value:"C060403 人类行为的遗传基础",label:"C060403 人类行为的遗传基础"}, {value:"C080903 疫苗递送系统",label:"C080903 疫苗递送系统"}, {value:"C0909 触觉神经生物学",label:"C0909 触觉神经生物学"}, {value:"C120208 生殖异常与不育",label:"C120208 生殖异常与不育"}, {value:"C190103 水产生物遗传学",label:"C190103 水产生物遗传学"}, {value:"C200705 转基因食品安全与检测",label:"C200705 转基因食品安全与检测"}, {value:"C2110 遗传心理学",label:"C2110 遗传心理学"}, {value:"E040302 油藏工程",label:"E040302 油藏工程"}, {value:"E041605 应变冶金",label:"E041605 应变冶金"}, {value:"E060704 水能、海洋能、潮汐能利用中的工程热物理问题",label:"E060704 水能、海洋能、潮汐能利用中的工程热物理问题"}, {value:"E070303 其他电器",label:"E070303 其他电器"}, {value:"F010709 有机、无机电子学",label:"F010709 有机、无机电子学"}, {value:"F011110 压缩感知理论与方法",label:"F011110 压缩感知理论与方法"}, {value:"F011506 图像安全",label:"F011506 图像安全"}, {value:"F020402 处理器设计方法与工具",label:"F020402 处理器设计方法与工具"}, {value:"F040803 量子信息器件",label:"F040803 量子信息器件"}, {value:"F050402 红外辐射与物质相互作用",label:"F050402 红外辐射与物质相互作用"}, {value:"F051004 空间激光应用技术",label:"F051004 空间激光应用技术"}, {value:"F051105 海洋光学",label:"F051105 海洋光学"}, {value:"F060105 自然计算基础理论",label:"F060105 自然计算基础理论"}, {value:"F060207 强化学习",label:"F060207 强化学习"}, {value:"F060408 社会媒体处理与跨媒体分析",label:"F060408 社会媒体处理与跨媒体分析"}, {value:"G0313 区域发展管理",label:"G0313 区域发展管理"}, {value:"G0403 非营利组织管理",label:"G0403 非营利组织管理"}, {value:"H0102 呼吸系统遗传性疾病",label:"H0102 呼吸系统遗传性疾病"}, {value:"H0405 女性生殖系统遗传性疾病",label:"H0405 女性生殖系统遗传性疾病"}, {value:"H06 运动系统",label:"H06 运动系统"}, {value:"H0802 造血相关器官结构及功能异常",label:"H0802 造血相关器官结构及功能异常"}, {value:"H0924 其他精神障碍与精神卫生问题",label:"H0924 其他精神障碍与精神卫生问题"}, {value:"H14 口腔颅颌面科学",label:"H14 口腔颅颌面科学"}, {value:"H1902 病原放线菌、放线菌感染与宿主免疫",label:"H1902 病原放线菌、放线菌感染与宿主免疫"}, {value:"A040508 信息科学中的声学问题",label:"A040508 信息科学中的声学问题"}, {value:"B050504 表界面仿生材料化学",label:"B050504 表界面仿生材料化学"}, {value:"B0703 化学遗传学",label:"B0703 化学遗传学"}, {value:"B080604 化工过程安全",label:"B080604 化工过程安全"}, {value:"C031303 生态工程评价",label:"C031303 生态工程评价"}, {value:"C051002 合成生物学的新技术与新方法",label:"C051002 合成生物学的新技术与新方法"}, {value:"C100307 肾与膀胱组织工程",label:"C100307 肾与膀胱组织工程"}, {value:"C100501 生物系统成像",label:"C100501 生物系统成像"}, {value:"C110306 水、电解质平衡与调节",label:"C110306 水、电解质平衡与调节"}, {value:"C120210 体内外环境与生殖健康",label:"C120210 体内外环境与生殖健康"}, {value:"C15 园艺学与植物营养学",label:"C15 园艺学与植物营养学"}, {value:"C180804 兽医临床诊断学",label:"C180804 兽医临床诊断学"}, {value:"C21 心理学",label:"C21 心理学"}, {value:"D0104 自然资源管理",label:"D0104 自然资源管理"}, {value:"F011404 工业无损多模检测与成像",label:"F011404 工业无损多模检测与成像"}, {value:"F0117 多媒体信息处理",label:"F0117 多媒体信息处理"}, {value:"F011705 音频信息处理",label:"F011705 音频信息处理"}, {value:"F011802 电路与系统故障检测",label:"F011802 电路与系统故障检测"}, {value:"F020504 多媒体技术",label:"F020504 多媒体技术"}, {value:"F020805 网络安全",label:"F020805 网络安全"}, {value:"F020809 传感网络协议与计算",label:"F020809 传感网络协议与计算"}, {value:"F030404 工程系统优化方法与技术",label:"F030404 工程系统优化方法与技术"}, {value:"F030413 信息服务系统理论与技术",label:"F030413 信息服务系统理论与技术"}, {value:"F030415 信息物理系统优化与安全",label:"F030415 信息物理系统优化与安全"}, {value:"F030502 生物过程建模、分析与调控",label:"F030502 生物过程建模、分析与调控"}, {value:"F030608 生态与环境监测技术",label:"F030608 生态与环境监测技术"}, {value:"F030708 组合导航",label:"F030708 组合导航"}, {value:"F040408 有机/柔性电子器件与集成",label:"F040408 有机/柔性电子器件与集成"}, {value:"F050510 混沌光学及应用",label:"F050510 混沌光学及应用"}, {value:"F0507 光谱技术",label:"F0507 光谱技术"}, {value:"F051106 环境光学",label:"F051106 环境光学"}, {value:"F051209 无标记光学信息检测与显微成像",label:"F051209 无标记光学信息检测与显微成像"}, {value:"F051214 生物、医学光学成像仪器及应用",label:"F051214 生物、医学光学成像仪器及应用"}, {value:"F060206 集成学习",label:"F060206 集成学习"}, {value:"F060604 进化与演化系统",label:"F060604 进化与演化系统"}, {value:"F070109 学习分析与评测",label:"F070109 学习分析与评测"}, {value:"F070204 人工智能与数学交叉",label:"F070204 人工智能与数学交叉"}, {value:"G030703 科技创新管理",label:"G030703 科技创新管理"}, {value:"H0112 呼吸衰竭与呼吸支持",label:"H0112 呼吸衰竭与呼吸支持"}, {value:"H20 检验医学",label:"H20 检验医学"}, {value:"H29 中西医结合",label:"H29 中西医结合"}, {value:"A0902",label:"A0902"}, {value:"B020202 表面分子反应过程",label:"B020202 表面分子反应过程"}, {value:"B020203 表面组装过程与功能",label:"B020203 表面组装过程与功能"}, {value:"B020402 谱学电化学",label:"B020402 谱学电化学"}, {value:"B0508 电化学能源化学",label:"B0508 电化学能源化学"}, {value:"B070103 分子探针与信号转导",label:"B070103 分子探针与信号转导"}, {value:"B070303 化学表观遗传学",label:"B070303 化学表观遗传学"}, {value:"C0303 生理生态学",label:"C0303 生理生态学"}, {value:"C0810 抗体工程研究",label:"C0810 抗体工程研究"}, {value:"C100311 其他器官组织工程",label:"C100311 其他器官组织工程"}, {value:"C1105 营养与代谢生理学",label:"C1105 营养与代谢生理学"}, {value:"C120118 发育生物学研究的新技术、新方法",label:"C120118 发育生物学研究的新技术、新方法"}, {value:"C120207 分娩与泌乳",label:"C120207 分娩与泌乳"}, {value:"C140203 油料作物害虫",label:"C140203 油料作物害虫"}, {value:"C190301 水产生物多样性",label:"C190301 水产生物多样性"}, {value:"C1904 水产生物营养与饲料学",label:"C1904 水产生物营养与饲料学"}, {value:"E0421 矿冶装备工艺原理",label:"E0421 矿冶装备工艺原理"}, {value:"E060501 离散相动力学",label:"E060501 离散相动力学"}, {value:"F011310 海洋信息获取与处理",label:"F011310 海洋信息获取与处理"}, {value:"F011413 多探测器信息获取与融合",label:"F011413 多探测器信息获取与融合"}, {value:"F0118 电路与系统",label:"F0118 电路与系统"}, {value:"F012202 相对论电子学",label:"F012202 相对论电子学"}, {value:"F012509 精准医学信息获取与处理",label:"F012509 精准医学信息获取与处理"}, {value:"F012510 医学影像重建与手术导航",label:"F012510 医学影像重建与手术导航"}, {value:"F030311 交通系统建模与仿真",label:"F030311 交通系统建模与仿真"}, {value:"F030705 自主导航",label:"F030705 自主导航"}, {value:"F030809 生产管理决策系统",label:"F030809 生产管理决策系统"}, {value:"F030811 系统状态评估、故障预测与智能维护",label:"F030811 系统状态评估、故障预测与智能维护"}, {value:"F030905 人-机-环境自然交互与互动",label:"F030905 人-机-环境自然交互与互动"}, {value:"F030920 特种机器人系统",label:"F030920 特种机器人系统"}, {value:"F040805 低维结构信息材料与器件",label:"F040805 低维结构信息材料与器件"}, {value:"F050403 红外探测、传输与发射",label:"F050403 红外探测、传输与发射"}, {value:"F050606 自由电子激光与X射线激光",label:"F050606 自由电子激光与X射线激光"}, {value:"F051005 光学相控阵",label:"F051005 光学相控阵"}, {value:"F0603 机器感知与模式识别",label:"F0603 机器感知与模式识别"}, {value:"F060501 知识表示与处理的基础理论与方法",label:"F060501 知识表示与处理的基础理论与方法"}, {value:"F060607 人机协同学习",label:"F060607 人机协同学习"}, {value:"F060708 类脑计算",label:"F060708 类脑计算"}, {value:"F070101 教育信息科学基础理论与方法",label:"F070101 教育信息科学基础理论与方法"}, {value:"F070103 虚拟与增强现实学习环境",label:"F070103 虚拟与增强现实学习环境"}, {value:"G030201 银行体系与货币政策",label:"G030201 银行体系与货币政策"}, {value:"G0314 信息资源管理",label:"G0314 信息资源管理"}, {value:"H0103 呼吸调控异常",label:"H0103 呼吸调控异常"}, {value:"H0412 男性生殖系统炎症与感染",label:"H0412 男性生殖系统炎症与感染"}, {value:"H0721 氨基酸代谢异常",label:"H0721 氨基酸代谢异常"}, {value:"H0810 血液系统感染性疾病",label:"H0810 血液系统感染性疾病"}, {value:"H1616 血液淋巴肿瘤（白血病除外）",label:"H1616 血液淋巴肿瘤（白血病除外）"}, {value:"H23 法医学",label:"H23 法医学"}, {value:"B010603 动态共价键化学",label:"B010603 动态共价键化学"}, {value:"B020101 催化基础与理论",label:"B020101 催化基础与理论"}, {value:"B030602 无机反应热力学与动力学",label:"B030602 无机反应热力学与动力学"}, {value:"B040306 量热分析",label:"B040306 量热分析"}, {value:"B080103 表界面结构与现象",label:"B080103 表界面结构与现象"}, {value:"C080602 重组与改型",label:"C080602 重组与改型"}, {value:"C081002 重组与改型",label:"C081002 重组与改型"}, {value:"C0912 神经信息学",label:"C0912 神经信息学"}, {value:"C120209 辅助生殖",label:"C120209 辅助生殖"}, {value:"C160802 森林分类经营",label:"C160802 森林分类经营"}, {value:"C190501 鱼类养殖学",label:"C190501 鱼类养殖学"}, {value:"C190503 贝类养殖学",label:"C190503 贝类养殖学"}, {value:"F0110 量子通信与量子信息处理",label:"F0110 量子通信与量子信息处理"}, {value:"F012209 电子显微学",label:"F012209 电子显微学"}, {value:"F030405 计划调度系统与优化",label:"F030405 计划调度系统与优化"}, {value:"F030911 机器人抓取及操作",label:"F030911 机器人抓取及操作"}, {value:"F031006 异常工况智能预测与自愈控制",label:"F031006 异常工况智能预测与自愈控制"}, {value:"F031007 决策特征提取与知识获取",label:"F031007 决策特征提取与知识获取"}, {value:"F040411 半导体器件测试表征与可靠性分析",label:"F040411 半导体器件测试表征与可靠性分析"}, {value:"F050212 微波光子器件",label:"F050212 微波光子器件"}, {value:"F050214 等离子体光子学及器件",label:"F050214 等离子体光子学及器件"}, {value:"F060205 统计学习",label:"F060205 统计学习"}, {value:"F060609 新型智能技术及应用",label:"F060609 新型智能技术及应用"}, {value:"F070110 自适应个性化辅助学习",label:"F070110 自适应个性化辅助学习"}, {value:"G031102 社会保障管理",label:"G031102 社会保障管理"}, {value:"H0409 乳腺结构、功能及发育异常",label:"H0409 乳腺结构、功能及发育异常"}, {value:"H0725 钙磷代谢异常",label:"H0725 钙磷代谢异常"}, {value:"H0927 危机干预",label:"H0927 危机干预"}, {value:"A0905",label:"A0905"}, {value:"A0906",label:"A0906"}, {value:"B010705 可再生资源化学",label:"B010705 可再生资源化学"}, {value:"B010706 温和条件下的化学转化",label:"B010706 温和条件下的化学转化"}, {value:"B030801 分子信息学",label:"B030801 分子信息学"}, {value:"B050105 团簇材料化学",label:"B050105 团簇材料化学"}, {value:"B050604 含能材料安全性与稳定性",label:"B050604 含能材料安全性与稳定性"}, {value:"B0509 可再生与可持续能源化学",label:"B0509 可再生与可持续能源化学"}, {value:"B080401 分子辨识分离工程",label:"B080401 分子辨识分离工程"}, {value:"C0206 植物资源学",label:"C0206 植物资源学"}, {value:"C050501 生物模块",label:"C050501 生物模块"}, {value:"C050503 生物网络动力学",label:"C050503 生物网络动力学"}, {value:"C050504 生物系统的信号处理与控制",label:"C050504 生物系统的信号处理与控制"}, {value:"C100404 生物检测的器件及系统",label:"C100404 生物检测的器件及系统"}, {value:"C1108 比较生理学",label:"C1108 比较生理学"}, {value:"C1602 森林资源信息学",label:"C1602 森林资源信息学"}, {value:"C2114 行为心理学",label:"C2114 行为心理学"}, {value:"E020202 传统玻璃材料",label:"E020202 传统玻璃材料"}, {value:"F010611 瞬态电磁场理论与应用",label:"F010611 瞬态电磁场理论与应用"}, {value:"F011307 遥感图像分类与检索",label:"F011307 遥感图像分类与检索"}, {value:"F012310 穿戴式敏感材料与传感器",label:"F012310 穿戴式敏感材料与传感器"}, {value:"F012406 生物细胞信号处理与分析",label:"F012406 生物细胞信号处理与分析"}, {value:"F012511 医学信息融合与应用",label:"F012511 医学信息融合与应用"}, {value:"F020801 计算机网络体系结构",label:"F020801 计算机网络体系结构"}, {value:"F020803 网络资源共享与管理",label:"F020803 网络资源共享与管理"}, {value:"F030310 社会、经济系统建模与仿真",label:"F030310 社会、经济系统建模与仿真"}, {value:"F030312 能源系统建模与仿真",label:"F030312 能源系统建模与仿真"}, {value:"F030414 社会经济系统分析与优化",label:"F030414 社会经济系统分析与优化"}, {value:"F030611 无线传感器与检测技术及装置",label:"F030611 无线传感器与检测技术及装置"}, {value:"F030711 协同制导与控制",label:"F030711 协同制导与控制"}, {value:"F030716 机动目标识别、制导与控制",label:"F030716 机动目标识别、制导与控制"}, {value:"F030807 先进制造控制技术",label:"F030807 先进制造控制技术"}, {value:"F030914 机器人智能化控制系统",label:"F030914 机器人智能化控制系统"}, {value:"F030921 无人系统控制技术",label:"F030921 无人系统控制技术"}, {value:"F031008 智能决策系统架构与方法",label:"F031008 智能决策系统架构与方法"}, {value:"F031011 机器感知技术与系统",label:"F031011 机器感知技术与系统"}, {value:"F031012 机器视/听/力觉技术与控制系统",label:"F031012 机器视/听/力觉技术与控制系统"}, {value:"F040109 新型信息功能材料",label:"F040109 新型信息功能材料"}, {value:"F040209 集成电路硬件安全",label:"F040209 集成电路硬件安全"}, {value:"F040708 微纳机电生化传感器",label:"F040708 微纳机电生化传感器"}, {value:"F040709 微纳机电执行器与微能源",label:"F040709 微纳机电执行器与微能源"}, {value:"F040807 神经形态信息材料与器件",label:"F040807 神经形态信息材料与器件"}, {value:"F050809 制造技术中的光学问题",label:"F050809 制造技术中的光学问题"}, {value:"F050910 液晶态光电子材料",label:"F050910 液晶态光电子材料"}, {value:"F060104 复杂任务规划与决策",label:"F060104 复杂任务规划与决策"}, {value:"F060110 人工智能中的博弈理论与方法",label:"F060110 人工智能中的博弈理论与方法"}, {value:"F060202 监督学习",label:"F060202 监督学习"}, {value:"F060304 多模态感知与情景计算",label:"F060304 多模态感知与情景计算"}, {value:"F060401 自然语言处理基础理论与方法",label:"F060401 自然语言处理基础理论与方法"}, {value:"F060407 情感计算",label:"F060407 情感计算"}, {value:"F060601 人工智能器件、芯片及系统结构",label:"F060601 人工智能器件、芯片及系统结构"}, {value:"F060603 自主无人系统",label:"F060603 自主无人系统"}, {value:"F0607 认知与神经科学启发的人工智能",label:"F0607 认知与神经科学启发的人工智能"}, {value:"F060705 神经系统建模与分析",label:"F060705 神经系统建模与分析"}, {value:"G030804 食物经济管理",label:"G030804 食物经济管理"}, {value:"G031302 城镇发展与管理",label:"G031302 城镇发展与管理"}, {value:"G031401 图书情报档案管理",label:"G031401 图书情报档案管理"}, {value:"H0115 胸廓/膈肌结构、功能及发育异常",label:"H0115 胸廓/膈肌结构、功能及发育异常"}, {value:"H0408 女性性功能障碍",label:"H0408 女性性功能障碍"}, {value:"H0925 精神疾病的心理测量和评估",label:"H0925 精神疾病的心理测量和评估"}, {value:"H0926 心理咨询与心理治疗",label:"H0926 心理咨询与心理治疗"}, {value:"H21 特种医学",label:"H21 特种医学"}, {value:"B040607 公共安全分析与溯源",label:"B040607 公共安全分析与溯源"}, {value:"B0504 复合与杂化材料化学",label:"B0504 复合与杂化材料化学"}, {value:"B050902 人工光合过程",label:"B050902 人工光合过程"}
+      ],
+      field2:[
+        {
+          value:'department',
+          label:'学部'
+        },{
+          value:'unit',
+          label:'单位名称'
+        },{
+          value:'type',
+          label:'项目类别'
+        },{
+          value:'money',
+          label:'项目金额'
+        },{
+          value:'joinStudentsName',
+          label:'参与学生'
+        },{
+          value:'hostStudentsName',
+          label:'负责学生'
+        },{
+          value:'subjectOne',
+          label:'一级学科'
+        },{
+          value:'subjectTwo',
+          label:'二级学科'
+        },{
+          value:'subjectThree',
+          label:'三级学科'
+        }
+      ],
+      searchCompletion:[],
+      model1: "",model2:'',model3:'',model4:'',subCou:'',
+      relation:[
+        {
+          value:'OR',
+          label:'OR'
+        },
+        {
+          value:'AND',
+          label:'AND'
+        },
+        {
+          value:'NOT',
+          label:'NOT'
+        }
+      ],relation2:'AND',relation3:'AND',relation4:'AND',
+      int1:'',int2:'',int3:'',int4:'',
+      senior1:false,isShow: false,blok:"",jus:'',showSCI:false,isSci:'',
+      sort:'',typeAggs:[],
+      aggs:'',systemDate:'',departmentAggs:[],typeAggs1:[],studentsNameAggs:[],titleAggs:[],subjectOneAggs:[],subjectThreeAggs:[],subjectTwoAggs:[],
+      unitAggs:[],yearAggs:[],his:[],Fu:{}
+    }
+  },
+  components:{
+    Header,Footer
+  },
+  created(){
+    this.currentPage = Number(localStorage.getItem('pagination')) || 1;
+    this.currentPage=1
+    this.choice=this.fund
+  },
+  watch: {
+  },
+  mounted() {
+    // this.$refs['input'].focus();
+    window.addEventListener('scroll', this.scrollToTop)
+    this.addDate()
+    this.block()
+    this.inf()
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.scrollToTop)
+  },
+  updated () {
+    this.xue1();
+    this.xiang1();
+    this.biaoti2();
+    this.yiji2();
+    this.erji2();
+    this.sanji2();
+    this.danwei2();
+    this.nianfen2();
+  },
+  beforeUpdate () {
+    localStorage.setItem('pagination', this.currentPage);
+  },
+  beforeDestroy () {
+    localStorage.setItem('pagination', '1');
+  },
+  computed: {
+    // chanPage(){
+    //   if(this.currentPage!=1){
+    //     this.searcher()
+    //   }
+    // },
+    noMore () {
+      return this.count >= 20
+    },
+    disabled () {
+      return this.loading || this.noMore
+    },
+    data1: {
+      get: function(){
+        return this.a1; // 在这里把临时对象的值通过计算属性赋值给页面中用到的对象
+      }
+    },
+    data2: {
+      get: function(){
+        return this.a5; // 在这里把临时对象的值通过计算属性赋值给页面中用到的对象
+      }
+    },
+    data3: {
+      get: function(){
+        return this.a6; // 在这里把临时对象的值通过计算属性赋值给页面中用到的对象
+      }
+    },
+    data4: {
+      get: function(){
+        return this.accc; // 在这里把临时对象的值通过计算属性赋值给页面中用到的对象
+      }
+    },
+    data5:{
+      get:function(){
+        return this.searchCompletion
+      }
+    },
+    data6:{
+      get:function(){
+        return this.abbb
+      }
+    },
+    data7:{
+      get:function(){
+        return this.blok
+      }
+    },
+    data8:{
+      get:function(){
+        return this.departmentAggs
+      }
+    },
+    data9:{
+      get:function(){
+        return this.typeAggs1
+      }
+    },
+    data10:{
+      get:function(){
+        return this.studentsNameAggs
+      }
+    },
+    data11:{
+      get:function(){
+        return this.unitAggs
+      }
+    },
+    data12:{
+      get:function(){
+        return this.yearAggs
+      }
+    },data13:{
+      get:function(){
+          return this.his
+      }
+    }
+  },
+  activated() {
+    this.getRouterData();this.handleCurrentChange()
+    // this.searcher();
+    this.inf();
+    this.history()
+  },
+  methods:{
+    subjectOne1(a){
+      this.searchContent=`subjectOneType:"${a}"`
+    },
+    subjectTwo1(a){
+      this.searchContent=`subjectTwoType:"${a}"`
+    },
+    subjectThree1(a){
+      this.searchContent=`subjectThreeType:"${a}"`
+    },
+    type11(a){
+      this.searchContent=a
+    },
+    money1(a){
+      this.searchContent=`money:"${a}"`
+    },
+    Year1(a){
+      this.searchContent=`approvalYear:"${a}"`
+    },
+    unit1(a){
+      this.searchContent=a
+    },
+    student(a){
+      this.searchContent=a
+    },
+    his1(hi){
+      const {href}=this.$router.resolve({
+        path: '/SearchFund',
+        query:{
+          search1:hi
+        }
+      })
+      window.open(href,'_blank')
+    },
+    history(){
+      if(typeof(this.searchContent)!='undefined'){
+        var mj=this.searchContent.replace(/\s*/g,"")
+        if(mj!=""){
+          var nnnn=JSON.parse(localStorage.getItem('SearchFundhistory'))
+          if(nnnn==null){
+            nnnn=[]
+            nnnn.unshift(mj)
+          }else{
+            nnnn.unshift(mj)
+          }
+          // console.log(JSON.stringify(nnnn))
+          localStorage.setItem('SearchFundhistory', JSON.stringify(nnnn));
+        }
+      }
+      var nm=localStorage.getItem('SearchFundhistory')
+      this.his=JSON.parse(nm)
+      if(this.his!=null){
+        this.his.length>4?this.his=this.his.slice(0,4):this.his
+      }else{
+        this.his=[]
+      }
+      // console.log(localStorage.getItem('Searchhistory'))
+    },
+    to884(){
+      window.open('https://shengxin.ren/article/884','_blank')
+    },
+    to885(){
+      window.open('https://shengxin.ren/article/885','_blank')
+    },
+    to886(){
+      window.open('https://shengxin.ren/article/886','_blank')
+    },
+    to887(){
+      window.open('https://shengxin.ren/article/887','_blank')
+    },
+    to888(){
+      window.open('https://shengxin.ren/article/888','_blank')
+    },
+    to889(){
+      window.open('https://shengxin.ren/article/889','_blank')
+    },
+    search2(){
+      this.$router.push({
+        path:'/SearchFund',
+        query:{
+          chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:this.currentPage,search1:this.searchContent
+        }
+      })
+    },
+    search3(){
+      this.$router.push({
+        path:'/SearchFund',
+        query:{
+          chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:1,search1:this.searchContent
+        }
+      })
+    },
+    toContribute(){
+      const {href}=this.$router.resolve({
+        path: '/Contribute'
+      })
+      window.open(href,'_blank')
+    },
+    
+    handleSelect(){},
+    querySearch(queryString, cb) {
+      if(this.jus!=''){
+        var restaurants = this.jus;
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+        // 调用 callback 返回建议列表的数据
+        cb(results); 
+      }
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },  
+    toShengxinren(id){
+      let url=`https://shengxin.ren/article/${id}`
+      window.open(url,'_blank')
+    },
+    block(){
+      $.ajax({
+        url:'https://shengxin.ren/sxrpost/getBlog',
+        dataType:'json',
+        type:'GET',
+        success:res=>{
+          this.blok=(res.data).slice(0,4)
+        }
+      })
+    },
+    settingEvent(){
+    },
+    downAnalysis(){
+      this.h++
+      this.show=true
+    },
+    addDate() {
+      let nowDate = new Date();
+      let date = {
+        year: nowDate.getFullYear(),
+        month: nowDate.getMonth() + 1,
+        date: nowDate.getDate(),
+      }
+      this.systemDate = date.year + '-'  + date.month + '-'  + date.date;
+    },
+    toFund(approvalNumber){
+      const {href}=this.$router.resolve({
+        path: '/Fund',
+        query: {
+          approvalNumber:approvalNumber
+        },
+      })
+      window.open(href, '_blank')
+    },
+    high(){
+      this.d++;
+      if(this.d%2==1){
+        this.senior1=true;
+      }else{
+        this.senior1=false;
+      }
+    },
+    getRouterData(){
+      if(typeof(this.$route.query.search)!="undefined"){
+        $("#lit").click()
+      }
+      this.searchContent=this.$route.query.search || this.$route.query.search1 || this.$route.query.isoAbbr || this.$route.query.author || this.$route.query.pubTime || this.$route.query.word || this.$route.query.grant || this.$route.query.publication1 || this.$route.query.Search || this.$route.query.volume || this.$route.query.pagination || this.$route.query.fund || this.$route.query.mesh || this.$route.query.comm || this.$route.query.chem
+        
+    },
+    blur(){
+      setTimeout(() => {
+        this.isShow = false
+      },
+      200)
+    },
+    nlmId(id){
+      this.searchContent="nlmId:"+id;
+      this.periodical2=false;
+      this.literature2=true;
+      this.i++;
+      this.choice=this.literature;
+    },
+    scrollToTop () {
+      //返回顶部
+      const that = this
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      that.scrollTop = scrollTop
+      if (that.scrollTop > 60) {
+        that.btnFlag = true
+      } else {
+        that.btnFlag = false
+      }
+    },
+    savecanvas(){
+      //数据分析图导出
+      const that = this
+      let timer = setInterval(() => {
+        let ispeed = Math.floor(-that.scrollTop / 5)
+        document.documentElement.scrollTop = document.body.scrollTop = that.scrollTop + ispeed
+        if (that.scrollTop === 0) {
+          clearInterval(timer)
+        }
+      }, 16)
+      setTimeout(function(){
+        let canvas = document.querySelector('#view');
+        html2canvas(canvas,{scale:2,logging:false,useCORS:true}).then(function(canvas) {
+          let type = 'png';
+          let imgData = canvas.toDataURL('image/jpeg',.99);
+          // 照片格式处理
+          let _fixType = function(type) {
+              type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+              let r = type.match(/png|jpeg|bmp|gif/)[0];
+              return 'image/' + r;
+          };
+          imgData = imgData.replace(_fixType(type),'image/octet-stream');
+          let filename = "SangerBox" + '.' + type;
+          that.saveFile(imgData,filename);
+        });
+      },500)
+    },
+    saveFile(data, filename){
+      //数据分析图导出
+      let save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+      save_link.href = data;
+      save_link.download = filename;
+      let event = document.createEvent('MouseEvents');
+      event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+      save_link.dispatchEvent(event);
+    },
+    Fund(){
+      var qs=require('qs')
+      this.$axios.get(`/pubmed/completionFundSuggester`, {
+        params:{
+          query:this.searchContent
+        },paramsSerializer: function(params) {
+          return qs.stringify(params, {arrayFormat: 'brackets'})
+        },
+      }).then(result=>{
+        if(result.data.res!=undefined){
+          this.searchCompletion=result.data.res.completionList.searchCompletion;
+          this.jus=[]
+          for(let i=0;i<(this.searchCompletion).length;i++){
+            this.jus.push({'value':this.searchCompletion[i]})
+          }
+        }
+        if(result.data.status=='500'){
+          this.$message({
+            message: '不能为空',
+            type: 'warning'
+          });
+        }
+      })
+      this.isShow = true
+    },
+    Fuze(name){
+      if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+        this.h++
+        this.searchContent=`studentsName:"${name}"`
+        this.show=true
+        this.$router.push({
+          path:'/SearchFund',
+          query:{
+            chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:this.currentPage,search1:this.searchContent
+          }
+        })
+      }else{
+        let a=this.searchContent
+        this.h++
+        this.show=true
+        this.searchContent=`${a} AND studentsName:"${name}"`
+        this.$router.push({
+          path:'/SearchFund',
+          query:{
+            chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:this.currentPage,search1:this.searchContent
+          }
+        })
+      }
+    },
+    //一级学科
+    yiji2(){
+      var b=[];
+      var c=[];
+      var d=[];
+      for(var a of this.subjectOneAggs){
+        b.push(a.name)
+        c.push(a.count)
+        d.push(a.moneySum.moneySum)
+      }
+      $('.yiji').html('<div id="yiji1" style="width: 830px; height: 280px"></div>')
+      var echarts1 = document.getElementById("yiji1");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          color: ['#3398DB'],
+          tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+          },
+          legend: {
+            data:['项目个数','项目金额'],
+            x:'right',
+            textStyle: {color: '#fff',fontSize:10},
+            itemGap: 5,
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            top:'15%',
+            containLabel: true
+          },
+          xAxis: [{
+            type: 'category',
+            boundaryGap: true,
+            data:b,
+            axisLabel:{
+              color:"#fff",
+              formatter: function (value) {
+                if (value.length>6) {
+                  return value.substring(0, 5)+'...';
+                } else{
+                  return value;
+                };
+              },
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          },{
+            type: 'category',
+            boundaryGap: true,
+            data:b,
+            axisLabel:{
+              show:false
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          }
+          ],  
+          yAxis: [{
+            type: 'value',
+            scale: true,
+            boundaryGap: [0.2, 0.2],
+            axisLabel: {//x轴文字的配置
+              show: true,
+              textStyle: {
+                color: "#fff",
+              }
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          },{
+            type: 'value',
+            scale: true,
+            boundaryGap: [0.2, 0.2],
+            axisLabel: {//x轴文字的配置
+              show: true,
+              textStyle: {
+                color: "#fff",
+              }
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          }],
+          series : [
+            {
+              name:'项目个数',
+              type:'bar',
+              xAxisIndex: 1,
+              yAxisIndex: 1,
+              data:c,
+              itemStyle:{
+                normal:{
+                  color:'#36e7b3',
+                }
+              }
+            },
+            {
+              name:'项目金额',
+              type:'line',
+              data:d,
+              itemStyle:{
+                normal:{
+                  color:'#f3b508',
+                }
+              }
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`subjectOne:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND subjectOne:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //二级学科
+    erji2(){
+      var b=[];
+      var c=[];
+      var d=[];
+      for(var a of this.subjectTwoAggs){
+        b.push(a.name)
+        c.push(a.count)
+        d.push(a.moneySum.moneySum)
+      }
+      $('.erji').html('<div id="erji1" style="width: 830px; height: 280px"></div>')
+      var echarts1 = document.getElementById("erji1");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          color: ['#3398DB'],
+          tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+          },
+          legend: {
+            data:['项目个数','项目金额'],
+            x:'right',
+            textStyle: {color: '#fff',fontSize:10},
+            itemGap: 5,
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            top:'15%',
+            containLabel: true
+          },
+          xAxis: [{
+            type: 'category',
+            boundaryGap: true,
+            data:b,
+            axisLabel:{
+              color:"#fff",
+              formatter: function (value) {
+                if (value.length>6) {
+                  return value.substring(0, 5)+'...';
+                } else{
+                  return value;
+                };
+              },
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          },{
+            type: 'category',
+            boundaryGap: true,
+            data:b,
+            axisLabel:{
+              show:false
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          }
+          ],  
+          yAxis: [{
+            type: 'value',
+            scale: true,
+            boundaryGap: [0.2, 0.2],
+            axisLabel: {//x轴文字的配置
+              show: true,
+              textStyle: {
+                color: "#fff",
+              }
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          },{
+            type: 'value',
+            scale: true,
+            boundaryGap: [0.2, 0.2],
+            axisLabel: {//x轴文字的配置
+              show: true,
+              textStyle: {
+                color: "#fff",
+              }
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          }],
+          series : [
+            {
+              name:'项目个数',
+              type:'bar',
+              xAxisIndex: 1,
+              yAxisIndex: 1,
+              data:c,
+              itemStyle:{
+                normal:{
+                  color:'#36e7b3',
+                }
+              }
+            },
+            {
+              name:'项目金额',
+              type:'line',
+              data:d,
+              itemStyle:{
+                normal:{
+                  color:'#f3b508',
+                }
+              }
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`subjectTwo:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND subjectTwo:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //三级学科
+    sanji2(){
+      var b=[];
+      var c=[];
+      var d=[];
+      for(var a of this.subjectThreeAggs){
+        b.push(a.name)
+        c.push(a.count)
+        d.push(a.moneySum.moneySum)
+      }
+      $('.sanji').html('<div id="sanji1" style="width: 830px; height: 280px"></div>')
+      var echarts1 = document.getElementById("sanji1");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          color: ['#3398DB'],
+          tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+          },
+          legend: {
+            data:['项目个数','项目金额'],
+            x:'right',
+            textStyle: {color: '#fff',fontSize:10},
+            itemGap: 5,
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            top:'15%',
+            containLabel: true
+          },
+          xAxis: [{
+            type: 'category',
+            boundaryGap: true,
+            data:b,
+            axisLabel:{
+              color:"#fff",
+              formatter: function (value) {
+                if (value.length>6) {
+                  return value.substring(0, 5)+'...';
+                } else{
+                  return value;
+                };
+              },
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          },{
+            type: 'category',
+            boundaryGap: true,
+            data:b,
+            axisLabel:{
+              show:false
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          }
+          ],  
+          yAxis: [{
+            type: 'value',
+            scale: true,
+            boundaryGap: [0.2, 0.2],
+            axisLabel: {//x轴文字的配置
+              show: true,
+              textStyle: {
+                color: "#fff",
+              }
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          },{
+            type: 'value',
+            scale: true,
+            boundaryGap: [0.2, 0.2],
+            axisLabel: {//x轴文字的配置
+              show: true,
+              textStyle: {
+                color: "#fff",
+              }
+            },
+            axisLine: {//x轴线的颜色以及宽度
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                width: 0,
+                type: "solid"
+              }
+            },
+            axisTick: {
+              show: false,
+            },
+          }],
+          series : [
+            {
+              name:'项目个数',
+              type:'bar',
+              xAxisIndex: 1,
+              yAxisIndex: 1,
+              data:c,
+              itemStyle:{
+                normal:{
+                  color:'#36e7b3',
+                }
+              }
+            },
+            {
+              name:'项目金额',
+              type:'line',
+              data:d,
+              itemStyle:{
+                normal:{
+                  color:'#f3b508',
+                }
+              }
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`subjectThree:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND subjectThree:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //标题统计
+    biaoti2(){
+      var bbb = JSON.parse(JSON.stringify(this.titleAggs).replace(/count/g,"value"));
+      $('.Biaoti').html('<div id="biaoti" style="width: 280px; height: 340px"></div>')
+      var echarts1 = document.getElementById("biaoti");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear()
+        myChart.setOption({
+          title: {
+            x: 'center',
+            textStyle: {
+              fontSize: 23
+            }
+          },
+          tooltip: {
+            show: true,
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+            axisLine: {
+              show:false
+            },
+            splitLine: {
+              show:false
+            },
+            axisLabel:{
+              show:false
+            },
+            axisTick:{
+              show:false
+            }
+          },  
+          yAxis: {
+            type: 'category',
+            data: this.pubCountryAggsName,
+            axisLine: {
+              show:false
+            },
+            splitLine: {
+              show:false
+            },
+            axisTick:{
+              show:false
+            },
+            axisLabel:{
+              color:"#fff",
+              formatter: function (value) {
+                var maxlength=7;
+                if (value.length>maxlength) {
+                  return value.substring(0, maxlength-1)+'...';
+                } else{
+                  return value;
+                };
+              },
+            }
+          },
+          series : [
+            {
+              name:'数量',
+              type:'bar',
+              barWidth: '60%',
+              data:this.pubCountryAggsCount,
+              barWidth:5
+              ,
+              itemStyle:{
+                normal:{
+                  label:{
+                    show:true,
+                    position:"right",
+                    textStyle:{
+                      color:"#fff",
+                      fontSize:12
+                    }
+                  },
+                  color: function (params){
+                    var colorList = ['#8282DC','#8282DC','#8282DC','#8282DC','#36E7B3','#EBED37','#ED6C18'];
+                    return colorList[params.dataIndex];
+                  }
+                }
+              }
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            var date=new Date();
+            let date1=date.getFullYear()+'-'+((date.getMonth()+1)<10?'0'+(date.getMonth()+1):date.getMonth()+1)+'-'+(date.getDate()<10?'0'+date.getDate():date.getDate())
+            this.searchContent=`title:"${params.name}" AND pubTime:"${date1}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND title:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //学部统计
+    xue1(){
+      var bbb = JSON.parse(JSON.stringify(this.departmentAggs).replace(/count/g,"value"));
+      $('.xue1').html('<div id="xue" style="width: 350px; height: 300px"></div>')
+      var echarts1 = document.getElementById("xue");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          color:['#D75E64','#2EA8E6','#44C6C5','#E09076','#E1DFF1','#DB4517','#9C94D4','#53BF59'],
+          series : [
+            {
+              name: '学部',
+              type: 'pie',
+              radius : '60%',
+              center: ['50%', ' 50%'],
+              data:bbb,
+              label:{
+                normal:{
+                  fontSize:11
+                }
+              },
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`department:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND department:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //项目类别统计
+    xiang1(){
+      var ccc = JSON.parse(JSON.stringify(this.typeAggs1).replace(/count/g,"value"));
+      $('.xiang1').html('<div id="xiang" style="width: 350px; height: 300px"></div>')
+      var echarts1 = document.getElementById("xiang");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+          },
+          color:['#D75E64','#2EA8E6','#44C6C5','#E09076','#E1DFF1','#DB4517','#9C94D4','#53BF59','#BE71CA','#3AB9B4'],
+          series : [
+            {
+              name: '类型',
+              type: 'pie',
+              radius : '60%',
+              center: ['50%', ' 50%'],
+              data:ccc,
+              label:{
+                normal:{
+                  fontSize:11
+                }
+              },
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`type:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND type:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //单位统计
+    danwei2(){
+      var b=[];
+      var c=[];
+      var d=[];
+      for(var a of this.unitAggs){
+        b.push(a.name)
+        c.push(a.count)
+        d.push(a.moneySum.moneySum)
+      }
+      $('.danwei1').html('<div id="danwei1" style="width: 550px; height: 240px"></div>')
+      var echarts1 = document.getElementById("danwei1");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          color: ['#3398DB'],
+          tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis : [
+            {
+              type : 'category',
+              data : b,
+              axisTick: {
+                alignWithLabel: true
+              },
+              axisLabel:{
+                color:"#fff",
+                formatter: function (value) {
+                  if (value.length>3) {
+                    return value.substring(0, 2)+'...';
+                  } else{
+                    return value;
+                  };
+                },
+              },
+              axisLine: {//x轴线的颜色以及宽度
+                show: true,
+                lineStyle: {
+                  color: "#fff",
+                  width: 0,
+                  type: "solid"
+                }
+              },
+              axisTick: {
+                show: false,
+              },
+            }
+          ],
+          yAxis : [
+            {
+              type : 'value',
+              axisLabel: {//x轴文字的配置
+                show: true,
+                textStyle: {
+                  color: "#fff",
+                }
+              },
+              axisLine: {//x轴线的颜色以及宽度
+                show: true,
+                lineStyle: {
+                  color: "#fff",
+                  width: 0,
+                  type: "solid"
+                }
+              },
+              axisTick: {
+                show: false,
+              },
+            }
+          ],
+          series : [
+            {
+              name:'项目数量',
+              type:'bar',
+              barWidth: '60%',
+              data:c
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`subjectTwo:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND subjectTwo:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //年份统计
+    nianfen2(){
+      var b=[];
+      var c=[];
+      var d=[];
+      for(var a of this.yearAggs){
+        b.push(a.name)
+        c.push(a.count)
+        d.push(a.moneySum.moneySum)
+      }
+      $('.nianfen1').html('<div id="nianfen1" style="width: 550px; height: 240px"></div>')
+      var echarts1 = document.getElementById("nianfen1");
+      // 绘制图表
+      if(echarts1){
+        let myChart = this.echarts.init(echarts1)
+        myChart.clear();
+        myChart.setOption({
+          color: ['#3398DB'],
+          tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+              type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis : [
+            {
+              type : 'category',
+              data : b,
+              axisTick: {
+                alignWithLabel: true
+              },
+              axisLabel:{
+                color:"#fff",
+                formatter: function (value) {
+                  if (value.length>5) {
+                    return value.substring(0, 4)+'...';
+                  } else{
+                    return value;
+                  };
+                },
+              },
+              axisLine: {//x轴线的颜色以及宽度
+                show: true,
+                lineStyle: {
+                  color: "#fff",
+                  width: 0,
+                  type: "solid"
+                }
+              },
+              axisTick: {
+                show: false,
+              },
+            }
+          ],
+          yAxis : [
+            {
+              type : 'value',
+              axisLabel: {//x轴文字的配置
+                show: true,
+                textStyle: {
+                  color: "#fff",
+                }
+              },
+              axisLine: {//x轴线的颜色以及宽度
+                show: true,
+                lineStyle: {
+                  color: "#fff",
+                  width: 0,
+                  type: "solid"
+                }
+              },
+              axisTick: {
+                show: false,
+              },
+            }
+          ],
+          series : [
+            {
+              name:'项目数量',
+              type:'bar',
+              barWidth: '60%',
+              data:c
+            }
+          ]
+        })
+        myChart.off('click')
+        myChart.on('click',(params)=>{
+          if(typeof(this.searchContent)=='undefined' || this.searchContent==''){
+            this.h++
+            this.searchContent=`subjectTwo:"${params.name}"`
+            this.show=true
+            $("#sea").click()
+          }else{
+            let a=this.searchContent
+            this.h++
+            this.show=true
+            this.searchContent=`${a} AND subjectTwo:"${params.name}"`
+            $("#sea").click()
+          }
+        })
+      }
+    },
+    //分析
+    analysis(){
+      if(this.h%2==0){
+        this.h++
+        this.loading1=true
+        this.show=false;
+          this.foreConte=false
+          var qs=require('qs');
+          this.axios.post(`/pubmed/statisticsFund`, qs.stringify({
+            queryStringQuery:this.searchContent,
+            page:this.currentPage,
+            departmentFilter:this.chk6,
+            moneyFilter:this.chk7 || this.chk8,
+            approvalYearFilter:this.chk9 || this.chk10,
+            typeFilter:this.chk11
+          })).then(result=>{
+            if(JSON.stringify(result.data.res) == "{}"){
+              this.wu=false
+            }else{
+            this.studentsNameAggs=result.data.res.aggs.studentsNameAggs
+            this.titleAggs=result.data.res.aggs.titleAggs
+            this.typeAggs1=result.data.res.aggs.typeAggs
+            this.subjectOneAggs=result.data.res.aggs.subjectOneAggs
+            this.subjectTwoAggs=result.data.res.aggs.subjectTwoAggs
+            this.subjectThreeAggs=result.data.res.aggs.subjectThreeAggs
+            this.unitAggs=result.data.res.aggs.unitAggs
+            this.yearAggs=result.data.res.aggs.nearly10YearsAggs[0].yearAggs
+            this.departmentAggs=result.data.res.aggs.departmentAggs
+            let type=this.typeAggs1;
+            if(type.length==10){
+              type[0]['borcolor']='3px solid #D75E64',type[1]['borcolor']='3px solid #2EA8E6',type[2]['borcolor']='3px solid #44C6C5',type[3]['borcolor']='3px solid #E09076',type[4]['borcolor']='3px solid #E1DFF1',type[5]['borcolor']='3px solid #DB4517',type[6]['borcolor']='3px solid #9C94D4',type[7]['borcolor']='3px solid #53BF59',type[8]['borcolor']='3px solid #BE71CA',type[9]['borcolor']='3px solid #3AB9B4'
+              this.typeAggs1=type
+            }
+            let depar=this.departmentAggs
+            if(depar.length==10){
+              depar[0]['borcolor']='3px solid #D75E64',depar[1]['borcolor']='3px solid #2EA8E6',depar[2]['borcolor']='3px solid #44C6C5',depar[3]['borcolor']='3px solid #E09076',depar[4]['borcolor']='3px solid #E1DFF1',depar[5]['borcolor']='3px solid #DB4517',depar[6]['borcolor']='3px solid #9C94D4',depar[7]['borcolor']='3px solid #53BF59'
+              this.departmentAggs=depar
+            }
+            }
+            if(!this.result){
+              this.el_show=false;
+              this.result=0
+            }else{
+              this.el_show=true
+            }
+            if(result.data.status==200){
+              this.loading1=false;
+            }else{
+              this.loading1=false;
+            }
+          }) 
+        
+      }else{
+        this.h++
+        this.show=true;
+      }
+    },
+    clear(){
+      this.loading=true;
+      this.int1="";this.int2="";this.int3="";this.int4="";
+      this.model1="";this.model2="";this.model3="";this.model3="";
+      this.checkList1=[];this.checkList2=[];this.checkList3=[];this.checkList4=[];this.checkList5=[];this.checkList6=[];this.checkList7=[];
+      this.chk1="";this.chk2="";this.chk3="";this.chk4="";this.chk5="";this.chk6="";this.chk7="";this.chk8="";this.chk9="";this.chk10="";this.chk11="";
+      this.inp1="";this.inp2="";this.inp3="";this.inp4="";this.inp5="";this.inp6="";this.inp7="";this.inp8="";this.i=0;this.isAsc1=false;this.isDesc1=false;this.isAsc2=false;this.isDesc2=false;this.isAsc3=false;this.isDesc3=false;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      this.currentPage=1
+      $("#sea").click()
+      
+    },
+    quiet(){
+      this.j++;
+      this.senior1=false;
+    },
+    Search(){
+      this.j++;
+      this.senior1=false;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      if(this.relation2=="AND"){
+        this.relation2="AND"
+      }if(this.relation3=="AND"){
+        this.relation3="AND"
+      }if(this.relation4=="AND"){
+        this.relation4="AND"
+      }
+      if(this.int1=="" && this.int2=="" && this.int3=="" && this.int4==""){
+        this.loading=true;
+        this.searchContent="";
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2=="" && this.int3=="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2!="" && this.int3=="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}" ${this.relation2} ${this.model2}:"${this.int2}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}" ${this.relation2} ${this.model2}:"${this.int2}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2!="" && this.int3!="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}" ${this.relation2} ${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}" ${this.relation2} ${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2!="" && this.int3!="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}" ${this.relation2} ${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}" ${this.relation2} ${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2!="" && this.int3!="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2=="" && this.int3!="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2=="" && this.int3=="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2=="" && this.int3!="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}" ${this.relation3} ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}" ${this.relation3} ${this.model3}:"${this.int3}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2=="" && this.int3!="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}" ${this.relation3} ${this.model3}:"${this.int3}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}" ${this.relation3} ${this.model3}:"${this.int3}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1!="" && this.int2=="" && this.int3=="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model1}:"${this.int1}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model1}:"${this.int1}" ${this.relation4} ${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2!="" && this.int3=="" && this.int4!=""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model2}:"${this.int2}" ${this.relation3} ${this.model4}:"${this.int4}"`;
+        }else{
+          this.searchContent=`${this.model2}:"${this.int2}" ${this.relation3} ${this.model4}:"${this.int4}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2!="" && this.int3!="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}"`;
+        }else{
+          this.searchContent=`${this.model2}:"${this.int2}" ${this.relation3} ${this.model3}:"${this.int3}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2!="" && this.int3=="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model2}:"${this.int2}"`;
+        }else{
+          this.searchContent=`${this.model2}:"${this.int2}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+      if(this.int1=="" && this.int2=="" && this.int3!="" && this.int4==""){
+        this.loading=true;
+        if(this.searchContent!=undefined && this.searchContent!=""){
+          this.searchContent=`${this.searchContent} AND ${this.model3}:"${this.int3}"`;
+        }else{
+          this.searchContent=`${this.model3}:"${this.int3}"`;
+        }
+        this.search3();
+        this.searcher();
+      }
+    },
+    reset(){
+      this.int1='';this.int2='';this.int3='';this.int4='';
+      this.model1="";this.model2='';this.model3='';this.model4='';this.searchContent=""
+    },
+    senior(){
+      this.j++;
+      if(this.j%2==1){
+        this.senior1=true;
+      }else{
+        this.senior1=false;
+      }
+    },
+    searchkras(){
+      const {href}=this.$router.resolve({
+        path: '/Search',
+        query: {
+          search1:`kras`
+        },
+      })
+      window.open(href,'_blank')
+    },
+    searchegfr(){
+      const {href}=this.$router.resolve({
+        path: '/Search',
+        query: {
+          search1:`egfr`
+        },
+      })
+      window.open(href,'_blank')
+    },
+    searchmyc(){
+      const {href}=this.$router.resolve({
+        path: '/Search',
+        query: {
+          search1:`myc`
+        },
+      })
+      window.open(href,'_blank')
+    },
+    searchtp53(){
+      const {href}=this.$router.resolve({
+        path: '/Search',
+        query: {
+          search1:`tp53`
+        },
+      })
+      window.open(href,'_blank')
+    },
+    xiangDown(){
+      this.inpp2=!this.inpp2
+      this.inpp3=!this.inpp3
+      this.checkList5=[];
+      this.chk7=this.checkList5.join(",");
+      this.$router.push({
+        path:'/SearchFund',
+        query:{
+          chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:this.currentPage,search1:this.searchContent
+        }
+      })
+    },
+    influencefactorDown(){
+      this.inpp=!this.inpp
+      this.inpp1=!this.inpp1
+      this.checkList1=[];
+    },
+    sanDown(){
+      this.inpp4=!this.inpp4
+      this.inpp5=!this.inpp5
+      this.checkList6=[]
+      this.chk9=this.checkList6.join(",");
+      this.$router.push({
+        path:'/SearchFund',
+        query:{
+          chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:this.currentPage,search1:this.searchContent
+        }
+      })
+    },
+    xiangmuDown(){
+      this.inpp6=!this.inpp6
+      this.inpp7=!this.inpp7
+      this.checkList7=[]
+    },
+    type2(){
+      this.type1=!this.type1
+      this.type3=!this.type3
+    },
+    //页码
+    handleCurrentChange(currentPage){
+      this.loading=true;
+      if(typeof(currentPage)!='undefined' && currentPage!=1){
+        this.currentPage = currentPage;
+        $("#sea").click()
+        this.inf();
+      }else if(currentPage==1){
+        this.currentPage = 1
+        $("#sea").click()
+        this.inf();
+      }else{
+        this.currentPage =this.$route.query.page*1 || 1
+        currentPage=this.currentPage
+        $("#sea").click()
+        this.inf();
+      }
+    },
+    //选择
+    Choice(){
+      this.i++;
+      if(this.i%2==1){
+        this.down1=true
+      }else{
+        this.down1=false
+      }
+    },
+    //文献选择
+    literature1(){
+      const {href} =this.$router.resolve({
+        path:'/Search'
+      })
+      window.open(href, '_blank')
+    },
+    //期刊选择
+    periodical1(){
+      const {href} =this.$router.resolve({
+        path:'/SearchJournal'
+      })
+      window.open(href, '_blank')
+    },
+    //基金选择
+    fund1(){
+      const {href} =this.$router.resolve({
+        path:'/SearchFund'
+      })
+      window.open(href, '_blank')
+    },
+    //搜索框搜索
+    searcher(){
+      this.loading=true;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      this.j++;
+      this.senior1=false;
+      this.chk6=this.$route.query.chk6
+      this.chk7=this.$route.query.chk7
+      this.chk8=this.$route.query.chk8
+      this.chk9=this.$route.query.chk9
+      this.chk10=this.$route.query.chk10
+      this.chk11=this.$route.query.chk11
+      this.sort=this.$route.query.sort
+      this.currentPage=parseInt(this.$route.query.page)
+      var qs=require('qs');
+      if(typeof(this.searchContent)=='undefined'){
+        this.searchContent=""
+      }
+      // let aut=window.sessionStorage.getItem("authorization");
+      // this.axios.defaults.headers.common["Authorization"] = aut;
+      this.axios.post(`/pubmed/searchFund`, qs.stringify({
+        queryStringQuery:this.searchContent,
+        page:this.currentPage,
+        departmentFilter:this.chk6,
+        moneyFilter:this.chk7 || this.chk8,
+        sort:this.sort,
+        approvalYearFilter:this.chk9 || this.chk10,
+        typeFilter:this.chk11
+      })).then(result=>{
+        this.searchPubmedArticle=result.data
+        this.Fu=result.data.res
+        if(JSON.stringify(result.data.res)==="{}" || result.data.res==undefined){
+          this.abbb=''
+          this.result=0
+          this.timer=0
+        }else{
+          this.abbb=result.data.res.fundList.searchData;
+          this.result=result.data.res.fundList.searchTotal;
+          this.timer=result.data.res.fundList.searchTime;
+        }
+        if(!this.result){
+          this.el_show=false;
+          this.result=0
+        }else{
+          this.el_show=true
+        }
+        if(this.searchPubmedArticle.status==200){
+          this.loading=false;
+        }
+      }).catch(error=>{
+          if(error){
+            throw error
+          }
+        });
+      if(this.show==false){
+          this.h=0
+          $('#ana').click()
+        }
+      
+    },
+    
+    //批准年份
+    checkListEight(){
+      this.loading=true;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      var qs=require('qs');
+      this.chk9=this.checkList6.join(",");
+      this.$router.push({
+        path:'/SearchFund',
+        query:{
+          chk9:this.chk9,chk11:this.chk11,chk6:this.chk6,chk7:this.chk7,chk8:this.chk8,chk10:this.chk10,sort:this.sort,page:this.currentPage,search1:this.searchContent
+        }
+      })
+    },
+    //项目类型
+    checkListNine(){
+      this.loading=true;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      var qs=require('qs');
+      this.chk11=this.checkList7.join(",");
+    },
+    //学部分类
+    checkListSix(){
+      this.loading=true;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      var qs=require('qs');
+      this.chk6=this.checkList4.join(",");
+    },
+    //项目金额分类
+    checkListSeven(){
+      this.loading=true;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      var qs=require('qs');
+      this.chk7=this.checkList5.join(",");
+    },
+    //自定义批准年份
+    yearTimeOne(){
+      this.loading=true;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      this.chk10=this.inp5+'-'+this.inp6
+    },
+    //自定义项目金额
+    xiangMoney(){
+      this.loading=true;
+      this.i=0;this.o=0;this.p=0;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false,this.show6=true;this.active6=false;
+      this.isAsc1=false;this.isAsc2=false;this.isAsc3=false
+      var qs=require('qs');
+      this.chk8=this.inp3+'-'+this.inp4
+    },
+    inf(){
+      this.sort=this.$route.query.sort
+      if(this.sort=="approvalYear-sort_-1"){
+        this.a=1
+        this.isAsc1=true
+        this.show1=false
+        this.active1=true
+        this.show6=true
+        this.active6=false
+      }else if(this.sort=="approvalYear-sort_1"){
+        this.a=2
+        this.isAsc1=true
+        this.show1=true
+        this.active1=false
+        this.show6=false
+        this.active6=true
+      }else if(this.sort=="money-sort_-1"){
+        this.o=1
+        this.isAsc2=true
+        this.show2=false
+        this.active2=true
+        this.show3=true
+        this.active3=false
+      }else if(this.sort=="money-sort_1"){
+        this.o=2
+        this.isAsc2=true
+        this.show2=true
+        this.active2=false
+        this.show3=false
+        this.active3=true
+      }else if(this.sort=="matching-sort_-1"){
+        this.p=1
+        this.isAsc3=true
+        this.show4=false
+        this.active4=true
+        this.show5=true
+        this.active5=false
+      }else if(this.sort=="matching-sort_1"){
+        this.p=2
+        this.isAsc3=true
+        this.show4=true
+        this.active4=false
+        this.show5=false
+        this.active5=true
+      }
+    },
+    //批准年份排序
+    approvedYear(){
+      this.a++;
+      this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show4=true;this.active4=false;this.show5=true;this.active5=false
+      this.p=0;
+      this.o=0;
+      this.isAsc2=false
+      this.isAsc3=false
+      if(this.a%3==1){
+        this.loading=true;
+        this.isAsc1=true
+        this.show1=false
+        this.active1=true
+        this.show6=true
+        this.active6=false
+        this.sort="approvalYear-sort_-1"
+      }else if(this.a%3==2){
+        this.loading=true;
+        this.isAsc1=true
+        this.show1=true
+        this.active1=false
+        this.show6=false
+        this.active6=true
+        this.sort="approvalYear-sort_1"
+      }else if(this.a%3==0){
+        this.loading=true;
+        this.isAsc1=false
+        this.show1=true
+        this.active1=false
+        this.show6=true
+        this.active6=false
+        this.sort=""
+      }
+    },
+    //项目金额排序
+    projectAmount(){
+      this.o++;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show6=true;this.active6=false;
+      this.i=0;this.p=0;
+      this.isAsc1=false
+      this.isAsc3=false
+      if(this.o%3==1){
+        this.loading=true;
+        this.isAsc2=true
+        this.show2=false
+        this.active2=true
+        this.show3=true
+        this.active3=false
+        this.sort="money-sort_-1"
+      }else if(this.o%3==2){
+        this.loading=true;
+        this.isAsc2=true
+        this.show2=true
+        this.active2=false
+        this.show3=false
+        this.active3=true
+        this.sort="money-sort_1"
+      }else if(this.o%3==0){
+        this.loading=true;
+        this.isAsc2=false
+        this.show2=true
+        this.active2=false
+        this.show3=true
+        this.active3=false
+        this.sort=""
+      }
+    },
+    //按照相关度进行升序降序排列
+    relevant(){
+      this.p++;
+      this.show1=true;this.active1=false;this.show2=true;this.active2=false;this.show3=true;this.active3=false;this.show6=true;this.active6=false;
+      this.i=0;this.o=0;
+      this.isAsc1=false
+      this.isAsc2=false
+      if(this.p%3==1){
+        this.loading=true;
+        this.isAsc3=true
+        this.show4=false
+        this.active4=true
+        this.show5=true
+        this.active5=false
+        this.sort="matching-sort_-1"
+      }else if(this.p%3==2){
+        this.loading=true;
+        this.isAsc3=true
+        this.show4=true
+        this.active4=false
+        this.show5=false
+        this.active5=true
+        this.sort="matching-sort_1"
+      }else if(this.p%3==0){
+        this.loading=true;
+        this.isAsc3=false
+        this.show4=true
+        this.active4=false
+        this.show5=true
+        this.active5=false
+        this.sort=""
+      }
+    }
+  }
+}
+</script>
+<style scoped>
+  @media screen and (min-width:992px){
+    .SearchHeadOne{
+      width: 15% !important;
+      padding-left: 0!important;
+      
+    }
+    .SearchHeadThree{
+      width: 15% !important;
+    }
+    .SearchHeadTwo{
+      width: 70% !important;
+    }
+    .SearchBodyOne{
+      padding-left: 0 !important;
+    }
+  }
+  @media screen and (max-width:992px){
+    .SearchBodyTwo>ul>li>div>p[data-v-1a1d373c]:nth-child(1){
+      width: 80% !important;
+    }
+    .datas{
+      flex-direction: column !important;
+    }
+    .datas>div:nth-child(2){
+      margin-left: 0px !important;
+      margin-top: 5px;
+    }
+    .SearchHeadOne{
+      width: 20% !important;
+    }
+    .SearchBodyOne{
+      width: 20% !important;
+    }
+    .SearchBodyTwo{
+      width: 80% !important;
+    }
+    .SearchBodyThree{
+      display: none !important;
+    }
+  }
+  @media screen and (max-width:1200px){
+    .datas[data-v-1a1d373c]{
+      width: 100% !important;
+    }
+  }
+  @media screen and (max-width:800px){
+    .SearchHeadOne>div:first-child>img{
+      display: none !important;
+    }
+    .SearchHeadOne>div:first-child{
+      margin: 0 !important;
+    }
+    .SearchHeadOne>div:first-child>span>span{
+      display: none !important;
+    }
+  }
+  @media screen and (max-width:768px){
+    .search2{
+      display: block !important;
+    }
+    .SearchBody{
+      display:none !important;
+    }
+    .SearchBodyOne{
+      margin-right: 0 !important;
+    }
+    .SearchBodyTwo{
+      margin-right: 0 !important;
+    }
+    .SearchBodyOne>ul>li>p>span{
+      display: none !important;
+    }
+    .SearchBodyOne>ul>li>p{
+      width: 100%;
+      text-align: left;
+      margin-left: 30%;
+    }
+    .SearchHeadOne>div:first-child>img{
+      display: none !important;
+    }
+    .SearchHeadOne>div:first-child{
+      margin: 0 !important;
+    }
+    .SearchHeadOne>div:first-child>span>span{
+      display: none !important;
+    }
+    .SearchHeadOne{
+      padding: 0 !important;
+      text-align: center !important ;
+    }
+    .el-checkbox-group{
+      margin-left: 30% !important;
+    }
+    .SearchHeadOne{
+      justify-content: space-around !important;
+    }
+    .SearchHeadThree{
+      display: none !important;
+    }
+  }
+  @media screen and (max-width:400px){
+    .el-checkbox-group{
+      margin: 0 !important;
+    }
+  }
+  @media screen and (min-width:1200px){
+    .datas>div:nth-child(3)>p>span{
+      margin-right: 20px !important;
+    }
+    .datas[data-v-1a1d373c]{
+      width: 100% !important;
+    }
+    .SearchBody1{
+      width: 1200px !important;
+    }
+    .SearchContent1{
+      width: 1200px !important;
+    }
+  }
+  .el-dropdown{
+    color: #999;
+    line-height: 40px;
+  }
+  .SearchBackground{
+    width: 100%;
+    background: #E7EDF9;
+    overflow: hidden;
+  }
+  .SearchBody1{
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+  }
+  .SearchHeadBg{
+    height: 50px;
+    width: 100%;
+    line-height: 50px;
+    background:linear-gradient(0deg,rgba(45,76,161,1),rgba(78,112,201,1));
+  }
+  .SearchBody{
+    width: 70%;
+    height: 153px;
+    margin: 39px auto 19px;
+    position: relative;
+
+  }
+  .SearchBody>span{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(64,64,64,1);
+  }
+  .SearchBody>ul{
+    position: absolute;
+    top: 0;
+    left: 80px;
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    text-decoration:underline;
+    color:rgba(48,77,153,1);
+    display: flex;
+    flex-direction: row;
+  }
+  .SearchBody>ul>li>span{
+    margin-left: 20px;
+    color:rgba(48,77,153,1);
+  }
+  .SearchBody>ul>li>span:hover{
+    cursor: pointer;
+  }
+  .SearchBody>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(62,94,181,1);
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .SearchBody>p>span:first-child>span:nth-child(2){
+    margin-left: 20px;
+  }
+  .SearchBody>p>span:nth-child(2){
+    cursor: pointer;
+    margin-right: 12.9%;
+  }
+  .SearchBox>.searchInput>>>.el-input__inner{
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .SearchBox>.searchInput>>>div{
+    width: 80%;
+  }
+  .searchInput>span{
+    color: #3366cc;
+    cursor: pointer;
+  }
+  .search2{
+    width: 100%;
+    margin: 40px auto;
+    position: relative;
+    display: none;
+  }
+      
+  .searchBox1{
+    width:80%;
+    height:50px;
+    background:rgba(255,255,255,1);
+    border:1px solid rgba(235,235,235,1);
+    border-radius:25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 auto;
+    margin-top: 13px;
+    line-height: 50px;
+  }
+  .searchBox1>input{
+    display: inline-block;
+    width:45%;
+    height:13px;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(183,183,183,1);
+    border: none;
+    margin-top: 19px;
+    margin-left: 15px;
+    outline: none;
+  }
+  .searchBox1>div:first-child{
+    margin-left: 4%;
+    cursor: pointer;width: 75px;
+  }
+  .searchBox1>div:last-child{
+    width: 120px;
+    height: 48px;
+    background: rgba(51,102,204,1);
+    border-radius: 24px;
+    text-align: center;
+    cursor: pointer;
+    text-align: center;
+    line-height: 48px;
+  }
+  .el-dropdown{
+    width: 100%;
+  }
+  .xiaLa{
+    position: absolute;
+    top:50px;
+    left: 0px;
+    display: none;
+    width: 100%;
+    background: #fff;
+    z-index: 99;
+    box-shadow: #f5f5f5 0 0px 6px 0 ;
+  }
+  .xiaLa>p{
+    font-size: 12px;
+    line-height: 20px;
+    margin: 0;
+    color: #999;
+    text-align: center
+  }
+  .xiaLa>p:hover{
+    color: #3C61C3;
+  }
+  .down1{
+    display: block !important;
+  }
+  .searchBox1>div:last-child{
+    width:120px;
+    height:48px;
+    background:rgba(51,102,204,1);
+    border-radius:24px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .searchBox1>div:last-child>span{
+    display: inline-block;
+    width:25px;
+    height:12px;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .SearchBox>div:first-child{
+    width: 79px;
+    margin-left: 4%;
+    cursor: pointer;
+    position: relative;
+  }
+  .SearchBox>div:first-child>span:first-child{
+    color: #304D99; 
+    font-size: 12px;
+    
+  }
+  .SearchBox>div:first-child>img{
+    margin-left:4px;
+  }
+  .SearchBox{
+    width:80%;
+    height:50px;
+    background:rgba(255,255,255,1);
+    border:1px solid rgba(235,235,235,1);
+    border-radius:25px;
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    margin-top: 13px;
+    line-height: 50px;
+    justify-content: space-between;
+  }
+  .searchInput>input{
+    display: inline-block;
+    width:100%;
+    height:19px;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(183,183,183,1);
+    border: none;
+    margin-top: 13px;
+    outline: none;
+  }
+  .SearchBox>div:last-child{
+    width:120px;
+    height:48px;
+    background:rgba(51,102,204,1);
+    border-radius:24px;
+    text-align: center;
+    cursor: pointer;
+    text-align: center;
+    line-height: 48px;
+  }
+  .SearchBox>div:last-child>span{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  /* 设置placeholder的属性，使得各个浏览器兼容 */
+  input::-webkit-input-placeholder { 
+    /* WebKit browsers */ 
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:bold;
+    color:rgba(183,183,183,1);
+  } 
+  input:-moz-placeholder { 
+    /* Mozilla Firefox 4 to 18 */ 
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:bold;
+    color:rgba(183,183,183,1);
+  } 
+  input::-moz-placeholder { 
+    /* Mozilla Firefox 19+ */ 
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:bold;
+    color:rgba(183,183,183,1);
+  } 
+  input:-ms-input-placeholder { 
+    /* Internet Explorer 10+ */ 
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:bold;
+    color:rgba(183,183,183,1);
+  }
+  .SearchContent{
+    width:100%;  
+    /* background: #E7EDF9;     */
+    background:#fff; 
+    margin-top: -50px;
+  }
+  .SearchContent1{
+    width: 100%;
+    margin: 0 auto;
+    height: 50px;
+    line-height: 50px;
+  }
+  .SearchHeadOne{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;position: relative;
+  }
+  .SearchHeadOne>div:first-child{
+    margin-left: 21%;
+  }
+  .SearchHeadOne>div:last-child{
+    cursor: pointer;
+  }
+  .SearchHeadOne>div:first-child>img{
+    cursor: pointer;
+  }
+  .SearchHeadOne>div:first-child>span{
+    font-size: 14px;
+    color: #fff;
+    margin-left: 15px;
+    cursor: pointer;
+  }
+  .el-checkbox-group>span{
+    margin-top: 10px;
+    margin-left: 30%;
+    cursor: pointer;
+  }
+  /* .el-checkbox-group>span{
+    text-align: center;
+  } */
+  .senior{
+    position: absolute;
+    left:120px;
+    top: 100px;
+    z-index: 2001;
+    width: 570px;
+    background: #fff;
+    border-radius: 10px;
+  }
+  .senior>table{
+    width: 100%;
+    height: 354px;
+  }
+  td,th{
+    text-align: center;
+  }
+  .senior>table>thead>tr>th{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    line-height: 50px;
+    color:rgba(255,255,255,1);
+  }
+  .senior>table>thead>tr>th:nth-child(3){
+    text-align: right;
+    padding-right: 20px;
+  }
+  
+  .senior>table>thead{
+    background:linear-gradient(0deg,rgba(45,76,161,1),rgba(78,112,201,1));
+    
+  }
+  .senior>table>tbody>tr:nth-child(1)>td{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:bolder;
+    color:rgba(51,51,51,1);
+  }
+  .el-button{
+    margin-left: 10px;
+  }
+  .senior>table>tbody>tr>td{
+    padding:0 5px;
+  }
+  .SearchHeadTwo{
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
+  }
+  .SearchHeadTwo>ul{
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+  }
+  .SearchHeadTwo>>>.el-switch{
+    margin-top: 15px;
+  }
+  .SearchHeadTwo>>>.el-switch__label--right{
+    color: #fff;
+    font-style: 12px;
+  }
+  .SearchHeadTwo>>>.el-switch__core{
+    width: 36px !important;
+    height: 16px;
+  }
+  .SearchHeadTwo>>>.el-switch__core:after{
+    width: 12px;
+    height: 12px;
+  }
+  .SearchHeadTwo>ul>li{
+    line-height: 50px;
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    position: relative;
+    cursor: pointer;
+  }
+  .SearchHeadTwo>ul>li>span{
+    color: #fff;
+    font-size: 12px;
+  }
+  .SearchHeadTwo>ul>li:nth-child(1)>span{
+    position: absolute;
+    top: -3px;
+    left: 110%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(1){
+    margin-right: 8%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(1)>span:nth-child(1){
+    position: absolute;
+    top: -5px;
+    left: 110%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(1)>span:nth-child(2){
+    position: absolute;
+    top: 3px;
+    left: 110%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(2){
+    margin-right: 10%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(2)>span:nth-child(1){
+    position: absolute;
+    top: -5px;
+    left: 110%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(2)>span:nth-child(2){
+    position: absolute;
+    top: 3px;
+    left: 110%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(3)>span:nth-child(1){
+    position: absolute;
+    top: -5px;
+    left: 110%;
+  }
+  .SearchHeadTwo>ul>li:nth-child(3)>span:nth-child(2){
+    position: absolute;
+    top: 3px;
+    left: 110%;
+  }
+  .SearchHeadThree{
+    text-align: right;
+    padding-left: 17px;
+  }
+  .SearchHeadThree>ul{
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
+    margin: 0;
+  }
+  .SearchHeadThree>ul>li{
+    margin-right: 10px;
+    text-align: center;
+  }
+  .SearchHeadThree>ul>li>span{
+    font-size: 14px;
+    color: #fff;
+    vertical-align: middle;
+    
+  }
+  .SearchHeadThree>ul>li>img{
+    width: 20px;  
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  .SearchHead{
+    width: 100%;
+    background:linear-gradient(0deg,rgba(45,76,161,1),rgba(78,112,201,1));
+    height: 50px;
+  }
+  .SearchBody1{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    background: #E7EDF9;
+  }
+  .SearchBodyOne{
+    background:rgba(255,255,255,1);
+    margin-right: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding-bottom: 50px;
+  }
+  .SearchBodyOne>ul{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+  .SearchBodyOne>ul>li{
+    width: 100%
+  }
+  .SearchBodyOne>ul>li>p{
+    display: inline-block;
+    margin-top: 20px;
+  }
+  .SearchBodyOne>ul>li>p>img{
+    vertical-align: middle;
+    width: 20px;
+    height: 18px;
+  }
+  .SearchBodyOne>ul>li>p>span{
+    margin-left: 10px;
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:500;
+    color:#3366cc;
+  }
+  .el-checkbox-group{
+    display: flex !important ;
+    flex-direction: column !important;
+    text-align: left;
+    margin-left: 40%;
+  }
+  .el-checkbox{
+    margin: 3px 0 !important;
+  }
+  .el-pagination{
+    text-align: center;
+  }
+  .InputP{
+    line-height: 14px;
+    margin-top: 5px;
+    text-align: left;
+    border: 0;
+  }
+  .InputP>div{
+    width: 11px;
+    height:1px;
+    background:rgba(207,207,207,1);
+    margin: 5px 0;
+  }
+  .InputP>input{
+    width:35px;
+    height:14px;
+    background:rgba(255,255,255,1);
+    border:1px solid rgba(207,207,207,1);
+    outline: none;
+    padding-left: 5px;
+    font-size: 12px;
+    display: block;
+  }
+  .InputP>input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  .InputP>input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  .InputP>input:nth-child(3){
+    margin-bottom: 10px;
+  }
+  .SearchBodyOne>ul>li:nth-child(3)>span{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(45,76,161,1);
+    margin-left: 30%;
+    cursor: pointer;
+  }
+  .SearchBodyOne>ul>li:nth-child(3)>img{
+    cursor: pointer;
+  }
+  .SearchBodyTwo{
+    background:rgba(255,255,255,1);
+    margin-right: 5px;
+    padding: 8px 15px;
+    box-sizing: border-box;
+    padding-bottom: 50px;
+  }
+  .SearchBodyTwo>ul>li>div{
+    position: relative; 
+     margin-bottom: 30px;
+  }
+  /* .SearchBodyTwo>div:nth-child(2){
+    text-align: center;
+    widows: 100px;
+    margin: 0 auto;
+  }
+  .SearchBodyTwo>div:nth-child(3){
+    text-align: center;
+    widows: 100px;
+    margin: 0 auto;
+  } */
+  .SearchBodyTwo>ul>li>div>p:nth-child(1){
+    text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width:80%;
+    font-size:13px;
+    font-family:Source Han Sans CN;
+    font-weight:500;
+    color:rgba(51,51,51,1);
+    margin-top: 10px;
+  }
+  .SearchBodyTwo>ul>li>div>p:nth-child(1)>span:hover{
+    cursor: pointer;
+    color: #304d99;
+  }
+  .SearchBodyTwo>ul>li>div>p:nth-child(1)>img{
+    margin-left: 10px;
+    width: 14px;
+    cursor: pointer;
+  }
+  .SearchBodyTwo>ul>li>div>p:nth-child(1)>img:hover{
+    margin-left: 10px;
+    width: 14px;
+    cursor: pointer;
+  }
+  /* .SearchBodyTwo>ul>li>div>div:nth-child(2){
+    width:1px;
+    height:78px;
+    background:rgba(153,153,153,1);
+    margin-top: 14px;
+    position: absolute;
+    top: 35px;
+    left: 0;
+  } */
+  .SearchBodyTwo>ul>li>div>div:nth-child(3){
+    border-left: 1px solid #999;
+  }
+  .SearchBodyTwo>ul>li>div>div:nth-child(3)>div:nth-child(1){
+    text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    width:100%;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    text-decoration:underline;
+    color:rgba(102,102,102,1);
+    margin-top: 10px;
+    margin-left: 2.5%;
+  }
+  .SearchBodyTwo>ul>li>div>div:nth-child(3)>div:nth-child(1)>span:hover{
+    cursor: pointer;
+    color:#304d99;
+  }
+  .datas{
+    width: 80%;
+    margin-left: 2.5%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+  }
+  .datas>div:first-child{
+    display: flex;
+    flex-direction: row;
+  }
+  .datas>div:first-child>div:first-child{
+    width:54px;
+    height:16px;
+    background:rgba(255,255,255,1);
+    border: 1px solid #999;
+    border-radius:8px;
+    text-align: center;
+    line-height: 14px;
+    margin-right: 5px;
+  }
+  .datas>div:first-child>div:first-child>span{
+    display: inline-block;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:500;
+    color:rgba(151,151,151,1);
+  }
+  .datas>div:first-child>ul{
+    height: 16px;
+    display: flex;
+    flex-direction: row;
+    border:1px solid rgba(153,153,153,1);
+    border-radius:2px;
+    text-align: center;
+    font-size:16px;
+    font-family:Source Han Sans CN;
+    color:rgba(51,51,51,1);
+  }
+  .datas>div:first-child>ul>li:nth-child(2){
+    line-height: 10px;
+  }
+  .datas>div:first-child>ul>li:nth-child(3){
+    line-height: 10px;
+  }
+  .datas>div:first-child>ul>li:nth-child(1){
+    padding: 0 5px;
+    background: #fff;
+    border-right:1px solid #999999;
+    line-height: 10px;
+  }
+  .datas>div:first-child>ul>li:nth-child(1)>span{
+    display: inline-block;
+    font-size: 12px;
+    font-family: Source Han Sans CN;
+    color:#666666;
+  }
+  .datas>div:first-child>ul>li:nth-child(1)>span:hover{
+    color: #304d99;
+    cursor: pointer;
+  }
+  .datas>div:first-child>ul>li:nth-child(2)>span{
+    display: inline-block;
+    font-size: 12px;
+    font-family: Source Han Sans CN;
+    color:#666666;
+  }
+  .datas>div:first-child>ul>li:nth-child(3)>span{
+    display: inline-block;
+    font-size: 12px;
+    font-family: Source Han Sans CN;
+    color:#666666;
+  }
+  .datas>div:first-child>ul>li:nth-child(2){
+    line-height: 10px;
+    width: 44px;
+    background:rgba(238,238,238,1);
+    border-right:1px solid #999999;
+  }
+  .datas>div:first-child>ul>li:nth-child(3){
+    line-height: 10px;
+    width: 24px;
+    background:rgba(238,238,238,1);
+  }
+  .datas>div:nth-child(2)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:500;
+    margin: 0;
+    color:rgba(51,51,51,1);
+  }
+  .datas>div:nth-child(2)>p>span{
+    margin-right: 10px;
+  }
+  .datas>div:nth-child(2){
+    margin-left: 2%;
+    line-height: 16px;
+  }
+  .SearchBodyTwo>ul>li>div>div:nth-child(3)>div:nth-child(3){
+    text-align: left;
+  }
+  .SearchBodyTwo>ul>li>div>div:nth-child(3)>div:nth-child(3)>span{
+    text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size:13px;
+    width: 95%;
+    margin-left: 2.5%;
+    font-family:Source Han Sans CN-;
+    color:rgba(102,102,102,1);
+    margin-top: 5px;;
+    /* -webkit-transform: scale(0.8) */
+  }
+  .SearchBodyThree{
+    box-sizing: border-box;
+    background:rgba(255,255,255,1);
+    padding: 17px 15px;;
+  }
+  .SearchBodyThree>div>p:nth-child(1){
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    color:rgba(51,51,51,1);
+    cursor: pointer;
+  }
+  .SearchBodyThree>div>div{
+    width:84px;
+    height:1px;
+    background:rgba(220,220,220,1);
+    font-weight: bold;
+    margin-top: 14px;
+    margin-bottom: 15px;
+  }
+  .SearchBodyThree>div>p:nth-child(3){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    color:rgba(53,84,172,1);
+    margin-bottom: 15px;
+    cursor: pointer;
+    line-height: 20px;
+  }  
+  .SearchBodyThree>div>p:nth-child(4){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    color:rgba(53,84,172,1);
+    margin-bottom: 15px;
+    cursor: pointer;
+    line-height: 20px;
+  }
+  .SearchBodyThree>div>p:nth-child(5){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    color:rgba(53,84,172,1);
+    margin-bottom: 15px;
+    cursor: pointer;
+    line-height: 20px;
+  }
+  .SearchBodyThree>div>p:nth-child(6){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    color:rgba(53,84,172,1);
+    margin-bottom: 15px;
+    cursor: pointer;
+    line-height: 20px;
+  }
+  .asc{
+    color: #25F7D2 !important;
+  }
+  .desc{
+    color: #fff !important;
+  }
+  .ForeContent{
+    width: 100%;
+    background: linear-gradient(-120deg, #93A3CE 0%, #7783A8 100%);
+    margin-top: 6px;
+  }
+  .ForeContent>div:nth-child(1){
+    width: 100%;
+    position: relative;
+  }
+  .ForeContent>div:nth-child(1)>img{
+    width: 100%;
+    opacity: 0.8;
+  }
+  .ForeContent>div:nth-child(1)>ul{
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 7px 14px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .ForeContent>div:nth-child(1)>ul>li{
+    width: 33%;
+  }
+  .ForeContent>div:nth-child(1)>ul>li:nth-child(2){
+    text-align: center;
+  }
+  .ForeContent>div:nth-child(1)>ul>li:nth-child(2)>p:nth-child(1){
+    font-size:18px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin: 0;
+    line-height: 20px;
+    letter-spacing:5px;
+  }
+  .ForeContent>div:nth-child(1)>ul>li:nth-child(2)>p:nth-child(2){
+    font-size:8px;
+    font-family:Source Han Sans CN;
+    font-weight:300;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+    margin-top: 5px;
+    opacity: .8;
+  }
+  .ForeContent>div:nth-child(1)>ul>li:nth-child(3)>p{
+    text-align: right;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+    margin-top: 3px;
+    opacity: .8;
+  }
+  .ForeContent>div:nth-child(2)>ul{
+    margin: 0;
+    padding: 5px 14px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .ForeContent>div:nth-child(2)>ul>li{
+    
+    opacity:0.8;
+    border-radius:2px;
+    margin-right: 10px;
+  }
+  .ForeContent>div:nth-child(2)>ul>li>div{
+    box-shadow:0px 2px 18px 0px rgba(21,22,34,0.5);
+    background:linear-gradient(270deg,#393F53,#3C4357);
+    height: 170px;
+    padding: 10px 10px 10px 15px;
+  }
+  .ForeContent>div:nth-child(2)>ul>li:nth-child(1){
+    width: 26%;
+  }
+  .ForeContent>div:nth-child(2)>ul>li:nth-child(1)>div>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .Periodical{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    
+  }
+  .Periodical>div:nth-child(2){
+    width: 50%;
+  }
+  .Periodical>div:nth-child(1){
+    text-align: right;
+    margin-right: 10px;
+    width: 50%;
+  }
+  .Periodical>div:nth-child(1)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin-bottom: 0;
+    line-height: 20px;
+  }
+  .partition>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height: 20px;
+  }
+  .part1{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+  }
+  .part1>div:nth-child(1){
+    width: 50%;
+    text-align: center;
+    line-height: 63px;
+  }
+  .part1>div:nth-child(2){
+    width: 50%;
+    line-height: 63px;
+    text-align: center;
+  }
+  .part1>div:nth-child(2){
+    font-size:18px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .part1>div:nth-child(1)>div{
+    width:63px;
+    height:63px;
+    background:linear-gradient(-30deg,rgba(92,101,176,1),rgba(130,130,220,1));
+    border-radius:50%;
+    margin: 0 auto;
+  }
+  .part1>div:nth-child(1)>div>p{
+    font-size:18px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .mesh>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height: 20px;
+  }
+  .five4{
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row
+  }
+  .five4>div:nth-child(1){
+    width: 10%;
+  }
+  .five4>div:nth-child(1)>div{
+    width:6px;
+    height:6px;
+    background:rgba(237,108,24,1);
+    border-radius:50%;
+    margin-bottom: 20px;
+    margin-top: 4px;
+  }
+  .five4>div:nth-child(2)>p{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin: 0;
+    line-height: 12px;
+    margin-bottom: 14px;
+  }
+  .five4>div:nth-child(2){
+    width: 90%
+  }
+  .mesh>div{
+    width: 100%;
+    margin-top: 5px;
+  }
+  .mesh>div:nth-child(2)>div:nth-child(1)>div{
+    background:rgba(237,108,24,1);
+  }
+  .mesh>div:nth-child(3)>div:nth-child(1)>div{
+    background:#F3B407;
+  }
+  .mesh>div:nth-child(4)>div:nth-child(1)>div{
+    background:#13B88B;
+  }
+  .mesh>div:nth-child(5)>div:nth-child(1)>div{
+    background:#5C65B0;
+  }
+  .mesh>div:nth-child(6)>div:nth-child(1)>div{
+    background:#5C65B0;
+  }
+  .mesh1{
+    display: flex;
+    flex-direction: row
+  }
+  .mesh1>div:nth-child(1){
+    width: 10%;
+  }
+  .mesh1>div:nth-child(1)>div{
+    width:6px;
+    height:6px;
+    background:rgba(237,108,24,1);
+    border-radius:50%;
+    margin-bottom: 15px;
+    margin-top: 4px;
+  }
+  .mesh1>div:nth-child(1)>div:nth-child(1){
+    background:rgba(237,108,24,1);
+  }
+  .mesh1>div:nth-child(2)>p{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin: 0;
+    line-height: 12px;
+    margin-bottom: 9px;
+  }
+  .mesh1>div:nth-child(2){
+    width: 90%
+  }
+  .ForeContent>div:nth-child(2)>ul>li:nth-child(2){
+    width: 20%;
+  }
+  .ForeContent>div:nth-child(2)>ul>li:nth-child(3){
+    width: 23%;
+  }
+  .ForeContent>div:nth-child(2)>ul>li:nth-child(4){
+    width: 32%;
+    margin-right: 0;
+  }
+  .ForeContent>div:nth-child(2)>ul>li:nth-child(4)>div>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height: 20px;
+  }
+  .perLeft{
+    display: flex;
+    flex-direction: row;
+  }
+  .perLeft>div:nth-child(1){
+    margin-right: 10px;
+    width: 60%;
+  }
+
+  .perLeft>div:nth-child(1)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin:0;
+    line-height: 20px;
+  }
+  .perRight{
+    display: flex;
+    flex-direction: row;
+    text-align: right;
+  }
+  .perRight>div:nth-child(1){
+    margin-right: 10px;
+    width: 60%
+  }
+  .perRight>div:nth-child(2){
+    width: 40%
+  }
+  .perRight>div:nth-child(1)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin:0;
+    line-height: 20px;
+  }
+  .Country{
+    display: flex;
+    flex-direction: row;
+    padding: 5px 14px;
+  }
+  .Country>div{
+    height: 270px;
+    box-shadow:0px 2px 18px 0px rgba(21,22,34,0.5);
+    background:linear-gradient(270deg,#393F53,#3C4357);
+    margin-right: 10px;
+    opacity:0.8;
+  }
+  .Country>div:nth-child(1){
+    width: 52%;
+  }
+  .Country>div:nth-child(2){
+    width: 31%;
+  }
+  .Country>div:nth-child(3){
+    width: 17%;
+    margin: 0;
+  }
+  .country1{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 10px 10px 15px;
+  }
+  .country1>div:first-child{
+    width: 35%;
+  }
+  .country1>div:first-child>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .country1>div:last-child{
+    width: 65%;
+    line-height: 250px;
+  }
+  .count1{
+    display: flex;
+    flex-direction: row;
+  }
+  .count1>div:first-child{
+    width: 30%
+  }
+  .count1>div:first-child>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height: 20px;
+  }
+  .count1>div:last-child{
+    width: 70%
+  }
+  .Countrymen{
+    padding: 10px 10px 10px 15px;
+  }
+  .Countrymen>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height: 20px;
+  }
+  .Countrymen>div{
+    margin-top: -50px;
+  }
+  .Countrymen>div>div:first-child{
+    width: 55%
+  }
+  .Countrymen>div>div:first-child>p{
+    font-size: 12px;
+    font-family: Source Han Sans CN;
+    font-weight: 400;
+    color: rgba(255,255,255,1);
+    line-height: 20px;
+    text-align: right;
+    margin-right: 10px;
+  }
+  .Countrymen>div>div:last-child{
+    width: 45%;
+  }
+  .first1{
+    padding: 10px 10px 10px 15px;
+    
+  }
+  .first1>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height: 20px;
+  }
+  .first1>div{
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+  }
+  .first1>div>div:nth-child(1){
+    width: 20%;
+    position: absolute;
+
+  }
+  .first1>div>div:nth-child(1)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(92,101,176,1);
+    margin-top: 3px;
+  }
+  .first1>div>div:nth-child(1)>p:nth-child(4){
+    margin-top: -3px;
+  }
+  .first1>div>div:nth-child(1)>p:nth-child(5){
+    margin-top: 20px;
+  }
+  .first1>div>div:nth-child(1)>p:nth-child(6){
+    margin-top: 20px;
+  }
+  .First{
+    width: 76%;
+    margin-left: 35px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .First>div:nth-child(1)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin: 0;
+  }
+  .First>div:nth-child(1)>p:nth-child(1){
+    line-height: 28px
+  }
+  .First>div:nth-child(1)>p:nth-child(2){
+    line-height: 28px
+  }
+  .First>div:nth-child(1)>p:nth-child(3){
+    line-height: 28px
+  }
+  .First>div:nth-child(2)>p{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin: 0;
+  }
+  .First>div:nth-child(2)>p:nth-child(1){
+    line-height: 28px
+  }
+  .First>div:nth-child(2)>p:nth-child(2){
+    line-height: 28px
+  }
+  .First>div:nth-child(2)>p:nth-child(3){
+    line-height: 28px
+  }
+  .foreFoot{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 5px 14px;
+  }
+  .foreFoot>div{
+    box-shadow:0px 2px 18px 0px rgba(21,22,34,0.5);
+    background:linear-gradient(270deg,#393F53,#3C4357);
+    height: 215px;
+    padding: 10px 10px 10px 15px;
+    margin-right: 10px; 
+    opacity: .8;
+  }
+  .foot1{
+    width: 30%;
+  }
+  .foot1>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .foot2{
+    width: 35%;
+  }
+  .foot2>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .foot3{
+    width: 35%;
+    margin-right: 0 !important;
+  }
+  .foot3>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  #foot3{
+    margin-top: -50px;
+  }
+  .fiveFoot{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 5px 14px;
+  }
+  .fiveFoot>div{
+    box-shadow:0px 2px 18px 0px rgba(21,22,34,0.5);
+    background:linear-gradient(270deg,#393F53,#3C4357);
+    height: 212px;
+    padding: 10px 10px 10px 15px;
+    margin-right: 10px; 
+    opacity: .8;
+  }
+  .five1{
+    width: 50%;
+  }
+  .five1>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  #five1{
+    margin-top: -50px; 
+  }
+  .five2{
+    width: 27%;
+  }
+  .five2>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .five3{
+    width: 23%;
+    margin-right: 0!important;
+  }
+  .five3>div:nth-child(2)>div:nth-child(1)>div{
+    background:rgba(237,108,24,1);
+  }
+  .five3>div:nth-child(3)>div:nth-child(1)>div{
+    background:#F3B407;
+  }
+  .five3>div:nth-child(4)>div:nth-child(1)>div{
+    background:#13B88B;
+  }
+  .five3>div:nth-child(5)>div:nth-child(1)>div{
+    background:#5C65B0;
+  }
+  .five3>div:nth-child(6)>div:nth-child(1)>div{
+    background:#5C65B0;
+  }
+  .five3>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin-bottom: 20px;
+  }
+  .five4{
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  #per2{
+    margin-top: -55px;
+  }
+  #per3{
+    margin-top: -55px;
+  }
+  #per4{
+    margin-top: -55px;
+  }
+  #five2{
+    margin-top: -55px;
+  }
+  .sixFoot{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 5px 14px;
+  }
+  .sixFoot>div{
+    box-shadow:0px 2px 18px 0px rgba(21,22,34,0.5);
+    background:linear-gradient(270deg,#393F53,#3C4357);
+    height: 413px;
+    padding: 10px 10px 10px 15px;
+    margin-right: 10px; 
+    opacity: .8;
+  }
+  .six1{
+    width: 49.5%;
+  }
+  .six2{
+    width: 50.5%;
+    margin-right: 0!important;
+  }
+  .six1>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin-bottom: 20px;
+  }
+  #six1{
+    margin-top: -55px;
+  }
+  .six2>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    margin-bottom: 20px;
+  }
+  .Periodical1{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+  .Periodical2{
+    width: 100%;
+  }
+  .title3{
+    margin: 10px 0 15px 0;
+    cursor: pointer;
+  }
+  .Periodical1Left{
+    width: 70%;
+  }
+  .Periodical1Left>div:nth-child(1){
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin:0 0 20px 0;
+  }
+  .Periodical1Left>div:nth-child(1)>p:nth-child(1){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+  }
+  .Periodical1Left>div:nth-child(1)>p:nth-child(1)>span:nth-child(3){
+    margin-left: 20px;
+  }
+  .Periodical1Left>div:nth-child(1)>p:nth-child(2){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(102,102,102,1);
+  }
+  .Periodical1Left>div:nth-child(1)>p:nth-child(2)>span:last-child{
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  .Periodical1Left>div:nth-child(1)>p:nth-child(2)>span{
+    cursor: pointer;
+  }
+  .Periodical1Left>div:nth-child(1)>p:nth-child(2)>span:hover{
+    color:#4E70C9;
+  }
+  .Periodical1Right{
+    width: 30%;
+    margin-top: -50px;
+  }
+  .Periodical2Left{
+    width: 100%;
+  }
+  .Periodical2Left>p:nth-child(1){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+    margin: 0;
+    margin-bottom: 5px;
+  }
+  .Periodical2Left>p:nth-child(2){
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+    margin-bottom: 20px;;
+  }
+  .Periodical2Left>p:nth-child(2)>span{
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+    margin: 0 10px;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(102,102,102,1);
+  }
+  .Periodical2Left>p:nth-child(1)>span{
+    margin:0 10px;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(102,102,102,1);
+  }
+  .Periodical2Left>div:last-child{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+  .Periodical2Left>div:last-child>div{
+    width: 65%;
+    height: 1px;
+    background: #dcdcdc;
+    margin-top: 10px;
+  }
+  .Periodical2Left>div:last-child>p{
+    margin-left: 30px;
+    font-size:12px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+  }
+  .issn{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border:1px solid rgba(243,243,253,1);
+    border-radius:4px;
+    padding: 0 20px;
+  }
+  .issn>div{
+    font-size:13px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+  }
+  .issn>div>p:first-child{
+    padding: 10px;
+    margin-top: 5px;
+  }
+  .issn>div>p:last-child{
+    padding: 10px;
+  }
+  #Period{
+    margin-top: -50px;
+  }
+  .select-panel {
+    position: absolute;
+    top: 85px;
+    height: 0;
+    z-index: 999;
+
+  }
+  .searchInput{
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 70%;
+  }
+  .select-item {
+    /*height: 0;*/
+    z-index: 999;
+    background: #fff;
+    color: #b7b7b7;
+    padding: 0 10px;
+  }
+  .select-item:hover{
+    color: #3d5eb5;
+    background: #f3f3fd;
+    cursor: pointer;
+  }
+  .senior>table{
+    box-shadow: 3px 3px 5px rgba(244,244,244,1);
+  }
+  .mess{
+    background-color: #fdf6ec;
+    border-color: #faecd8;
+    min-width: 380px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    position: fixed;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    transition: opacity .3s,transform .4s,top .4s;
+    overflow: hidden;
+    padding: 15px 15px 15px 20px;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    z-index: 999 ;
+  }
+  .mess>span{
+    font-size: 12px;
+    vertical-align: middle;
+    color: #e6a23c;
+  }
+  .sta:hover{
+    color: #3C61C3;
+    cursor: pointer;
+  }
+  .mess>img{
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+  .el-checkbox, .el-checkbox__input{
+    white-space: pre-wrap !important;
+  }
+  .sevenContent{
+    display: flex;
+    flex-direction: row;
+  }
+  .eghitContent{
+    display: flex;
+    flex-direction: row;
+  }
+  .nineContent{
+    display: flex;
+    flex-direction: row;
+  }
+  .shucontent{
+    width: 27%;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    opacity: .8;
+  }
+  .hengcontent{
+    width: 73%;
+    opacity: .8;
+  }
+  .shuContent{
+    width: 50%;
+    margin-left: 10px;
+    margin-right: 10px;
+    opacity: .8;
+  }
+  .hengContent{
+    width: 50%;
+    opacity: .8;
+  }
+  .xuebu{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+  }
+  .fuze{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+  }
+  .biaoti1{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+    margin-top: 10px;
+  }
+  .yijixue{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+    margin-top: 10px;
+  }
+  .yijixue>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .erjixue{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+    margin-top: 10px;
+  }
+  .erjixue>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .nineContent{
+    opacity: 0.8;
+  }
+  .danwei{
+    width: 50%;
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .danwei>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .nianfen{
+    width: 50%;
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+    margin-top: 10px;
+  }
+  .nianfen>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .sanjixue{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+    margin-top: 10px;
+  }
+  .sanjixue>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .fuze1{
+    display: flex;flex-direction: row;
+  }
+  .fu1{
+    width: 80%;
+  }
+  .fu2{
+    width: 25%;
+    text-align: center
+  }
+  .fu2>p{
+    margin-bottom: 12px;
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(92,101,176,1);
+  }
+  .fuze>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .fu1{
+    width: 70%;
+  }
+  
+  .fu1>tbody>tr>td{
+    color: #fff;
+    padding: 6px;
+  }
+  .fu1>tbody>tr:nth-child(1)>td{
+    color: #AFB6D4 !important;
+  }
+  .fu1>tbody>tr:nth-child(2)>td{
+    padding-top: 10px;
+  }
+  .fu1>tbody>tr:nth-child(3)>td{
+    padding: 14px 0;
+  }
+  .fu1>tbody>tr:nth-child(4)>td{
+    padding-top: 7px;
+    padding-bottom: 9px;
+  }
+  .biaoti1>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+  }
+  .xue1{
+    width: 350px;
+    height: 300px;
+  }
+  .xuebu>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .xuebu>div{
+    display: flex;
+    flex-direction: row;
+  }
+  .xuebu>div>div:nth-child(2){
+    margin-left: 10px;
+    margin-top: 50px;
+    color: #fff;
+  }
+  
+  .xiangmu{
+    box-shadow: 0px 2px 18px 0px rgba(21,22,34,0.5);
+    background: linear-gradient(270deg,#393F53,#3C4357);
+    padding: 10px 10px 10px 15px;
+  }
+  .xiang1{
+    width: 350px;
+    height: 300px;
+  }
+  .xiangmu>p{
+    font-size:14px;
+    font-family:Source Han Sans CN;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    letter-spacing:2px;
+  }
+  .xiangmu>div{
+    display: flex;
+    flex-direction: row;
+  }
+  .xiangmu>div>div:nth-child(2){
+    margin-left: 10px;
+    color: #fff;
+  }
+  .xiang2{
+    display: flex;
+    flex-direction: row;
+  }
+  .xue2{
+    display: flex;
+    flex-direction: row;
+  }
+  .yuan1{
+    width: 18px;
+    height: 18px;
+    border-radius:50%;
+    background: #fff;
+  }
+  .xiang2>p{
+    margin-bottom: 8px;
+    margin-left: 10px;
+    font-size: 12px;
+  }
+  .xue2>p{
+    margin-bottom: 7px;
+    margin-left: 10px;
+    font-size: 12px;
+  }
+  .danwei1{
+    margin-top: -30px;
+  }
+  .xiangmujine{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #fff;
+  }
+  .xiangmujine>p:nth-child(1){
+    margin-left: 30px
+  }
+  .xiangmujine>p:nth-child(2){
+    margin-right: 30px
+  }
+  .xiangmujin{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .xiangmujin>p:nth-child(1){
+    margin-left: 30px
+  }
+  .xiangmujin>p:nth-child(2){
+    margin-right: 30px
+  }
+  .nianfen1{
+    margin-top: -30px;
+  }
+  .dangnianjine{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #fff;
+  }
+  .dangnianjine>p:nth-child(1){
+    margin-left: 30px
+  }
+  .dangnianjine>p:nth-child(2){
+    margin-right: 30px
+  }
+  .dangnianjin{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .dangnianjin>p:nth-child(1){
+    margin-left: 30px
+  }
+  .dangnianjin>p:nth-child(2){
+    margin-right: 30px
+  }
+  .theads{
+    line-height: 50px;
+    background:linear-gradient(0deg,#4a6bc4 ,#587ad6);
+    color: #fff;
+    padding-left: 25px;
+    position: relative;
+  }
+  .theads>img{
+    position: absolute;
+    top: 18px;
+    right: 30px;
+    cursor: pointer;
+  }
+  .shijian>>>.el-checkbox__label{
+    padding-left: 7px!important;
+  }
+</style>
