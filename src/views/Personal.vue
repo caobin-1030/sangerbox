@@ -683,7 +683,6 @@
                           <p>1.20G免费存储空间</p>
                           <p>2.即时分析不限次数</p>
                           <p>3.耗时分析免费60次</p>
-                          <p>4.教学视频8折</p>
                           <el-radio label="2" slot="reference" :disabled='TCdisabled>=3'>套餐3--无忧中级版</el-radio>
                         </el-popover>
                         <el-popover placement="top-start" width="160" trigger="hover">

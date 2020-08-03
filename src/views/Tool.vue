@@ -40,10 +40,10 @@
       
       <div class="contentC">
         <div class="content11">
-        <span @click="togongju('IdConversion')">>>便捷ID转换器</span>
-        <span @click="togongju('Information')">>>GEO快速下载</span>
-        <span @click="togongju('TcgaDown')">>>TCGA简易下载</span>
-      </div>
+          <span @click="togongju('IdConversion')">>>便捷ID转换器</span>
+          <span @click="togongju('Information')">>>GEO快速下载</span>
+          <span @click="togongju('TcgaDown')">>>TCGA简易下载</span>
+        </div>
         <el-button type="text" class="edittool" :disabled="edittool" @click="toEditTools()">新增工具</el-button>
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="全部" name="all">
@@ -126,6 +126,13 @@
             </el-pagination>
           </el-tab-pane>
         </el-tabs>
+        
+      </div>
+      <div class="msg1">
+        <div>
+          <p>发表论文引用:</p>
+          <p>如果您在数据处理过程中，使用了Sangerbox Tools完成了分析或在Sangerbox得到了有价值的帮助，我们期望您在论文发表时，在方法学部分或致谢部分引用或提及Sangerbox平台。例如：XXXX analysis was performed using the Sangerbox tools,a free online platform for data analysis (<router-link to='tool'>http://www.sangerbox.com/tool</router-link>)。这样便于更多的同行了解和分享SangerBox平台。</p>
+        </div>
       </div>
     </div>
     <Footer></Footer>
@@ -634,6 +641,9 @@ export default {
     .contentC{
       width: 1200px !important;
     }
+    .msg1>div{
+      width: 1200px !important;
+    }
   }
   .head{
     width: 100%;
@@ -926,5 +936,27 @@ export default {
   }
   .content11>span:hover{
     color: #3366cc;
+  }
+  .msg1{
+    width: 100%;
+    border-top:1px solid #dcdcdc;
+    margin: 0 auto;
+  }
+  .msg1>div{
+    margin: 0 auto;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+  }
+  .msg1>div>p:nth-child(1){
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 600;
+  }
+  .msg1>div>p:nth-child(2){
+    font-size: 14px;
+    line-height: 26px;
+    color: #757575;
+    /* letter-spacing: 2px; */
   }
 </style>
