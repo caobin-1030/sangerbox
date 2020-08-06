@@ -261,7 +261,7 @@ export default {
   },
   data() {
     return {
-      searchContent:'',result:'',nlmId:'',course:'',searchJournalData:'',if:[],yearTimeAggs:[],comments:[],journalTypeTop:[],hIndex:'',citedNum:'',pubTotal:'',
+      searchContent:'',result:'',nlmId:'',course:'',searchJournalData:{type:Object,defent:()=>{return {}}},if:[],yearTimeAggs:[],comments:[],journalTypeTop:[],hIndex:'',citedNum:'',pubTotal:'',
       loading:false,jourcacheNowAreaList:[],shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),uid:'',pinglun:false,dataContent:'',title:'',discu:[],discuoptions:[],visibley:false,phone:'',shoucang11:'取消收藏',nlmIdList:[],con:''
     }
   },

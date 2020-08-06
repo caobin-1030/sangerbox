@@ -18,7 +18,7 @@
           <div >
             <el-upload
               class="upload-demo"
-              action="http://calculate.mysci.online:9000/files/uploadUserFile"
+              :action="url+'/files/uploadUserFile'"
               :on-success="success"
               :on-error='error'
               :before-upload="beforeupload"
@@ -212,6 +212,7 @@
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Filecom from '../components/Filecom'
+import { geturl } from '../../public/js/status'
 export default {
   metaInfo() {
     return {title: 'ID转换工具'} // set a title
@@ -228,7 +229,7 @@ export default {
         fliselists:[],gongju2:true,lizi2:false,shiyong2:false,filesss:'',
         wenjian:require('../../public/img/wenjian1.png'),
         fileselect:false,loading5:false,fileslist:[],all:null,pagesize:10,dir:'/',wenjianjia:require('../../public/img/wenjian.png'),msg:'',header:{'Authorization': localStorage.getItem('authorization')},datadir:{dir:'/'},fileList1:[],fanhui:false,fileSel:'',fileSels:[],fileSel1:[],fileSels1:[],selectInput:null,multiple:false,
-        Sort:'',search:'',mobile:null
+        Sort:'',search:'',mobile:null,url:''
     }
   },
   components:{
@@ -267,6 +268,7 @@ export default {
     },
   },
   mounted(){
+    this.url=geturl()
     this.IDleixing()
     this.mobile=localStorage.getItem("mobile")
   },

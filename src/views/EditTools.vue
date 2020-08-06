@@ -18,7 +18,7 @@
           <div >
             <el-upload
               class="upload-demo"
-              action="http://calculate.mysci.online:9000/files/uploadUserFile"
+              :action="url+'/files/uploadUserFile'"
               :on-success="success"
               :on-error='error'
               :before-upload="beforeupload"
@@ -440,6 +440,7 @@ import Footer from '../components/Footer'
 import Filecom from '../components/Filecom'
 import { formCreats } from '../../public/js/indexof'
 import { pako_ungzip } from '../../public/js/indexof'
+import { geturl } from '../../public/js/status'
 export default {
   metaInfo() {
     return {title: this.title + '-新增工具'} // set a title
@@ -453,7 +454,7 @@ export default {
       parameterNumber2:"",edit:'',fanhui:false,wenjian:'',wenjians:[],title1:'',tableData: [],index:'',xuanzhonghang:true,fileName:'',radioFile:'0',fileType:'',fileTypes:[{value: 'tab',label: 'tab'},{value: 'text',label: 'text'},{value: 'pdf',label: 'pdf'},{value: 'jpeg',label: 'jpeg'},{value: 'binary',label: 'binary'},{value: 'folder',label: 'folder'}],radioDefect:'0',xuanzhonghang1:true,tableData1:[],gongju2:true,lizi2:false,shiyong2:false,desctiption:'',
       rule:[],typeValue:'',fliselists:[],files111:[],readme:'',example:'',pipline:'',ff:{},readhasfile:false,readtype:'',exptype:'',exphasfile:false,piptype:false,piphasfile:'',readfilename:'',expfilename:'',pipfilename:'',runcmd:'',fileList:[],wenjian:require('../../public/img/wenjian1.png'),datas1:'',contenttype:'',img1:'',fujian1:'下载附件',leftheight:0,defaultImg: require('../../public/img/def.jpg'),toolImg:null,missValue:'0',
       fileselect:false,loading5:false,fileslist:[],all:null,pagesize:10,dir:'/',wenjianjia:require('../../public/img/wenjian.png'),msg:'',header:{'Authorization': localStorage.getItem('authorization')},datadir:{dir:'/'},fileList1:[],fanhui1:false,fileSel:'',fileSels:[],fileSel1:[],fileSels1:[],selectInput:null,multiple:false,currentPage:1,mobile:null,aa:'',
-      Sort:'',search:''
+      Sort:'',search:'',url:''
     }
   },
   components:{
@@ -467,6 +468,7 @@ export default {
   mounted() {
   },
   activated() {
+    this.url=geturl()
     this.mobile=localStorage.getItem("mobile")
     this.getRouterData().then(e=>{
       if(document.getElementsByClassName('upload1')[0]!=undefined){
@@ -880,7 +882,7 @@ export default {
       document.getElementById('fujian').disabled=true
       document.getElementById('fujian').style.cursor='not-allowed'
       var xhr = new XMLHttpRequest();
-      xhr.open('get', `http://calculate.mysci.online:9000/tools/downToolFile?id=${this.id}&type=${this.piptype}`);    //也可以使用POST方式，根据接口
+      xhr.open('get', `${this.url}/tools/downToolFile?id=${this.id}&type=${this.piptype}`);    //也可以使用POST方式，根据接口
       xhr.setRequestHeader("Authorization",`${localStorage.getItem('authorization')}`);
       xhr.responseType = "blob";   //返回类型blob
       xhr.onload = function () {
@@ -909,7 +911,7 @@ export default {
       document.getElementById('fujian').disabled=true
       document.getElementById('fujian').style.cursor='not-allowed'
       var xhr = new XMLHttpRequest();
-      xhr.open('get', `http://calculate.mysci.online:9000/tools/downToolFile?id=${this.id}&type=${this.exptype}`);    //也可以使用POST方式，根据接口
+      xhr.open('get', `${this.url}/tools/downToolFile?id=${this.id}&type=${this.exptype}`);    //也可以使用POST方式，根据接口
       xhr.setRequestHeader("Authorization",`${localStorage.getItem('authorization')}`);
       xhr.responseType = "blob";   //返回类型blob
       xhr.onload = function () {
@@ -938,7 +940,7 @@ export default {
       document.getElementById('fujian').disabled=true
       document.getElementById('fujian').style.cursor='not-allowed'
       var xhr = new XMLHttpRequest();
-      xhr.open('get', `http://calculate.mysci.online:9000/tools/downToolFile?id=${this.id}&type=${this.readtype}`);    //也可以使用POST方式，根据接口
+      xhr.open('get', `${this.url}/tools/downToolFile?id=${this.id}&type=${this.readtype}`);    //也可以使用POST方式，根据接口
       xhr.setRequestHeader("Authorization",`${localStorage.getItem('authorization')}`);
       xhr.responseType = "blob";   //返回类型blob
       xhr.onload = function () {

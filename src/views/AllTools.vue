@@ -18,7 +18,7 @@
           <div >
             <el-upload
               class="upload-demo"
-              action="http://calculate.mysci.online:9000/files/uploadUserFile"
+              :action="url+'/files/uploadUserFile'"
               :on-success="success"
               :on-error='error'
               :before-upload="beforeupload"
@@ -231,6 +231,7 @@ import Filecom from '../components/Filecom'
 import { formCreats } from '../../public/js/indexof'
 import pdf from 'vue-pdf'
 import { pako_ungzip } from '../../public/js/indexof'
+import { geturl } from '../../public/js/status'
 export default {
   metaInfo() {
     return {title: this.title1} // set a title
@@ -238,7 +239,7 @@ export default {
   data() {
     return {
       gongju2:true,lizi2:false,shiyong2:false,id:'',title1:"",desctiption:'',readme:'',example:'',pipline:'',ff:{},readhasfile:false,readtype:'',exptype:'',exphasfile:false,piptype:false,piphasfile:'',readfilename:'',expfilename:'',pipfilename:'',rule:[],runcmd:'',fileList:[],wenjian:require('../../public/img/wenjian1.png'),datas1:'',contenttype:'',img1:'',tooltype:"",fujian1:'下载附件',loading:false,leftheight:0,pdfurl:'',clickIndex:"",currentPage: 1,pageCount: 0,src: "",scale: 100,idx: -1,loadedRatio: 0,toolImg:null,defaultImg: require('../../public/img/def.jpg'),loading1:false,pmidList:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",downloadDir:'',xiazai:true,logID:'',tankuang:false,runlog:'',fileselect:false,loading5:false,fileslist:[],all:null,pagesize:10,dir:'/',wenjianjia:require('../../public/img/wenjian.png'),msg:'',header:{'Authorization': localStorage.getItem('authorization')},datadir:{dir:'/'},fileList1:[],fanhui:false,fileSel:'',fileSels:[],fileSel1:[],fileSels1:[],selectInput:null,multiple:false,
-      Sort:'',search:'',isvip:'',aa:'',filesewid:"",mobile:null
+      Sort:'',search:'',isvip:'',aa:'',filesewid:"",mobile:null,url:''
     }
   },
   components:{
@@ -251,6 +252,7 @@ export default {
   },
   
   mounted(){
+    this.url=geturl()
     this.mobile=localStorage.getItem("mobile")
     this.getRouterData().then(e=>{
       if(document.getElementsByClassName('upload1')[0]!=undefined){
@@ -645,7 +647,8 @@ export default {
     downLoad(){
       this.mess=true
       var xhr = new XMLHttpRequest();
-      xhr.open('get', `http://calculate.mysci.online:9000/files/downloadAllUserFile?dir=/${this.downloadDir}`);    //也可以使用POST方式，根据接口
+      
+      xhr.open('get', `${this.url}/files/downloadAllUserFile?dir=/${this.downloadDir}`);    //也可以使用POST方式，根据接口
       xhr.setRequestHeader("Authorization",`${localStorage.getItem('authorization')}`);
       xhr.responseType = "blob";   //返回类型blob
       xhr.onload =  (e) =>{
@@ -886,7 +889,7 @@ export default {
       document.getElementById('fujian').disabled=true
       document.getElementById('fujian').style.cursor='not-allowed'
       var xhr = new XMLHttpRequest();
-      xhr.open('get', `http://calculate.mysci.online:9000/tools/downToolFile?id=${this.id}&type=${this.exptype}`);    //也可以使用POST方式，根据接口
+      xhr.open('get', `${this.url}/tools/downToolFile?id=${this.id}&type=${this.exptype}`);    //也可以使用POST方式，根据接口
       xhr.setRequestHeader("Authorization",`${localStorage.getItem('authorization')}`);
       xhr.responseType = "blob";   //返回类型blob
       xhr.onload = function () {
@@ -917,7 +920,7 @@ export default {
       
       document.getElementById('fujian').style.cursor='not-allowed'
       var xhr = new XMLHttpRequest();
-      xhr.open('get', `http://calculate.mysci.online:9000/tools/downToolFile?id=${this.id}&type=${this.readtype}`);    //也可以使用POST方式，根据接口
+      xhr.open('get', `${this.url}/tools/downToolFile?id=${this.id}&type=${this.readtype}`);    //也可以使用POST方式，根据接口
       xhr.setRequestHeader("Authorization",`${localStorage.getItem('authorization')}`);
       xhr.responseType = "blob";   //返回类型blob
       xhr.onload = function () {

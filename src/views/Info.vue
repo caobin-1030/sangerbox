@@ -296,7 +296,7 @@ import Footer from '../components/Footer'
 import Filecom from '../components/Filecom'
 import html2canvas from 'html2canvas'
 import { functiontofindIndexByKeyValue,pako_ungzip,web } from '../../public/js/indexof'
-
+import {geturl} from '../../public/js/status'
 export default {
   metaInfo() {
     return {title: this.geoDetails.title + '-数据搜索'} // set a title
@@ -305,7 +305,7 @@ export default {
     return {
       searchContent:'',result:'',PMID:'',searchJournalData:'',if:[],yearTimeAggs:[],comments:[],journalTypeTop:[],articleDetails:[],authorList:[],addr_show:false,d:0,journal1:'',searchData:[],loading:false,grantsList:[],publicationTypeList:[],zh:false,z:0,
       addrList1:'',authorList2:'',dou:false,Id:'',geoDetails:{},gsmInfomationList:[],bb:[],len:0,load1:false,filelist:[],co1:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",phone:"",articleList:[],gseRelationList:[],platformIDs:[],exopt1:'',options1:[],exopt2:'',options2:[],vis:false,gpl:"",exopt3:'',options3:[{label:"均值",value:1},{label:"中位数",value:2},{label:"最大值",value:3},{label:"最小值",value:4}],a:false,b:false,vis1:false,geoList:[],
-      fileselect:false,ID:''
+      fileselect:false,ID:'',url:''
     }
   },
   components:{
@@ -314,6 +314,7 @@ export default {
   watch: {
   },
   created(){
+    this.url=geturl()
     this.phone=localStorage.getItem("mobile")
   },
   computed: {
@@ -644,7 +645,7 @@ export default {
     },
     downfile(a,b){
       if(b=="local"){
-        window.location.href=`http://calculate.mysci.online:9000/pubmed/downloadFile?filePath=${a}`
+        window.location.href=`${this.url}/pubmed/downloadFile?filePath=${a}`
       }else{
         window.location.href=`ftp://ftp.ncbi.nlm.nih.gov${a}`
       }

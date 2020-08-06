@@ -82,7 +82,7 @@ export default {
       screenWidth: document.body.clientWidth,
       isFixed:false,
       show:false,
-      down:false,msg:'',
+      down:false,msg:{type:String,defent:()=>{return ""}},
       i:0,
       login:false,
       uname:"",
@@ -427,8 +427,6 @@ export default {
   .header>div:first-child>img:nth-child(1){
     width: 170px;
     cursor: pointer;
-  }
-  .Navigation{
   }
   .Navigation>ul{
     display: flex;

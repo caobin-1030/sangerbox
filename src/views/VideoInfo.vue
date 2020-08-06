@@ -23,7 +23,7 @@
             <img style="width:128px;height:35px" src="../../public/img/pay1.png" alt="">
             <p>￥{{money1}}<span v-if="yuanjia!=money1" style="font-size:16px;text-decoration:line-through">{{yuanjia != money1 ? yuanjia : ''}}</span></p>
           </div>
-          <img v-if="money1!=0" :src="'data:image/png;base64,'+payimg"  style="width:270px;border:1px solid #dcdcdc" alt="">
+          <img v-if="money1!=0" :src="payimg"  style="width:270px;border:1px solid #dcdcdc" alt="">
           <img v-else src="../../public/img/zhifu1.png"  style="width:270px;border:1px solid #dcdcdc" alt="">
           <div class="youhuiquan">
             <span>请选择优惠券：</span>
@@ -175,7 +175,7 @@
         <div class="Recommend" v-if="videoTypeList.length>0">
           <p>相关推荐</p>
           <div v-for="(item,i) of videoTypeList" :key="i" @click="toVideoInfo(item.id)">
-            <img :src="'data:image/png;base64,'+item.image" :title="item.title" style="width:250px;height:150px" alt="">
+            <img :src="item.image" :title="item.title" style="width:250px;height:150px" alt="">
             <!-- <div>
               <p>{{item.title}}</p>
               <p>{{item.desc}}</p>

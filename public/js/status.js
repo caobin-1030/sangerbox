@@ -5,26 +5,8 @@ import {
   MessageBox
 } from 'element-ui'
 import store from '../../src/store/index'
-var url = "calculate.mysci.online";
- $.ajax({
-  type : "GET",
-  async : false,
-  timeout: 5000,
-  url : 'http://'+url+":9000/A",
-  error : function() {
-   $.ajax({
-    type : "GET",
-    async : false,
-    url : "http://admin.sangerbox.com/getIp",
-    success: function(data) {
-     if (data != null && data.length > 0) {
-      url = data;
-     }
-    }
-   });
-  }
- });
- axios.defaults.baseURL = 'http://'+url+":9000";
+var url="http://cloud.sangerbox.com"
+ axios.defaults.baseURL = url;
 var aut= localStorage.getItem("authorization")
 if(aut==null){
   axios.defaults.headers.common["Authorization"] = ''
@@ -86,7 +68,7 @@ axios.interceptors.response.use(
   function submitFormWithCaptcha() {
     var captcha = new TencentCaptcha('2081219061', function (res) {
     if (res.ret === 0) {
-      $.post("http://calculate.mysci.online:9000/deleteHostAddr?randstr="+res.randstr+"&ticket="+res.ticket,function(data) {
+      $.post("http://cloud.sangerbox.com/deleteHostAddr?randstr="+res.randstr+"&ticket="+res.ticket,function(data) {
         if(data.status==200 && data.res.response==1){
           $(".Search").click();
         }
@@ -124,12 +106,12 @@ axios.interceptors.response.use(
   //        Message({message: '请登录',type: 'warning'}) ;
          return
        }
-       var ws = new WebSocket(`ws://${url}:15674/ws`);
+       var ws = new WebSocket(`ws://socket.sangerbox.com/ws`);
        client = Stomp.over(ws);
        client.heartbeat.incoming = 0;
+   
        var on_connect = function() {
         client.subscribe(`/exchange/rabbitmqTackWeb/${phone}`, function(data) {
-          console.log(data)
               var msg = data.body;
               var a=msg.split(";")
               Message({message: `${a.length==1?msg:a[1]}`,type: 'success'}) ;
@@ -142,11 +124,10 @@ axios.interceptors.response.use(
             });
        };
        var on_error =  function() {
-        if(url!='calculate.mysci.online'){
           Message({message: '连接丢失，请等待10秒刷新页面',type: 'warning'}) ;
-        }
        };
        client.connect('web', 'web', on_connect, on_error, '/');
+   console.log(ws.readyState)
      }
   
   function aaa(){
@@ -161,7 +142,7 @@ axios.interceptors.response.use(
          }
         }
    function geturl(){
-     return 'http://'+url+":9000"
+     return url
    }
    export {
     web,aaa,geturl
