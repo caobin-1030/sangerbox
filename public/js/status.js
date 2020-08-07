@@ -28,19 +28,22 @@ let removePending = (config) => {
   }
  }
 }
+
+
 // http请求拦截器
 axios.interceptors.request.use(config => {
- 
   removePending(config); //在一个axios发送前执行一下取消操作
   config.cancelToken = new cancelToken((c)=>{
-   // 这里的axios标识我是用请求地址&请求方式拼接的字符串，当然你可以选择其他的一些方式
-   pending.push({ u: config.url + '&' + config.method, f: c }); 
+    // 这里的axios标识我是用请求地址&请求方式拼接的字符串，当然你可以选择其他的一些方式
+    pending.push({ u: config.url + '&' + config.method, f: c }); 
   });
-   
   return Promise.resolve(config)
- }, error => {
+}, error => {
   return Promise.reject(error)
- })
+})
+
+
+// http响应拦截器
 axios.interceptors.response.use(
   response => {
     removePending(response.config); //在一个axios响应后再执行一下取消操作，把已经完成的请求从pending中移除
@@ -96,6 +99,10 @@ axios.interceptors.response.use(
   return Promise.reject(error)
   }
   )
+
+
+
+  //WebSocket
   var client = null;
   function web(phone){ 
        if(typeof(WebSocket)== 'undefined'){
@@ -130,6 +137,7 @@ axios.interceptors.response.use(
    console.log(ws.readyState)
      }
   
+   //关闭WebSocket
   function aaa(){
       if(client!==null){
                 client.disconnect(function() {});
@@ -141,6 +149,9 @@ axios.interceptors.response.use(
            client.disconnect(function() {});
          }
         }
+
+
+   //获取服务器域名
    function geturl(){
      return url
    }

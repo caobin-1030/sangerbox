@@ -139,6 +139,7 @@ export default {
     })
   },
   methods: {
+    //上传文件前判断文件名
     beforeupload(file){
       var p=new RegExp(/^[a-z0-9A-Z_]+$/)
       if(p.test(file.name.substr(0,file.name.lastIndexOf(".")))==false){
@@ -149,15 +150,18 @@ export default {
         return false;
       }
     },
+    //下载查看的文件
     xizai1(name){
       this.axios.get('/files/downUserFile',{params:{dir:this.rowurl}}).then(result=>{
         window.open(result.data)
       })
     },
     settingEvent(){},
+    //关闭弹框
     downDiscuoption(){
       this.tankuang=false
     },
+    //下载文件
     download(b){
       if(b.type=="dir"){
         this.aid=b.row.type+b.row.size+b.$index
@@ -176,6 +180,7 @@ export default {
         
       }
     },
+    //文件排序
     sortChange(column, prop, order){
       if(column.order=='ascending' && column.prop=='name'){
         this.Sort='name_asc'
@@ -220,6 +225,7 @@ export default {
     error(err, file, fileList){
       // console.log(err)
     },
+    //返回上级
     toshang(dir){
       this.search=''
       this.loading5=true
@@ -248,6 +254,7 @@ export default {
         }
       })
     },
+    //上传文件成功
     success(response, file, fileList){
       if(response.msg=='个人空间不足，请扩容'){
         this.$message({
@@ -267,6 +274,7 @@ export default {
         this.shuaxin(this.dir)
       }
     },
+    //刷新
     shuaxin(dir){
       this.loading5=true
       this.axios.get(`/files/listUserFile`,{params:{
@@ -293,6 +301,7 @@ export default {
         }
       })
     },
+    //查看文件
     handleGoods(row){
       if(row.type=="dir"){
         this.loading=true
@@ -340,6 +349,7 @@ export default {
         })
       }
     },
+    //列表分页
     handleCurrentChange(currentPage){
       this.loading5=true
       this.axios.get(`/files/listUserFile`,{params:{

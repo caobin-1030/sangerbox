@@ -1053,6 +1053,27 @@ export default {
                     a.options=bbb
                   }
                 })
+                
+              }else if(a.name=='folder1'){
+                setTimeout(()=>{
+                  this.axios.get(`/files/getAllUserFile`,{
+                  params:{type:"folder"}
+                }).then(result=>{
+                  if(result.data.data!=undefined){
+                    var fliselists=JSON.parse(pako_ungzip(result.data.data))
+                    var bbb=[]
+                    for(var aa in fliselists){
+                      var cc={}
+                      cc.value=fliselists[aa]
+                      cc.label=fliselists[aa]
+                      bbb.push(cc)
+                    }
+                    a.ppp=bbb
+                    a.options=bbb
+                  }
+                })
+                },1000)
+                
               }
             }
           }
