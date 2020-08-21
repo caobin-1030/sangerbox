@@ -381,7 +381,7 @@ export default {
           couponId:this.value}
       }).then(result=>{
         if(result.data.data!=null && result.data.data!=undefined){
-          this.payimg=result.data.data.img
+          this.payimg='data:image/png;base64,'+result.data.data.img
           this.OrderId=result.data.data.orderNo
           this.yuanjia=result.data.data.yuanjia
           this.money1=result.data.data.mount
@@ -401,7 +401,7 @@ export default {
           couponId:this.value}
       }).then(result=>{
         if(result.data.data!=null && result.data.data!=undefined){
-          this.payimg=result.data.data.img
+          this.payimg='data:image/png;base64,'+result.data.data.img
           this.tankuang=true
           this.OrderId=result.data.data.orderNo
           this.yuanjia=result.data.data.yuanjia

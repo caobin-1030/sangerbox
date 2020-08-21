@@ -5,8 +5,12 @@ import {
   MessageBox
 } from 'element-ui'
 import store from '../../src/store/index'
-var url="http://cloud.sangerbox.com"
- axios.defaults.baseURL = url;
+if(localStorage.getItem("url")!=null){
+  var url=localStorage.getItem("url")
+}else{
+  var url="cloud.sangerbox.com"
+}
+axios.defaults.baseURL = 'http://' + url;
 var aut= localStorage.getItem("authorization")
 if(aut==null){
   axios.defaults.headers.common["Authorization"] = ''
@@ -47,6 +51,7 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(
   response => {
     removePending(response.config); //在一个axios响应后再执行一下取消操作，把已经完成的请求从pending中移除
+    localStorage.setItem('url', url);
     var Authorization=response.headers.authorization;
     if(Authorization!=undefined){
       localStorage.setItem('authorization', Authorization);
@@ -61,7 +66,12 @@ axios.interceptors.response.use(
   },
   error => {
   if (error && error.response) {
-  axios.defaults.baseURL = 'http://sangerbox.com';
+    if(localStorage.getItem("url")=="cloud.sangerbox.com"){
+      localStorage.setItem('url', 'calculate.mysci.online:9000');
+    }else{
+      localStorage.setItem('url', 'cloud.sangerbox.com');
+    }
+    
   switch (error.response.status) {
   case 401:
     localStorage.setItem('href', window.location.href);
@@ -71,7 +81,7 @@ axios.interceptors.response.use(
   function submitFormWithCaptcha() {
     var captcha = new TencentCaptcha('2081219061', function (res) {
     if (res.ret === 0) {
-      $.post("http://cloud.sangerbox.com/deleteHostAddr?randstr="+res.randstr+"&ticket="+res.ticket,function(data) {
+      $.post(`${url}/deleteHostAddr?randstr=`+res.randstr+"&ticket="+res.ticket,function(data) {
         if(data.status==200 && data.res.response==1){
           $(".Search").click();
         }
@@ -113,7 +123,7 @@ axios.interceptors.response.use(
   //        Message({message: '请登录',type: 'warning'}) ;
          return
        }
-       var ws = new WebSocket(`ws://socket.sangerbox.com/ws`);
+       var ws = new WebSocket(`ws://calculate.mysci.online:15674/ws`);
        client = Stomp.over(ws);
        client.heartbeat.incoming = 0;
    
@@ -134,7 +144,6 @@ axios.interceptors.response.use(
           Message({message: '连接丢失，请等待10秒刷新页面',type: 'warning'}) ;
        };
        client.connect('web', 'web', on_connect, on_error, '/');
-   console.log(ws.readyState)
      }
   
    //关闭WebSocket
@@ -153,7 +162,7 @@ axios.interceptors.response.use(
 
    //获取服务器域名
    function geturl(){
-     return url
+     return 'http://' + url
    }
    export {
     web,aaa,geturl
