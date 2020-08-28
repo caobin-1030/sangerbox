@@ -14,6 +14,8 @@ import stomp from '../public/js/stomp.js'
 import sockjs from '../public/js/sockjs.js'
 import formCreate, {maker} from '@form-create/element-ui'
 Vue.use(formCreate)
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
 import Echarts from 'echarts'
 import VueClipboard from 'vue-clipboard2'
 import pako from 'pako'

@@ -5,11 +5,44 @@ import {
   MessageBox
 } from 'element-ui'
 import store from '../../src/store/index'
-if(localStorage.getItem("url")!=null){
-  var url=localStorage.getItem("url")
-}else{
-  var url="cloud.sangerbox.com"
+import VueCookies from 'vue-cookies'
+if(!VueCookies.isKey('url')){
+  var url=''
+  let ips = [
+    'cloud.sangerbox.com',
+    'cloud2.sangerbox.com',
+  ];//线路地址
+
+  let arr = [];
+  for(let ip of ips){
+    arr.push(
+        new Promise(function(resolve, reject) {
+            let startTime, endTime, fileSize;
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState === 2){
+                    startTime = Date.now();
+                }
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    endTime = Date.now();
+                    fileSize = xhr.responseText.length;
+                    setTimeout(resolve, endTime-startTime, ip);
+                }
+            }
+            xhr.timeout = 1000
+            xhr.open("GET", 'http://'+ip+'/A', true);
+            xhr.send();
+        })
+    );
+  }
+
+  Promise.race(arr).then(function(value) {
+    localStorage.setItem("url",value)
+    VueCookies.set('url',value, '10min')
+  });
 }
+
+url=localStorage.getItem("url")
 axios.defaults.baseURL = 'http://' + url;
 var aut= localStorage.getItem("authorization")
 if(aut==null){
@@ -51,7 +84,6 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(
   response => {
     removePending(response.config); //在一个axios响应后再执行一下取消操作，把已经完成的请求从pending中移除
-    localStorage.setItem('url', url);
     var Authorization=response.headers.authorization;
     if(Authorization!=undefined){
       localStorage.setItem('authorization', Authorization);
