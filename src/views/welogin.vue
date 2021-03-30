@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     SendPhone(){
-      if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone))) {
         this.show1=true
       } else if (this.phone == "" || !this.phone) {
         this.show1=true          

@@ -1,6 +1,23 @@
 <template>
   <div>
     <Header/>
+    <el-dialog title="日志详情" :visible.sync="dialogVisible" width="40%" @close="dialogClose">
+      <el-form label-width="100px">
+        <el-form-item label="工具名称:">{{logInfo.toolName}}</el-form-item>
+        <el-form-item label="手机号:">{{logInfo.phone}}</el-form-item>
+        <el-form-item label="cmd:">{{logInfo.cmd}}</el-form-item>
+        <el-form-item label="log信息:">
+          <div style="width:100%;height:300px;overflow-y: scroll;">
+            <table v-if="logInfo.log.split(/\n/g).length>1">
+              <tr v-for="(item,i) of logInfo.log.split(/\n/g)" :key="i">
+                <td  v-for="(item1,n) of item.split(/\t/g)" :key="n">{{item1}}</td>
+              </tr>
+            </table>
+          </div>
+          
+        </el-form-item>
+      </el-form>
+    </el-dialog>
     <div class="tankuangyidong" v-show="tankuangyidong" @click="tankuangyidong=false">
       <div class="yidong" @click.stop="settingEvent()">
         <p>当前文件位置：{{msg111.url}}</p>
@@ -188,26 +205,6 @@
                     </el-dropdown-menu>
                   </el-dropdown>
                 </li>
-                <!-- <li>
-                  <el-dropdown trigger="click">
-                    <span class="el-dropdown-link">
-                      我的钱包<i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </li> -->
-                <!-- <li>
-                  <el-dropdown trigger="click">
-                    <span class="el-dropdown-link">
-                      我的订购<i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </li> -->
                 <li>
                   <el-dropdown trigger="click">
                     <span class="el-dropdown-link">
@@ -452,10 +449,10 @@
                         <td>操作</td>
                       </tr>
                       <tr v-for="(item,i) of tackList" :key="i">
-                        <td><span class="pathway" :style="item.status==0?{color:'#FF6B00'}:item.status==1?{color:'#3366cc'}:item.status==200?{color:'#00be06'}:item.status==500?{color:'#ff0000'}:item.status==404?{color:'#ff0000'}:''">{{item.status==0?'等待运行':item.status==1?'正在运行':item.status==200?'运行成功':item.status==500?'运行错误':item.status==404?'运行错误':''}}</span></td>
+                        <td><span class="pathway" :style="item.status==0?{color:'#FF6B00'}:item.status==1?{color:'#3366cc'}:item.status==200?{color:'#00be06'}:item.status==500?{color:'#ff0000'}:item.status==404?{color:'#ff0000'}:''">{{item.status==0?'等待运行':item.status==1?'正在运行':item.status==100?'运行暂停':item.status==200?'运行成功':item.status==500?'运行错误':item.status==404?'运行错误':''}}</span></td>
                         <td style="word-wrap:break-word;word-break:break-all;">
                           <p style="color:#333;width:230px">{{item.desc}}</p>
-                          <p @click="toDate(item)" class="ho" style="font-size:12px;color:#666;width:230px">{{item.status==200?item.successFilePath:item.status==500?item.errorFilePath:item.status==404?'运行失败,请检查磁盘空间':''}}</p>
+                          <p @click="toDate(item)" class="ho" style="font-size:12px;color:#666;width:230px">{{item.status==200?item.successFilePath:item.status==500?item.errorFilePath:item.status==404?'运行错误,请检查磁盘空间':''}}</p>
                         </td>
                         <td v-if="item.createTime!=undefined || item.createTime!=null">
                           <p style="font-size:12px">{{item.createTime.split(" ")[0]}}</p>
@@ -468,8 +465,8 @@
                         </td>
                         <td v-else></td>
                         <td v-if="item.updateTime!=undefined || item.updateTime!=null">
-                          <p v-if="item.status==200 || item.status==500" style="font-size:12px">{{item.updateTime.split(" ")[0]}}</p>
-                          <p v-if="item.status==200 || item.status==500"  style="font-size:12px">{{item.updateTime.split(" ")[1]}}</p>
+                          <p v-if="item.status==200 || item.status==500 || item.status==404" style="font-size:12px">{{item.updateTime.split(" ")[0]}}</p>
+                          <p v-if="item.status==200 || item.status==500 || item.status==404"  style="font-size:12px">{{item.updateTime.split(" ")[1]}}</p>
                         </td>
                         <td v-else>
                         </td>
@@ -477,7 +474,10 @@
                           <p v-if="item.status==200 || item.status==500" style="font-size:12px">{{item.totalTime}}</p>
                         </td>
                         <td>
-                          <el-button @click="download1(item)" icon="el-icon-download" title="下载" circle size="small"></el-button>
+                          <span v-if="item.status==100 || item.status==1" class="shanchu" @click="endRun(item)">终止运行</span>
+                          <span v-if="item.status==200 || item.status==500 || item.status==404" class="shanchu" @click="shanchu(item)">删除</span>
+                          <span v-if="item.status==200 || item.status==500 || item.status==404" class="shanchu" style="margin-left:5px;" @click="rizhi(item)">日志</span>
+                          <!-- <el-button @click="download1(item)" icon="el-icon-download" title="下载" circle size="small"></el-button>
                           <el-popover style="margin-left:10px" 
                             placement="right"
                             title="操作"
@@ -485,7 +485,7 @@
                             trigger="hover">
                             <p style="width:125px;"><span class="shanchu" style="margin-right:5px;" @click="yunxing(item)">重新运行</span><span class="shanchu" @click="shanchu(item)">删除</span><span class="shanchu" style="margin-left:5px;" @click="rizhi(item)">日志</span></p>
                             <el-button  size="small" slot="reference" circle><img src="../../public/img/more.png" alt=""></el-button>
-                          </el-popover>
+                          </el-popover> -->
                           
                         </td>
                       </tr>
@@ -653,12 +653,47 @@
                   </div>
                 </div>
                 <div class="mokuai" :class="{active1:shows=='vip'}">
-                  <div class="coupon" v-if="getUserMember!=null">
-                    <span>您当前的权益：</span>
+                  <div class="coupon" >
+                    <span>您当前的权益：内存空间 {{maxRam.maxRam}} GB 存储空间 {{maxRam.maxSize}} GB</span>
+                    <p><span style="color:#FF6B00;margin-right:20px" class="cu" @click="toAddcun('1')">>>增加存储空间</span><span class="cu" style="color:#FF6B00" @click="toAddcun('2')">>>增加内存空间</span> </p>
                   </div>
                   <div class="quanyi" v-if="getUserMember!=null">
                     <span>{{getUserMember.name}}</span>
                     <span>您的会员权益到期时间：<span>{{getUserMember.volTime.split(' ')[0]}}</span></span>
+                  </div>
+                  <div>
+                    <el-table
+                      :data="Vipdata"
+                      border
+                      :cell-style="{'text-align':'center'}"
+                      :header-cell-style="headercellstyle"
+                      style="width: 100%;margin-bottom:20px">
+                      <el-table-column
+                        prop="resources"
+                        label=""
+                        width="180">
+                      </el-table-column>
+                      <el-table-column
+                        prop="ordinary"
+                        label="普通用户">
+                      </el-table-column>
+                      <el-table-column
+                        prop="primary"
+                        label="无忧初级版">
+                      </el-table-column>
+                      <el-table-column
+                        prop="intermediate"
+                        label="无忧中级版">
+                      </el-table-column>
+                      <el-table-column
+                        prop="advanced"
+                        label="无忧高级版">
+                      </el-table-column>
+                      <el-table-column
+                        prop="supers"
+                        label="超级用户">
+                      </el-table-column>
+                    </el-table>
                   </div>
                   <div class="fangshi">
                     <span>会员购买方式：</span>
@@ -667,32 +702,10 @@
                     <div>
                       <span class="title111">产品选择：</span>
                       <el-radio-group v-model="product" @change="vipchange">
-                        <el-popover placement="top-start" width="70" trigger="hover">
-                          <p>1.用于数据存储</p>
-                          <p>2.用于数据备份</p>
-                          <p>3.用于数据加载</p>
-                          <el-radio label="0" slot="reference" :disabled='TCdisabled>=1'>套餐1--10G存储空间</el-radio>
-                        </el-popover>
-                        <el-popover placement="top-start" width="160" trigger="hover">
-                          <p>1.10G免费存储空间</p>
-                          <p>2.即时分析不限次数</p>
-                          <p>3.耗时分析免费30次</p>
-                          <el-radio label="1" slot="reference" :disabled='TCdisabled>=2'>套餐2--无忧初级版</el-radio>
-                        </el-popover>
-                        <el-popover placement="top-start" width="160" trigger="hover">
-                          <p>1.20G免费存储空间</p>
-                          <p>2.即时分析不限次数</p>
-                          <p>3.耗时分析免费60次</p>
-                          <el-radio label="2" slot="reference" :disabled='TCdisabled>=3'>套餐3--无忧中级版</el-radio>
-                        </el-popover>
-                        <el-popover placement="top-start" width="160" trigger="hover">
-                          <p>1.50G免费存储空间</p>
-                          <p>2.即时分析不限次数</p>
-                          <p>3.耗时分析免费99次</p>
-                          <p>4.教学视频8折</p>
-                          <p>5.在线指导（仅限工具使用）</p>
-                          <el-radio label="3" slot="reference" :disabled='TCdisabled>=4'>套餐4--无忧高级版</el-radio>
-                        </el-popover>
+                          <el-radio label="0" :disabled='TCdisabled>=1'>套餐1--无忧初级版</el-radio>
+                          <el-radio label="1" :disabled='TCdisabled>=2'>套餐2--无忧中级版</el-radio>
+                          <el-radio label="2" :disabled='TCdisabled>=3'>套餐3--无忧高级版</el-radio>
+                          <el-radio label="3" :disabled='TCdisabled>=4'>套餐4--超级用户</el-radio>
                         
                       </el-radio-group>
                     </div>
@@ -701,17 +714,17 @@
                       <div class="timers">
                         <button class="timer" :class="{'active':timers==1,'cus':mounth1>1}" :disabled="mounth1>1" @click="mounth(1)">
                           <p>1个月</p>
-                          <p>￥{{vip111.a}}</p>
+                          <p>￥{{product!=3?vip111.a:"N/A"}}</p>
                           <img src="../../public/img/dui.png" v-if="timers==1" alt="">
                         </button>
                         <button class="timer" :class="{'active':timers==3,'cus':mounth1>3}" :disabled="mounth1>3" @click="mounth(3)">
                           <p>1季度</p>
-                          <p>￥{{vip111.a*3}}</p>
+                          <p>￥{{product!=3?vip111.a*3:"N/A"}}</p>
                           <img src="../../public/img/dui.png" v-if="timers==3" alt="">
                         </button>
                         <button class="timer" :class="{'active':timers==6,'cus':mounth1>6}" :disabled="mounth1>6" @click="mounth(6)">
                           <p>半年</p>
-                          <p>￥{{vip111.a*6}}</p>
+                          <p>￥{{product!=3?vip111.a*6:"N/A"}}</p>
                           <img src="../../public/img/dui.png" v-if="timers==6" alt="">
                         </button>
                         <button class="timer" :class="{'active':timers==12,'cus':mounth1>12}" :disabled="mounth1>12" @click="mounth(12)">
@@ -812,7 +825,7 @@
                       <span style="font-family:Source Han Sans CN;margin-right:14px;word-wrap:break-word;line-height:14px">主题：<span>{{emailinfo.subject}}</span></span>
                     </div>
                     <p style="margin-top: 20px;">时间：{{emailinfo.createTime}}</p>
-                    <div class="emailContent" style="word-wrap:break-word;" v-html="emailinfo.msg">
+                    <div class="emailContent" style="word-wrap:break-word;" @click="showLog(emailinfo.msg)" v-html="emailinfo.msg">
                     </div>
                     <el-button v-if="ziji" style="margin-top:20px;background:#3366cc;color:#fff" @click="tooutbox">回复</el-button>
                     <el-button style="margin-top:20px;background:#3366cc;color:#fff" @click="toback">返回</el-button>
@@ -855,6 +868,7 @@
                     :total="sendall">
                   </el-pagination>
                 </div>
+                <Addcun class="mokuai" ref="addCuncom" :fn="backVip" v-if="shows=='addcun'" :class="{active1:shows=='addcun'}"/>
               </div>            
             </div>
           </div>
@@ -867,6 +881,8 @@
 <script>
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Addcun from '../components/personalComponents/addcun'
+
 import contextButton from '../components/contextButton'
 import { pako_ungzip } from '../../public/js/indexof'
 import { geturl } from '../../public/js/status'
@@ -880,18 +896,20 @@ export default {
       literature:false,journal:false,gene:false,info:false,literaturepinglun:false,journalpinglun:false,articleList:[],jourcacheList:[],geneList:[],geoList:[],articTitle:[],articleUserCommentList:[],jourcacheUserCommentList:[],Safety:false,data:false,task:false,tackList:[],date:true,dir:"/",fileList: [],fileslist:[],multipleSelection: [],header:{'Authorization': localStorage.getItem('authorization')},datadir:{dir:'/'},menuVisible: false,fanhui:true,mingcheng:'',wenjianjia:require('../../public/img/wenjian.png'),wenjian:require('../../public/img/wenjian1.png'),msg:'',mess:false,gerenxin:{},
       tankuang:false,loading10:false,datas1:'',rowurl:'',rowname:'',loading11:false,tankuangweixin:false,tankuangphone:false,loading12:false,Phone123:'',duanxin12:'',show1:false,countshow:false,count:'',img1:"",contenttype:'',loading:false,xiazaidisabled:false,tankuangemail:false,loading13:false,Email123:'',show11:false,email11:'',count1:'',countshow1:true,codeR:false,tool:false,toolsList:[],realTime:0,backStage:0,
       currentPage:1,pagesize:20,all:null,Sort:'',wenjianlujing:'',wenjianlujings:[],loading20:false,tankuangyidong:false,msg111:'',action:'',
-      vip:false,inboxcurrentPage:1,inboxall:40,sendcurrentPage:1,sendall:40,jindu:null,detail:'',aid:null,
-      exchange:'',discounts:null,product:'0',timers:1,vip111:'',getUserMember:null,TCdisabled:0,mounth1:1,r:0,search:'',shows:'date',sjr:'',title:'',con:'',tableData:[],dataContent:'',downrenwu:true,emailinfo:null,zhannei:true,sendtableData:[],ziji:true,isDate:true,isVip:0,type111:''
+      vip:false,inboxcurrentPage:1,inboxall:40,sendcurrentPage:1,sendall:40,jindu:null,detail:'',aid:null,Vipdata:[],
+      exchange:'',discounts:null,product:'0',timers:1,vip111:'',getUserMember:null,TCdisabled:0,mounth1:1,r:0,search:'',shows:'date',sjr:'',title:'',con:'',tableData:[],dataContent:'',downrenwu:true,emailinfo:null,zhannei:true,sendtableData:[],ziji:true,isDate:true,isVip:0,type111:'',dialogVisible:false,logInfo:{toolName:'',phone:'',cmd:'',log:''},
+      maxRam:{}
     }
   },
   created() {
     this.phone=localStorage.getItem('phone')
+    
   },
   mounted() {
     
   },
   components:{
-    Header,Footer,contextButton,Ue
+    Header,Footer,contextButton,Ue,Addcun
   },
   watch: {
     
@@ -932,8 +950,53 @@ export default {
       }
     })
     this.action=geturl()+'/files/uploadUserFile'
+    
   },
   methods: {
+    showLog(msg){
+      if(localStorage.getItem('mobile')=='13456826965' || localStorage.getItem('mobile')=='13777421877'){
+        var qs=require('qs');
+        this.axios.post(`/tools/lookUserLogInfo`, qs.stringify({
+          id:msg
+        })).then(result=>{
+          if(result.data.code==200){
+            this.dialogVisible=true
+            this.logInfo=result.data.data
+          }else{
+            this.$message({
+              message:'log不存在',
+              type:'warning'
+            })
+          }
+          console.log(result)
+        })
+      }
+      
+    },
+    dialogClose(){
+      this.dialogVisible=false
+    },
+    headercellstyle(row){
+      if(row.columnIndex==1){
+        return {
+          backgroundColor:"#2C95E1",
+          textAlign:'center',
+          color:'#fff'
+        }
+      }else if(row.columnIndex==2 || row.columnIndex==3 || row.columnIndex==4){
+        return {
+          backgroundColor:"#3366CC",
+          textAlign:'center',
+          color:'#fff'
+        }
+      }else if(row.columnIndex==5){
+        return {
+          backgroundColor:"#FF6B00",
+          textAlign:'center',
+          color:'#fff'
+        }
+      }
+    },
     toback(){
       if(this.type111=='send'){
         this.Send()
@@ -1004,23 +1067,16 @@ export default {
       })
     },
     vipchange(){
-      if(this.product==0){
-        var a = '87459b98ba0d47b3961503cbc2011b65'
-      }else if(this.product==1){
-        var a = 'eadd72555fb04ab7942b39131db1ae3e'
-      }else if(this.product==2){
-        var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
-      }else if(this.product==3){
-        var a = '3e5d20ae3da94333bdd8f6015ff91933'
-      }
+      this.mounth1=1
+      this.timers=1
       if(this.getUserMember!=null){
-        if(this.getUserMember.name=='无忧初级版'){
+        if(this.getUserMember.name=='无忧中级版'){
           var c = 1
-        }else if(this.getUserMember.name=='无忧中级版'){
-          var c = 2
         }else if(this.getUserMember.name=='无忧高级版'){
+          var c = 2
+        }else if(this.getUserMember.name=='超级用户'){
           var c = 3
-        }else if(this.getUserMember.name=='10G存储空间'){
+        }else if(this.getUserMember.name=='无忧初级版'){
           var c = 0
         }
         if(c!=this.product){
@@ -1043,7 +1099,21 @@ export default {
           this.mounth1=1
         }
       }
-      
+      if(this.product==0){
+        // var a = '87459b98ba0d47b3961503cbc2011b65'
+        var a = 'eadd72555fb04ab7942b39131db1ae3e'
+      }else if(this.product==1){
+        // var a = 'eadd72555fb04ab7942b39131db1ae3e'
+        var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
+      }else if(this.product==2){
+        // var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
+        var a = '3e5d20ae3da94333bdd8f6015ff91933'
+      }else if(this.product==3){
+        var a = '9e8ba30f9e554cfba844c32a29ccfcbf'
+        // var a = '3e5d20ae3da94333bdd8f6015ff91933'
+        this.mounth1=12
+        this.timers=12
+      }
       this.axios.get(`/pay/getPayInfo`,{
         params:{
           goodId:a,
@@ -1056,14 +1126,19 @@ export default {
     },
     mounth(a){
       this.timers=a
+      
       if(this.product==0){
-        var a = '87459b98ba0d47b3961503cbc2011b65'
-      }else if(this.product==1){
+        // var a = '87459b98ba0d47b3961503cbc2011b65'
         var a = 'eadd72555fb04ab7942b39131db1ae3e'
-      }else if(this.product==2){
+      }else if(this.product==1){
+        // var a = 'eadd72555fb04ab7942b39131db1ae3e'
         var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
-      }else if(this.product==3){
+      }else if(this.product==2){
+        // var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
         var a = '3e5d20ae3da94333bdd8f6015ff91933'
+      }else if(this.product==3){
+        var a = '9e8ba30f9e554cfba844c32a29ccfcbf'
+        // var a = '3e5d20ae3da94333bdd8f6015ff91933
       }
       this.axios.get(`/pay/getPayInfo`,{
         params:{
@@ -1377,7 +1452,7 @@ export default {
       }
     },
     send(){
-      if (!(/^1[3456789]\d{9}$/.test(this.Phone123))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.Phone123))) {
         this.show1=true
       } else if (this.Phone123 == "" || !this.Phone123) {
         this.show1=true
@@ -1477,6 +1552,29 @@ export default {
     downDiscuoption(){
       this.tankuang=false
     },
+    endRun(item){
+      this.$confirm('确认终止运行?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.axios.get(`/tools/stopRunTool`,{params:{
+          id:item.id
+        }}).then(result=>{
+          console.log(result.data)
+          if(result.data.code==200){
+            console.log(1111)
+            this.axios.get(`/pubmed/getUserRabbitTackInfo`).then(result=>{
+              if(result.data.res.tackList!=undefined){
+                this.tackList=result.data.res.tackList
+              }
+            })
+          }
+        })
+      }).catch(() => {        
+      });
+      
+    },
     shanchu(item){
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -1556,6 +1654,7 @@ export default {
           }else{
             this.contenttype='text'
             this.datas1=response.data.toString()
+            console.log(this.datas1.split(/\n/g))
             this.rowurl=row.url
             this.rowname=row.name
             this.tankuang=true
@@ -1599,7 +1698,9 @@ export default {
         this.aid=b.row.type+b.row.size+b.$index
         this.axios.get('/files/downUserFile',{params:{dir:b.row.url}}).then(result=>{
           this.aid=null
-          window.open(result.data)
+          if(result.data.substring(0,4)!='Json'){
+            window.open(result.data)
+          }
         })
         
       }
@@ -1999,11 +2100,14 @@ export default {
       })
     },
     Outbox(q,a){
+      console.log(1)
       this.$router.push({path:'/Personal',query:{type:'outbox'}}); 
-      this.shows='outbox'
-      this.sjr=''
-      this.title=''
-      this.dataContent=''
+      this.shows='outbox';
+      this.sjr='';
+      this.title='';
+      this.dataContent='';
+      this.isDate=true;
+      this.con="";
       if(q=='date' || q=='task'){
         this.tankuang=false
         this.isDate=false
@@ -2043,38 +2147,61 @@ export default {
         this.emailinfo=result.data.datas
       })
     },
+    toAddcun(i){
+      this.shows='addcun'
+    },
+    backVip(){
+      console.log(1)
+      this.shows='vip'
+    },
     Vip(){
       this.$router.push({path:'/Personal',query:{type:'vip'}}); 
       this.shows='vip'
+      this.axios.get(`/user/getMemberWebInfo`).then(result=>{
+        if(result.data.datas){
+          result.data.datas.splice(0,1)
+          this.Vipdata=result.data.datas
+        }
+      })
+      this.axios.get(`/files/getTotalSpace`).then(result=>{
+        if(result.data.data!=null){
+          this.maxRam=result.data.data
+        }
+      })
       this.axios.get(`/user/getUserMember`).then(result=>{
         this.getUserMember=result.data.datas
         if(this.getUserMember!=null){
-          if(this.getUserMember.name=='无忧初级版'){
+          if(this.getUserMember.name=='无忧中级版'){
             this.TCdisabled=1
             this.product='1'
             this.timers=1
-          }else if(this.getUserMember.name=='无忧中级版'){
+          }else if(this.getUserMember.name=='无忧高级版'){
             this.TCdisabled=2
             this.product='2'
             this.timers=1
-          }else if(this.getUserMember.name=='无忧高级版'){
+          }else if(this.getUserMember.name=='超级用户'){
             this.TCdisabled=3
             this.product='3'
-            this.timers=1
-          }else if(this.getUserMember.name=='10G存储空间'){
+            this.timers=12
+            this.mounth1=12
+          }else if(this.getUserMember.name=='无忧初级版'){
             this.TCdisabled=0
             this.product='0'
             this.timers=1
           }
         }
         if(this.product==0){
-          var a = '87459b98ba0d47b3961503cbc2011b65'
-        }else if(this.product==1){
+          // var a = '87459b98ba0d47b3961503cbc2011b65'
           var a = 'eadd72555fb04ab7942b39131db1ae3e'
-        }else if(this.product==2){
+        }else if(this.product==1){
+          // var a = 'eadd72555fb04ab7942b39131db1ae3e'
           var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
-        }else if(this.product==3){
+        }else if(this.product==2){
+          // var a = 'c3e18ea588b944b0810fa5fddcc2ebdd'
           var a = '3e5d20ae3da94333bdd8f6015ff91933'
+        }else if(this.product==3){
+          var a = '9e8ba30f9e554cfba844c32a29ccfcbf'
+          // var a = '3e5d20ae3da94333bdd8f6015ff91933'
         }
         this.axios.get(`/pay/getPayInfo`,{
           params:{
@@ -2772,6 +2899,8 @@ export default {
   .timers{
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    width: 610px;
   }
   .timer{
     margin-right: 10px;
@@ -2820,11 +2949,11 @@ export default {
     margin-left: 40px;
   }
   .vip1>>>.el-radio-group{
-    width:600px;
+    width:610px;
     line-height: 30px;
+    display: flex;justify-content: space-between;
   }
   .vip1>>>.el-radio{
-    margin-right: 6px;
     margin-bottom: 0;
   }
   .vip1>div:nth-child(1){
@@ -2835,7 +2964,7 @@ export default {
     vertical-align: top;
   }
   .quanyi{
-    width: 680px;
+    width: 100%;
     height: 80px;
     line-height: 80px;
     background: #E7EDF9;
@@ -2949,5 +3078,8 @@ export default {
     font-size: 16px;
     color: #999;
     line-height: 28px;
+  }
+  .cu{
+    cursor: pointer;
   }
 </style>

@@ -29,7 +29,7 @@
               <tr v-for="(item,i) of useCount" :key="i">
                 <td><div class="yuan"></div></td>
                 <td @click="toAllTools1(item)"><span class="onetool" :title="item.tool_info">{{item.tool_info}}</span></td>
-                <td>{{item.use_count}}次</td>
+                <td>{{item.use_count>10000?(item.use_count/10000).toFixed(2)+'W':item.use_count+'次'}}</td>
               </tr>
             </table>
           </div>

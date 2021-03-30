@@ -136,7 +136,10 @@
           element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
           element-loading-background="f5f5f5">
-            <div class="aaa" v-if="tcgaTypeInfoList.length!=0" ><el-button v-if="radio1!='未本地化'" :title='location==true?"存在未本地化数据":""' :disabled='location' type="primary" size="small"  @click="download()">下载到个人中心</el-button></div>
+            <div class="aaa" v-if="tcgaTypeInfoList.length!=0" >
+              <span>{{radio}}/{{radio1}}</span>
+              <el-button v-if="radio1!='未本地化'" :title='location==true?"存在未本地化数据":""' :disabled='location' type="primary" size="small"  @click="download()">下载到个人中心</el-button>
+            </div>
             <div v-if="tcgaTypeInfoList.length>0">
               <el-table border :data="tcgaTypeInfoList.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="max-width:350%;">
                 <el-table-column prop="submitterId" label="Submitter Id" width='120px'>
@@ -200,7 +203,7 @@ export default {
     return {
       tcgaCancerSelectList:[],radio:'TCGA-THCA',tcgaCancerCaseCount:[],tcgaCancerFilesCount:[],tcgaCancerStrategyFilesCount:[],tcgaCancerStrategyCaseCount:[],
       radio1:'',tcgaTypeInfoList:[],currentPage:1,pagesize:20,loading:false,zhuanluzu:['FPKM','FPKM-UQ','Counts','前体miRNA','成熟体miRNA',{label:'Other1',value:'Other'}],yingxiang:['Tissue Slide','Diagnostic Slide',{label:'Other6',value:'Other'}],waixianzi:['MuSE','MuTect2','SomaticSniper','VarScan2',{label:'Other2',value:'Other'}],jiajihua:['Illumina Human Methylation 450','Illumina Human Methylation 27',{label:'Other3',value:'Other'}],kaobeishu:['CNV','MaskCNV','Gene Leve CNV','等位基因特异性拷贝数',{label:'Other4',value:'Other'}],linchuang:['Clinical','Other','Biospecimen'],qita:['已本地化','未本地化'],activeName: 'tongji',fileselect:false,xuri:null,location:false,
-      zhengchang1:[{value: 'RNA-seq',label: 'RNA-seq'},{value: 'miRNA-seq',label: 'miRNA-seq'},{value: 'SNV',label: 'SNV'},{value: 'CNV',label: 'CNV'},{value: 'Clinical',label: 'Clinical'},{value: 'TissueSlide',label: 'TissueSlide'},{value: 'DiagnosticSlide',label: 'DiagnosticSlide'},{value: 'Methy450k',label: 'Methy450k'},{value: 'Methy27k',label: 'Methy27k'}],zhengchang:[],isvip:null,loading1:false,yangben:''
+      zhengchang1:[{value: 'RNA-seq',label: 'RNA-seq'},{value: 'miRNA-seq',label: 'miRNA-seq'},{value: 'SNV',label: 'SNV'},{value: 'CNV',label: 'CNV'},{value: 'Clinical',label: 'Clinical'},{value: 'TissueSlide',label: 'TissueSlide'},{value: 'DiagnosticSlide',label: 'DiagnosticSlide'},{value: 'Methy450k',label: 'Methy450k'},{value: 'Methy27k',label: 'Methy27k'}],zhengchang:[],isvip:null,loading1:false,yangben:'',xuriimg:''
       
     }
   },
@@ -1098,9 +1101,11 @@ export default {
               this.xuri=result.data.res.resp
               const obj=this.tcgaTypeInfoList
               this.location=obj.every(item => !('location' in item))
+              
             }
           })
       }
+      console.log(this.location)
     },
     xuritu(){
       this.xuri111().then(e=>{
@@ -1313,7 +1318,10 @@ export default {
     margin-top: 10px;
   }
   .aaa{
-    text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* text-align: right; */
     margin-bottom: 10px;
   }
   .aaa>.el-button--primary{

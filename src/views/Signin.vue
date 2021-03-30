@@ -89,7 +89,7 @@ export default {
     login(){
       this.login1=true
       document.getElementById('login2').innerText='登 录 中 ...'
-      if (!(/^1[3456789]\d{9}$/.test(this.phone)) && !(/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone)) && !(/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(this.phone))) {
         this.$message({
           message: '手机号不符合规则',
           type: 'warning'

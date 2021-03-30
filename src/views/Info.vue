@@ -48,18 +48,35 @@
               <span class="shiyan" v-if="len>80">实验类型：<span v-for="(it,i) of geoDetails.platformTypes" :key="i">{{it}}<span v-if="i<geoDetails.platformTypes.length-1">;</span></span></span>
               <div>
                 <p>数据平台：</p>
+                <table width="100%" v-if="platformData" class="plattable" style="margin-top:20px">
+                  <tr style="text-align: center;table-layout:fixed">
+                    <td class="fix back p5" style="padding:5px!important;">平台列表</td>
+                    <td class="fix back p5">描述</td>
+                    <td class="fix back p5">样本量</td>
+                    <td class="fix back p5">数据导出</td>
+                    <td class="back p5" style="white-space:nowrap">原始数据导出</td>
+                  </tr>
+                  <tr v-for="(item,i) of platformData" :key="i">
+                    <td class="fix back p5 access" style="padding:0 15px;" @click="access(item.platform)">{{item.platform}}</td>
+                    <td class="fix p5"><span >{{item.describe}}</span></td>
+                    <td class="fix p5"><span >{{item.sample}}</span></td>
+                    <td style="white-space:nowrap" class="p5 access" @click="dialogVisible(item.dataExport)"><span v-if="item.dataExport">{{item.dataExport}}<img style="width:14px;margin-left:5px;margin-bottom:2px;" src="../../public/img/expot.png" title="导出" alt=""></span></td>
+                    <td style="white-space:nowrap" class="p5 access" @click="dialogVisible1(item.originalDataExport)"><span v-if="item.originalDataExport">{{item.originalDataExport}}<img style="width:14px;margin-left:5px;margin-bottom:2px;" src="../../public/img/expot.png" title="导出" alt=""></span></td>
+                  </tr>
+                </table>
               </div>
             </div>
-            <div class="yangbente" v-if="geoDetails.sampleTypesJson!=undefined">
-              <p>样本特性：</p>
-              <p><span v-for="(item1,i) of geoDetails.sampleTypesJson" :key="i"><span>{{item1}};</span></span></p>
-            </div>
+            
             <div class="zaiyao">
               <p>摘要</p>
               <p>{{geoDetails.summary}}</p>
             </div>
             <div class="yangben" v-if="gsmInfomationList!=undefined && gsmInfomationList.length>0">
               <p>样本信息 <span @click="load11">下载样本信息到个人数据中心</span></p>
+              <div class="yangbente" v-if="geoDetails.sampleTypesJson!=undefined">
+                <p>样本特性：</p>
+                <p style="margin-bottom:20px"><span v-for="(item1,i) of geoDetails.sampleTypesJson" :key="i"><span>{{item1}}； </span></span></p>
+              </div>
               <div class="scrolldiv" style="overflow: auto; width: 100%; height:200px;position: relative;table-layout: fixed';line-height:26px;" >
                 <table width="100%" height="200" v-if="bb.length>0">
                   <tr style="text-align: center;table-layout:fixed">
@@ -118,16 +135,21 @@
             
             <div class="xiazai">
               <p>
-                <el-button type="primary" @click="load" size='mini'>下载数据</el-button>
+                <!-- <el-button type="primary" @click="load" size='mini'>下载数据</el-button> -->
               </p>
               <table class="mingcheng" v-show="load1">
                 <tr>
                   <td>文件名称</td>
-                  <td style="text-align: center;">高级会员功能</td>
+                  <td style="text-align: center;">高速下载</td>
                   <td>大小</td>
                 </tr>
                 <tr v-for="(item,i) of filelist" :key="i">
-                  <td><span class="filename" @click="downfile(item.fullName,item.location)">{{item.fileName}}</span></td>
+                  <td>
+                    <span class="filename" @click="downfile(item.fullName,item.location)">{{item.fileName}} 
+                      <sup v-if="item.location=='ftp'"><img style="width:12px" title="低速" src="../../public/img/low.png" alt=""></sup>
+                      <sup v-else><img style="width:12px" title="高速" src="../../public/img/fast.png" alt=""></sup>
+                    </span>
+                  </td>
                   <td style="text-align: center;"><span class="filename" @click="toperson(item)">>>发送到个人中心</span></td>
                   <td style="font-weight: 400;">{{item.fileSize< (0.1 * 1024)?item.fileSize.toFixed(2) + "B":item.fileSize < (0.1 * 1024 * 1024)? (item.fileSize / 1024).toFixed(2) + "KB":item.fileSize < (0.1 * 1024 * 1024 * 1024) ? (item.fileSize / (1024 * 1024)).toFixed(2) + "MB": (item.fileSize / (1024 * 1024 * 1024)).toFixed(2) + "GB"}}</td>
                 </tr>
@@ -159,9 +181,9 @@
                 <p>快速分析</p>
                 <div class="jiaocheng" @click="toVideoinfo">数据下载和导出视频教程</div>
                 <div class="export" v-if="platformIDs!=undefined">
-                  <p>数据导出</p>
+                  <!-- <p>数据导出</p> -->
                   <div>
-                    <p v-for="(item,i) of platformIDs" :key="i" @click="dialogVisible(item)">{{i+1}}、{{item}}<img style="width:14px;margin-left:5px;margin-bottom:2px;" src="../../public/img/expot.png" title="导出" alt=""></p>
+                    <!-- <p v-for="(item,i) of platformIDs" :key="i" @click="dialogVisible(item)">{{i+1}}、{{item}}<img style="width:14px;margin-left:5px;margin-bottom:2px;" src="../../public/img/expot.png" title="导出" alt=""></p> -->
                     <div class="motai" v-if="vis">
                       <div>
                         <p style="width:100%;margin-bottom:30px;text-align: center">快速导出表达矩阵</p>
@@ -207,9 +229,9 @@
                   </div>
                 </div>
                 <div class="export" v-if="platformIDs!=undefined">
-                  <p>原始数据导出</p>
+                  <!-- <p>原始数据导出</p> -->
                   <div>
-                    <p v-for="(item,i) of platformIDs" :key="i" @click="dialogVisible1(item)">{{i+1}}、{{item}}<img style="width:14px;margin-left:5px;margin-bottom:2px;" src="../../public/img/expot.png" title="导出" alt=""></p>
+                    <!-- <p v-for="(item,i) of platformIDs" :key="i" @click="dialogVisible1(item)">{{i+1}}、{{item}}<img style="width:14px;margin-left:5px;margin-bottom:2px;" src="../../public/img/expot.png" title="导出" alt=""></p> -->
                     <div class="motai" v-if="vis1">
                       <div>
                         <p style="width:100%;margin-bottom:30px;text-align: center">从原始数据开始重新标准化</p>
@@ -287,6 +309,19 @@
     <div class="geren" @click="shujuzhongxin">
       <span>数据中心</span>
     </div>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisibleVip"
+      width="30%"
+      >
+      <div>
+        <p>仅限无忧高级版以上会员才有权限，请点击 <el-button type="text" @click="toVip">“此处”</el-button> 进行升级</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleVip = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisibleVip = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <Footer/>
   </div>
 </template>
@@ -304,8 +339,9 @@ export default {
   data() {
     return {
       searchContent:'',result:'',PMID:'',searchJournalData:'',if:[],yearTimeAggs:[],comments:[],journalTypeTop:[],articleDetails:[],authorList:[],addr_show:false,d:0,journal1:'',searchData:[],loading:false,grantsList:[],publicationTypeList:[],zh:false,z:0,
-      addrList1:'',authorList2:'',dou:false,Id:'',geoDetails:{},gsmInfomationList:[],bb:[],len:0,load1:false,filelist:[],co1:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",phone:"",articleList:[],gseRelationList:[],platformIDs:[],exopt1:'',options1:[],exopt2:'',options2:[],vis:false,gpl:"",exopt3:'',options3:[{label:"均值",value:1},{label:"中位数",value:2},{label:"最大值",value:3},{label:"最小值",value:4}],a:false,b:false,vis1:false,geoList:[],
-      fileselect:false,ID:'',url:''
+      addrList1:'',authorList2:'',dou:false,Id:'',geoDetails:{},gsmInfomationList:[],bb:[],len:0,load1:true,filelist:[],co1:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",phone:"",articleList:[],gseRelationList:[],platformIDs:[],exopt1:'',options1:[],exopt2:'',options2:[],vis:false,gpl:"",exopt3:'',options3:[{label:"均值",value:1},{label:"中位数",value:2},{label:"最大值",value:3},{label:"最小值",value:4}],a:false,b:false,vis1:false,geoList:[],
+      fileselect:false,ID:'',url:'',platformData:[],
+      dialogVisibleVip:false
     }
   },
   components:{
@@ -350,15 +386,21 @@ export default {
       })
       window.open(href,'_blank')
     },
+    toVip(){
+      const {href}=this.$router.resolve({
+        path: '/Personal',
+        query:{
+          type:'vip'
+        }
+      })
+      window.open(href,'_self')
+    },
     toperson(e){
       this.axios.get(`/tools/downloadGeoData`, {
         params:{geoId:this.ID,out:e.fileName},
       }).then(result=>{
         if(result.data.msg=='权限不足'){
-          this.$message({
-            message: '权限不足，请充值',
-            type: 'warning'
-          });
+          this.dialogVisibleVip=true;
         }
       })
     },
@@ -679,7 +721,8 @@ export default {
           this.platformIDs=this.geoDetails.platformIDs
           this.gseRelationList=this.geoDetails.gseRelationList
           this.len=this.geoDetails.platformTypes.toString().length
-          this.filelist=this.geoDetails.geoFileList
+          this.filelist=this.geoDetails.geoFileList;
+          console.log(this.filelist)
         }else{
           this.geoDetails=[]
         }
@@ -691,7 +734,12 @@ export default {
           throw error
         }
       });
-      
+      this.axios.get(`/pubmed/getDataPlatform`, {
+        params:{accession:this.ID},
+      }).then(result=>{
+        console.log(result.data.res)
+        this.platformData=result.data.res.data
+      })
       this.axios.get(`/pubmed/getGeoSampleCompressInfo`, {
         params:{accession:this.ID},
       }).then(result=>{
@@ -1316,5 +1364,13 @@ export default {
     background: #3366cc;
     color: #fff;
     cursor: pointer;
+  }
+  .p5{
+    padding: 5px !important;
+    text-align: center;
+  }
+  .plattable tr td[data-v-abb9de30] {
+    border: 1px solid #dcdcdc;
+    margin-top:20px;
   }
 </style>

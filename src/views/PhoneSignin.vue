@@ -62,7 +62,7 @@ export default {
       this.$router.push({path:'/Signup'})
     },
     getCode(){
-      if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone))) {
         this.show1=true
       } else if (this.phone == "" || !this.phone) {
         this.show1=true          
@@ -119,7 +119,7 @@ export default {
     },
     login(){
       //验证电话号码格式是否正确
-      if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone))) {
         this.show1=true
       } else if (this.phone == "" || !this.phone) {
         //判断电话号码或输入的是否为空

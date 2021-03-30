@@ -18,6 +18,7 @@
           <div class="tCode"><span v-show="show3">验证码不正确</span></div>
           <button @keyup.13="Signup" @click="Signup()" :disabled='signup1' :plain="true"><span id="signup">注册</span></button>
           <p>如果您已拥有账号，点击这里<span @click="toSignin()">登录</span></p>
+          <p>如无大陆手机号，注册Sangerbox请联系管理员</p>
         </div>
       </div>
       
@@ -58,7 +59,7 @@ export default {
     Signup(){
       this.signup1=true
       document.getElementById('signup').innerText='注 册 中 ...'
-      if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone))) {
         this.signup1=false
         document.getElementById('signup').innerText='注 册'
         this.show1=true
@@ -115,7 +116,7 @@ export default {
       this.$router.push({path:'/Signin'})
     },
     getCode(){
-      if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone))) {
         this.show1=true
       } else if (this.phone == "" || !this.phone) {
         this.show1=true          
@@ -314,6 +315,11 @@ export default {
     color: #999;
     font-size: 14px;
     margin-top: 20px;
+  }
+  .Signup>p:nth-child(12){
+    color: #999;
+    font-size: 12px;
+    margin-top: 10px;
   }
   .Signup>p:nth-child(11)>span{
     color: rgba(57,85,255,1);

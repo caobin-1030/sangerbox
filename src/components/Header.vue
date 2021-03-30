@@ -53,13 +53,20 @@
                 <el-dropdown-item @click.native="toPersonal('vip')"><img class="fenxi" @click.native="toPersonal('vip')" src="../../public/img/fenxi.png" alt=""><span @click.native="toPersonal('vip')">会员中心</span></el-dropdown-item>
                 <el-dropdown-item @click.native="toPersonal('inbox')"><img class="fenxi" @click.native="toPersonal('inbox')" src="../../public/img/fenxi.png" alt=""><span @click.native="toPersonal('inbox')"><el-badge :is-dot='zhannei' class="item">站内信</el-badge></span></el-dropdown-item>
                 <el-dropdown-item v-if="phone=='13777421877' || phone=='13456826965'" @click.native="houtai()"><img class="fenxi" src="../../public/img/fenxiang.png" alt=""><span>后台管理</span></el-dropdown-item>
+                <el-dropdown-item @click.native="toForgetPwd()"><img @click.native="toForgetPwd()" class="fenxi" src="../../public/img/name.png" alt=""><span @click.native="toForgetPwd()">修改密码<sup id="sup1" class="sup1"></sup></span></el-dropdown-item>
                 <el-dropdown-item @click.native="exit()"><img class="fenxi" src="../../public/img/exit.png" alt=""><span>退出</span></el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <div class="English col-md-4"><span>英文</span><img src="../../public/img/english.png" alt="英文" title="英文"></div>
+            <div class="English col-md-4">
+              <span v-if="url=='cloud.sangerbox.com'" @click="qiehuan('xiao')">其他线路</span>
+              <span v-if="url=='cloud2.sangerbox.com'" @click="qiehuan('qi')">校园网</span>
+            </div>
           </div>
           <div v-if="!login">
-            <div class="English col-md-4"><span>英文</span><img src="../../public/img/english.png" alt="英文" title="英文"></div>
+            <div class="English col-md-4">
+              <span v-if="url=='cloud.sangerbox.com'" @click="qiehuan('xiao')">其他线路</span>
+              <span v-if="url=='cloud2.sangerbox.com'" @click="qiehuan('qi')">校园网</span>
+            </div>
             <div class="Login col-lg-4 col-md-12 col-xs-12"><span @click="toSignin">登录</span><img @click="toSignin" src="../../public/img/login.png" alt="登录" title="登录"></div>
             <div class="Register col-md-4"><span @click="toSignup">注册</span><img @click="toSignup" src="../../public/img/register.png" alt="注册" title="注册"></div>
           </div>
@@ -86,10 +93,14 @@ export default {
       i:0,
       login:false,
       uname:"",
-      aut:'',phone:'',download:true,zhannei:true
+      aut:'',phone:'',download:true,zhannei:true,url:''
     }
   },
   mounted() {
+    if(localStorage.getItem('url')==null){
+      localStorage.setItem('url','cloud.sangerbox.com')
+    }
+    this.url=localStorage.getItem('url')
     if(localStorage.getItem('download')!=null && localStorage.getItem('download')>0){
       this.download=true
     }else{
@@ -174,12 +185,29 @@ export default {
     // },
   },
   methods: {
+    qiehuan(a){
+      if(a=='xiao'){
+        this.url='cloud2.sangerbox.com'
+        localStorage.setItem('url','cloud2.sangerbox.com')
+        location.reload()
+      }else{
+        this.url='cloud.sangerbox.com'
+        localStorage.setItem('url','cloud.sangerbox.com')
+        location.reload()
+      }
+    },
     houtai(){
       window.open('http://admin.sangerbox.com/', '_blank')
     },
     toVideo(){
       const {href} =this.$router.resolve({
         path: '/SangerBoxClassroom',
+      })
+      window.open(href, '_self')
+    },
+    toForgetPwd(){
+      const {href} =this.$router.resolve({
+        path: '/ForgetPwd',
       })
       window.open(href, '_self')
     },

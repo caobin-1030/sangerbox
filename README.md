@@ -1,2 +1,2 @@
-# sangerbox
-sangerbox
+# sanger
+sanger

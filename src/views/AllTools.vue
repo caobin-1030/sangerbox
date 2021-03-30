@@ -109,6 +109,16 @@
         
       </div>
     </div>
+    <el-dialog title="工具使用须知" width="60%" height="651px" :visible.sync="dialogVisible" :append-to-body="true" >
+      <div v-html="showshuoming"></div>
+      <div style="margin-left:33px">
+        链接: <span class="show1111" @click="show111('https://pan.baidu.com/s/1jz3eAFQjjRGdxy_jRHYRYA')">https://pan.baidu.com/s/1jz3eAFQjjRGdxy_jRHYRYA</span> 提取码: cft1
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button class="mr10" @click="falseSelect">取 消</el-button>
+        <el-button type="primary" @click="sureSelectPerson">确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- <div class="tankuang" v-if="tankuang" @click="downDiscuoption()">
       <div @click.stop="settingEvent()">
         <p></p>
@@ -138,7 +148,11 @@
                 <div class="wenzi">
                   <p style="font-weight: 600;">{{title1}}</p>
                   <p :title='desctiption'>{{desctiption}}</p>
-                  <p class="shoucang"><span v-if="mobile==null">需登录才能运行</span><img style="cursor: pointer;" :id="id" @click="collection(id,pmidList)"  :src="pmidList.indexOf(parseInt(id))==-1?shoucang1:shoucang10" :title="pmidList==undefined  || pmidList.indexOf(id)==-1?shoucang2:shoucang11"alt=""></p>
+                  <p class="shoucang">
+                    <span v-if="mobile==null">需登录才能运行</span>
+                    <img style="cursor: pointer;" :id="id" @click="collection(id,pmidList)"  :src="pmidList.indexOf(parseInt(id))==-1?shoucang1:shoucang10" :title="pmidList==undefined  || pmidList.indexOf(id)==-1?shoucang2:shoucang11"alt="">
+                    <span @click="showdialogVisible" style="cursor: pointer;color:#FF7613;font-size:12px;" v-if="mobile!=null">使用须知</span>
+                  </p>
                 </div>
               </div>
               <div class="top-right">
@@ -225,6 +239,7 @@
   </div>
 </template>
 <script>
+  
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Filecom from '../components/Filecom'
@@ -239,7 +254,8 @@ export default {
   data() {
     return {
       gongju2:true,lizi2:false,shiyong2:false,id:'',title1:"",desctiption:'',readme:'',example:'',pipline:'',ff:{},readhasfile:false,readtype:'',exptype:'',exphasfile:false,piptype:false,piphasfile:'',readfilename:'',expfilename:'',pipfilename:'',rule:[],runcmd:'',fileList:[],wenjian:require('../../public/img/wenjian1.png'),datas1:'',contenttype:'',img1:'',tooltype:"",fujian1:'下载附件',loading:false,leftheight:0,pdfurl:'',clickIndex:"",currentPage: 1,pageCount: 0,src: "",scale: 100,idx: -1,loadedRatio: 0,toolImg:null,defaultImg: require('../../public/img/def.jpg'),loading1:false,pmidList:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",downloadDir:'',xiazai:true,logID:'',tankuang:false,runlog:'',fileselect:false,loading5:false,fileslist:[],all:null,pagesize:10,dir:'/',wenjianjia:require('../../public/img/wenjian.png'),msg:'',header:{'Authorization': localStorage.getItem('authorization')},datadir:{dir:'/'},fileList1:[],fanhui:false,fileSel:'',fileSels:[],fileSel1:[],fileSels1:[],selectInput:null,multiple:false,
-      Sort:'',search:'',isvip:'',aa:'',filesewid:"",mobile:null,url:''
+      Sort:'',search:'',isvip:'',aa:'',filesewid:"",mobile:null,url:'',
+      dialogVisible:false,showshuoming:''
     }
   },
   components:{
@@ -279,6 +295,21 @@ export default {
     
   },
   methods: {
+    show111(val){
+      window.open(val,'_blank')
+    },
+    showdialogVisible(){
+      this.dialogVisible=true;
+      this.axios.get(`/tools/findToolsUsing`).then(result=>{
+        this.showshuoming=result.data.data[0].title
+      })
+    },
+    falseSelect(){
+      this.dialogVisible=false;
+    },
+    sureSelectPerson(){
+      this.dialogVisible=false;
+    },
     beforeupload(file){
       var p=new RegExp(/^[a-z0-9A-Z_]+$/)
       if(p.test(file.name.substr(0,file.name.lastIndexOf(".")))==false){
@@ -814,6 +845,7 @@ export default {
         }
       });
     },
+    
     //提交
     onSubmit(formData){
       if(this.fileList.length>0){
@@ -829,6 +861,23 @@ export default {
       document.getElementsByClassName('el-button--medium')[0].innerText='提交中...'
       document.getElementsByClassName('el-button--medium')[0].disabled=true
       document.getElementsByClassName('el-button--medium')[0].style.cursor='not-allowed'
+      var _this = this
+      if(this.tooltype==0){
+        this.$alert('提交成功，请耐心等待运行完成，结果即将在工具下方呈现', '工具运行', {
+          confirmButtonText: '确定',
+          callback: action => {
+          }
+        });
+      }else{
+        // this.$alert('<strong>提交成功，请到 <i id="totask">任务中心</i> 等待运行完成</strong>', '工具运行', {
+        //   dangerouslyUseHTMLString: true
+        // });
+        this.$alert('提交成功，请到任务中心等待运行完成', '工具运行', {
+          confirmButtonText: '确定',
+          callback: action => {
+          }
+        });
+      }
       var qs=require('qs');
       this.axios.post(`/tools/previewTool`, qs.stringify({
         id:this.id,
@@ -851,6 +900,7 @@ export default {
           });
           
         }
+        
         if(result.data.data!=null && result.data.data!='' && result.data.data!=undefined){
           this.logID=result.data.msg
           this.fileList=result.data.data
@@ -1527,5 +1577,13 @@ export default {
   cursor: pointer;
   color: #FF7613;
 }
-
+.show1111:hover{
+  color: #409EFF;
+  cursor: pointer;
+  text-decoration: #409EFF;
+}
+.show1111{
+  color: #409EFF;
+  cursor: pointer;
+}
 </style>

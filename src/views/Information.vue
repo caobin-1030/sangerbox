@@ -45,6 +45,10 @@
             <div @click="search3();searcher()"><span>搜索</span></div>
           </div>
           <p class="sousuo"><span>搜索结果：<span>{{result}}</span><span>搜索时间：</span><span>{{timer}}</span></span><span style="font-size:14px;color:#FF6B00" @click="toTcgaDown()">TCGA数据快速下载</span></p>
+          <p class="sousuo">
+            <span></span>
+            <span>同步时间：<span class="time1">{{countGeo.time}}</span> ,<span class="time1">{{countGeo.countAmount}}</span> 个数据集</span>
+          </p>
         </div>
       </div>
       <div class="SearchHeadBg">
@@ -461,7 +465,7 @@ export default {
       model1: "",model2:'',model3:'',model4:'',
       relation:[{value:'OR',label:'OR'},{value:'AND',label:'AND'},{value:'NOT',label:'NOT'}],relation2:'AND',relation3:'AND',relation4:'AND',GeoList:[],
       int1:'',int2:'',int3:'',int4:'',ybtx11:[],ybtx1:[],ybtx111:[],
-      senior1:false,isShow: false,blok:"",jus:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",geoList:'',sort:''
+      senior1:false,isShow: false,blok:"",jus:'',shoucang1:require('../../public/img/shoucang.png'),shoucang2:'收藏',shoucang10:require('../../public/img/shoucangactive.png'),phone:"",shoucang11:"取消收藏",geoList:'',sort:'',countGeo:{}
     }
   },
   components:{
@@ -890,6 +894,13 @@ export default {
           this.geoList=result.data.res.geoList
         }
       })
+      this.axios.get(`/pubmed/countGeoAmount`).then(result=>{
+        console.log(result.data)
+        if(result.data.res.time!=undefined){
+          this.countGeo=result.data.res
+        }
+      })
+
     },
     Search(){
       this.senior1=false;

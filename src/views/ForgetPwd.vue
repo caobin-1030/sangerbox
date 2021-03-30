@@ -186,7 +186,7 @@ export default {
     },
     sendPhone(){
       //验证电话号码格式是否正确
-      if (!(/^1[3456789]\d{9}$/.test(this.phone))) {
+      if (!(/^1[03456789]\d{9}$/.test(this.phone))) {
         this.codeR=false
         this.rphone=true
         this.remail=false

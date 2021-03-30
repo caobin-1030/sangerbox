@@ -5,44 +5,12 @@ import {
   MessageBox
 } from 'element-ui'
 import store from '../../src/store/index'
-import VueCookies from 'vue-cookies'
-if(!VueCookies.isKey('url')){
-  var url=''
-  let ips = [
-    'cloud.sangerbox.com',
-    'cloud2.sangerbox.com',
-  ];//线路地址
 
-  let arr = [];
-  for(let ip of ips){
-    arr.push(
-        new Promise(function(resolve, reject) {
-            let startTime, endTime, fileSize;
-            let xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = () => {
-                if(xhr.readyState === 2){
-                    startTime = Date.now();
-                }
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    endTime = Date.now();
-                    fileSize = xhr.responseText.length;
-                    setTimeout(resolve, endTime-startTime, ip);
-                }
-            }
-            xhr.timeout = 1000
-            xhr.open("GET", 'http://'+ip+'/A', true);
-            xhr.send();
-        })
-    );
-  }
-
-  Promise.race(arr).then(function(value) {
-    localStorage.setItem("url",value)
-    VueCookies.set('url',value, '10min')
-  });
-}
-
-url=localStorage.getItem("url")
+var url='cloud.sangerbox.com:9000';
+// var url=localStorage.getItem("url")
+// if(localStorage.getItem('url')==null){
+//   url='cloud.sangerbox.com'
+// }
 axios.defaults.baseURL = 'http://' + url;
 var aut= localStorage.getItem("authorization")
 if(aut==null){
@@ -98,11 +66,11 @@ axios.interceptors.response.use(
   },
   error => {
   if (error && error.response) {
-    if(localStorage.getItem("url")=="cloud.sangerbox.com"){
-      localStorage.setItem('url', 'calculate.mysci.online:9000');
-    }else{
-      localStorage.setItem('url', 'cloud.sangerbox.com');
-    }
+    // if(localStorage.getItem("url")=="cloud.sangerbox.com"){
+    //   localStorage.setItem('url', 'calculate.mysci.online:9000');
+    // }else{
+    //   localStorage.setItem('url', 'cloud.sangerbox.com');
+    // }
     
   switch (error.response.status) {
   case 401:
@@ -161,9 +129,15 @@ axios.interceptors.response.use(
    
        var on_connect = function() {
         client.subscribe(`/exchange/rabbitmqTackWeb/${phone}`, function(data) {
+          console.log(data)
+          if(data.type){
+            var messType=data.type
+          }else{
+            var messType='success'
+          }
               var msg = data.body;
               var a=msg.split(";")
-              Message({message: `${a.length==1?msg:a[1]}`,type: 'success'}) ;
+              Message({message: `${a.length==1?msg:a[1]}`,type: messType}) ;
               if(a[0]==200 && a[2]!='email'){
                 store.commit("adddown")
               }else if(a[0]=='提交成功'){

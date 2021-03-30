@@ -218,7 +218,20 @@
           </ul>
         </div>
         <div class="setMeal row">
-          <div class="col-md-3 col-sm-6 col-xs-12">
+          <div v-for="(item,i) of Vipdata" :key="i" class="vipinfo" @click="buyVip(item.vip,i-1)">
+            <div class="wh" :style="{background:item.color,color:'#fff'}">
+              {{item.name}}
+            </div>
+            <div class="ct">
+              <p v-for="(item1,n) of item.value" :key="n">
+                {{item1.key}}：{{item1.value}}
+              </p>
+              <div style="text-align: center;margin-top:40px;margin-bottom:20px">
+                <el-button type="primary" style="width:110px" plain>{{item.name=='普通用户'?'登录免费':'马上购买'}}</el-button>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-md-3 col-sm-6 col-xs-12">
             <div @click="buyVip('87459b98ba0d47b3961503cbc2011b65',0)">
               <div class="moneyHeader">
                 <p>10G存储空间</p>
@@ -281,7 +294,7 @@
               </div>
               <button>马上购买</button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="gcbi2">
@@ -350,7 +363,8 @@ export default {
       sample:'样 本',
       down1:false,
       i:0,tankuang:false,id:'',payimg:'',int:null,OrderId:'',zhifuTitle:'',zhifuInfoList:[],money:'',moren:'无可用优惠券',keyong:true,
-      value:'',options:[]
+      value:'',options:[],
+      Vipdata:[]
 
     }
   },
@@ -359,6 +373,7 @@ export default {
   },
   created() {
     this.block()
+    this.getvipdata()
   },
   mounted() {
     this.$refs['input'].focus()
@@ -371,6 +386,42 @@ export default {
     },
   },
   methods: {
+    getvipdata(){
+      this.axios.get(`/user/getMemberWebInfo`).then(result=>{
+        if(result.data.datas){
+          result.data.datas.splice(0,1)
+          var data=[]
+          var name=[{name:"普通用户",color:'#2C95E1',vip:""},{name:"无忧初级版",color:'#3366CC',vip:"87459b98ba0d47b3961503cbc2011b65"},{name:"无忧中级版",color:'#3366CC',vip:"eadd72555fb04ab7942b39131db1ae3e"},{name:"无忧高级版",color:'#3366CC',vip:"c3e18ea588b944b0810fa5fddcc2ebdd"},{name:"超级用户",color:'#FF6B00',vip:"3e5d20ae3da94333bdd8f6015ff91933"}]
+          
+          for(var i=0;i<5;i++){
+            var b={}
+            b.value=[]
+            b.name=name[i].name
+            b.color=name[i].color
+            b.vip=name[i].vip
+            for(var a of result.data.datas){
+              var c={}
+              c.key=a.resources
+              if(name[i].name=='普通用户'){
+                c.value=a.ordinary
+              }else if(name[i].name=='无忧初级版'){
+                c.value=a.primary
+              }else if(name[i].name=='无忧中级版'){
+                c.value=a.intermediate
+              }else if(name[i].name=='无忧高级版'){
+                c.value=a.advanced
+              }else if(name[i].name=='超级用户'){
+                c.value=a.supers
+              }
+              b.value.push(c)
+              data[i]=b
+            }
+          }
+          this.Vipdata=data
+          console.log(this.Vipdata)
+        }
+      })
+    },
     quanChange(){
       this.shuaxin()
     },
@@ -1186,39 +1237,9 @@ export default {
     margin: 0;
     text-align: center;
     margin-bottom: 70px;
-  }
-  .setMeal>div{
     margin-top: 51px;
-  }
-  .setMeal>div>div{
-    width: 220px;
-    height:350px;
-    background:rgba(255,255,255,1);
-    border:1px solid rgba(216, 220, 232, 0.51);
-    border-radius:20px;
-    cursor: pointer;
-    text-align: center;
-    padding: 0;
-    margin: 0 auto;
-  }
-  .setMeal>div>div:hover>.moneyHeader{
-    background: #3C61C3;
-  }
-  .setMeal>div>div:hover>button{
-    background: #3C61C3;
-    color: #fff;
-  }
-  .setMeal>div>div:hover>.moneyHeader>p:nth-child(1){
-    font-size:16px;
-    color: #fff;
-  }
-  .setMeal>div>div:hover>.moneyHeader>p:nth-child(2){
-    font-size:38px;
-    color: #fff;
-  }
-  .setMeal>div>div:hover>.moneyHeader>p:nth-child(3){
-    font-size:10px;
-    color: #fff;
+    display: flex;
+    justify-content: space-between;
   }
   .moneyHeader{
     width:220px;
@@ -1541,5 +1562,25 @@ export default {
   }
   .youhuiquan>>>.el-input__icon{
     line-height: 26px;
+  }
+  .vipinfo{
+    width: 220px;
+    border: 1px solid #ddd;
+  }
+  .wh{
+    width: 100%;
+    height: 124px;
+    line-height: 124px;
+    text-align: center;
+    font-size: 21px;
+    font-weight: 600;
+  }
+  .ct{
+    padding: 10px 0 0 10px;
+    text-align: left;
+  }
+  .ct>p{
+    font-size: 14px;
+    line-height: 30px;
   }
 </style>

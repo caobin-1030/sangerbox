@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     beian(){
-      window.open('http://www.beian.miit.gov.cn','_blank')
+      window.open('https://beian.miit.gov.cn/#/Integrated/index','_blank')
     }
   },
 }

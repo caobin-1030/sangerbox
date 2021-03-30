@@ -81,7 +81,18 @@
                 <div class="videoinfo">
                   <div><p :title="item.title">{{item.title}}</p></div>
                   <div style='height:44px'><p class="hang2" :title="item.desc"><span>简介：</span>{{item.desc}}</p></div>
-                  <p class="mon"><span style="color: #FF6B00;"><span v-show="item.money!='0.00'">{{item.type=='工具' ?  '高级会员免费' : item.discount==1 ? '' : `高级会员${item.discount*10}折`}}</span></span><span style="color: #FF6B00;">{{ item.money!='0.00' ? `￥${(item.money*item.discount).toFixed(2)}` : '免费' }} <span v-if="item.discount!=undefined && item.discount!=1" style="text-decoration:line-through;color:#666;">{{item.money}}</span></span></p>
+                  <p class="mon">
+                    <span style="color: #FF6B00;">
+                      <span v-show="item.money!='0.00'">
+                        <!-- {{item.type=='工具' ?  '超级用户免费' : item.discount==1 ? '' : `超级用户${item.discount*10}折`}} -->
+                        {{ '超级用户免费' }}
+                      </span>
+                    </span>
+                    <span style="color: #FF6B00;">
+                      {{ item.money!='0.00' ? `￥${(item.money*item.discount).toFixed(2)}` : '免费' }} 
+                    </span>
+                    <!-- <span v-if="item.discount!=undefined && item.discount!=1" style="text-decoration:line-through;color:#666;">{{item.money}}</span> -->
+                  </p>
                 </div>
               </div>
             </div>
